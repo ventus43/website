@@ -955,30 +955,33 @@
 
         <div class="contact-form-box reveal reveal-delay-1">
           <div class="form-title">문의 남기기</div>
-          <div class="form-group">
-            <label class="form-label">이름</label>
-            <input type="text" class="form-input" placeholder="홍길동" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">이메일</label>
-            <input type="email" class="form-input" placeholder="hello@example.com" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">문의 유형</label>
-            <select class="form-input">
-              <option value="">선택해주세요</option>
-              <option>팀 합류 문의</option>
-              <option>프로젝트 제안</option>
-              <option>협업·협력 문의</option>
-              <option>예술가 소개 요청</option>
-              <option>기타</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">내용</label>
-            <textarea class="form-input form-textarea" placeholder="자유롭게 내용을 적어주세요."></textarea>
-          </div>
-          <button type="submit" class="form-submit">보내기 →</button>
+          <form id="contactForm" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="cf-name">이름</label>
+              <input id="cf-name" name="name" type="text" class="form-input" placeholder="홍길동" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-email">이메일</label>
+              <input id="cf-email" name="email" type="email" class="form-input" placeholder="hello@example.com" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-type">문의 유형</label>
+              <select id="cf-type" name="type" class="form-input">
+                <option value="">선택해주세요</option>
+                <option>팀 합류 문의</option>
+                <option>프로젝트 제안</option>
+                <option>협업·협력 문의</option>
+                <option>예술가 소개 요청</option>
+                <option>기타</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cf-message">내용</label>
+              <textarea id="cf-message" name="message" class="form-input form-textarea" placeholder="자유롭게 내용을 적어주세요." required></textarea>
+            </div>
+            <div id="cf-feedback" style="display:none; font-size:0.875rem; margin-bottom:10px; padding:10px 14px; border-radius:8px;"></div>
+            <button type="submit" id="cf-submit" class="form-submit">보내기 →</button>
+          </form>
         </div>
 
       </div>
@@ -1065,5 +1068,60 @@
   </footer>
 
   <script src="gv_main.js"></script>
+  <script>
+    (function () {
+      const form     = document.getElementById('contactForm');
+      const submit   = document.getElementById('cf-submit');
+      const feedback = document.getElementById('cf-feedback');
+
+      function showFeedback(msg, isError) {
+        feedback.textContent = msg;
+        feedback.style.display = 'block';
+        feedback.style.background = isError ? 'rgba(192,57,43,0.08)' : 'rgba(13,12,11,0.06)';
+        feedback.style.color      = isError ? '#c0392b' : 'var(--text-1)';
+        feedback.style.border     = isError ? '1px solid rgba(192,57,43,0.2)' : '1px solid var(--border)';
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const name    = document.getElementById('cf-name').value.trim();
+        const email   = document.getElementById('cf-email').value.trim();
+        const type    = document.getElementById('cf-type').value;
+        const message = document.getElementById('cf-message').value.trim();
+
+        if (!name || !email || !message) {
+          showFeedback('이름, 이메일, 내용은 필수 항목입니다.', true);
+          return;
+        }
+
+        submit.disabled    = true;
+        submit.textContent = '전송 중…';
+        feedback.style.display = 'none';
+
+        try {
+          const res = await fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, type, message }),
+          });
+
+          const data = await res.json();
+
+          if (data.ok) {
+            showFeedback('✓ 문의가 전송되었습니다. 빠른 시일 내에 연락드리겠습니다.', false);
+            form.reset();
+          } else {
+            showFeedback(data.error || '전송에 실패했습니다. 다시 시도해주세요.', true);
+          }
+        } catch {
+          showFeedback('네트워크 오류가 발생했습니다. 다시 시도해주세요.', true);
+        } finally {
+          submit.disabled    = false;
+          submit.textContent = '보내기 →';
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

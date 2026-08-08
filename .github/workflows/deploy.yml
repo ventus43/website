@@ -19,14 +19,14 @@ jobs:
           echo "${{ secrets.GVENTUS }}" > ~/.ssh/deploy_key.pem
           chmod 600 ~/.ssh/deploy_key.pem
 
-      - name: Ensure deploy directory exists
+      - name: Ensure directories exist
         run: |
           ssh -i ~/.ssh/deploy_key.pem \
             -o StrictHostKeyChecking=no \
             ubuntu@${{ secrets.EC2_HOST }} \
-            "mkdir -p /home/ubuntu/report/dist"
+            "mkdir -p /home/ubuntu/report/dist /home/ubuntu/report/api"
 
-      - name: Deploy via rsync
+      - name: Deploy static files
         run: |
           rsync -avz --delete \
             --exclude '.git/' \
@@ -34,8 +34,37 @@ jobs:
             --exclude '.DS_Store' \
             --exclude 'README.md' \
             --exclude '.github/' \
+            --exclude 'api/' \
             -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" \
             ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/report/dist/
+
+      - name: Deploy API server
+        run: |
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" \
+            ./api/ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/report/api/
+
+      - name: Install dependencies & restart API
+        run: |
+          ssh -i ~/.ssh/deploy_key.pem \
+            -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
+          cd /home/ubuntu/report/api
+          npm install --omit=dev
+
+          # PM2가 없으면 설치
+          if ! command -v pm2 &> /dev/null; then
+            npm install -g pm2
+          fi
+
+          # 실행 중이면 reload, 아니면 start
+          if pm2 list | grep -q "gventus-api"; then
+            pm2 reload gventus-api
+          else
+            pm2 start server.js --name gventus-api
+            pm2 save
+          fi
+          ENDSSH
 
       - name: Reload Nginx
         run: |
@@ -43,40 +72,3 @@ jobs:
             -o StrictHostKeyChecking=no \
             ubuntu@${{ secrets.EC2_HOST }} \
             "sudo nginx -t && sudo systemctl reload nginx"
-
-      # ── .env 파일은 서버(/home/ubuntu/report/.env)에만 존재 ──
-      # heredoc 내부에서 source 후 변수 사용 → 토큰이 GitHub 로그에 노출되지 않음
-      - name: Notify Telegram (success)
-        if: success()
-        run: |
-          ssh -i ~/.ssh/deploy_key.pem \
-            -o StrictHostKeyChecking=no \
-            ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
-          set -a
-          source /home/ubuntu/report/.env
-          set +a
-          curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d "chat_id=${TELEGRAM_CHAT_ID}" \
-            -d "parse_mode=HTML" \
-            --data-urlencode "text=✅ <b>배포 완료</b>
-사이트: gventus.store
-시각: $(date '+%Y-%m-%d %H:%M KST')"
-          ENDSSH
-
-      - name: Notify Telegram (failure)
-        if: failure()
-        run: |
-          ssh -i ~/.ssh/deploy_key.pem \
-            -o StrictHostKeyChecking=no \
-            ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
-          set -a
-          source /home/ubuntu/report/.env
-          set +a
-          curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
-            -d "chat_id=${TELEGRAM_CHAT_ID}" \
-            -d "parse_mode=HTML" \
-            --data-urlencode "text=❌ <b>배포 실패</b>
-사이트: gventus.store
-시각: $(date '+%Y-%m-%d %H:%M KST')
-GitHub Actions 로그를 확인하세요."
-          ENDSSH
