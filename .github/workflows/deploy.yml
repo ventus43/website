@@ -59,8 +59,8 @@ jobs:
             -d "chat_id=${TELEGRAM_CHAT_ID}" \
             -d "parse_mode=HTML" \
             --data-urlencode "text=✅ <b>배포 완료</b>
-        사이트: gventus.store
-        시각: $(date '+%Y-%m-%d %H:%M KST')"
+사이트: gventus.store
+시각: $(date '+%Y-%m-%d %H:%M KST')"
           ENDSSH
 
       - name: Notify Telegram (failure)
@@ -76,7 +76,7 @@ jobs:
             -d "chat_id=${TELEGRAM_CHAT_ID}" \
             -d "parse_mode=HTML" \
             --data-urlencode "text=❌ <b>배포 실패</b>
-        사이트: gventus.store
-        시각: $(date '+%Y-%m-%d %H:%M KST')
-          GitHub Actions 로그를 확인하세요."
+사이트: gventus.store
+시각: $(date '+%Y-%m-%d %H:%M KST')
+GitHub Actions 로그를 확인하세요."
           ENDSSH
