@@ -1,0 +1,42 @@
+server {
+    server_name gventus.store www.gventus.store;
+
+    root /home/ubuntu/report/dist;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://localhost:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location = /404.html {
+        internal;
+    }
+    error_page 404 /404.html;
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+}
+
+server {
+    if ($host = www.gventus.store) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    if ($host = gventus.store) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    listen 80;
+    server_name gventus.store www.gventus.store;
+    return 404; # managed by Certbot
+}
