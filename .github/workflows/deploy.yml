@@ -52,9 +52,11 @@ jobs:
           cd /home/ubuntu/report/api
           npm install --omit=dev
 
-          # PM2가 없으면 설치
+          # PM2 글로벌 설치 (sudo 필요)
           if ! command -v pm2 &> /dev/null; then
-            npm install -g pm2
+            sudo npm install -g pm2
+            # 서버 재시작 후 자동 실행 등록
+            sudo env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
           fi
 
           # 실행 중이면 reload, 아니면 start
@@ -62,8 +64,9 @@ jobs:
             pm2 reload gventus-api
           else
             pm2 start server.js --name gventus-api
-            pm2 save
           fi
+
+          pm2 save
           ENDSSH
 
       - name: Reload Nginx
