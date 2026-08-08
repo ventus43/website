@@ -1,0 +1,82 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GVENTUS }}" > ~/.ssh/deploy_key.pem
+          chmod 600 ~/.ssh/deploy_key.pem
+
+      - name: Ensure deploy directory exists
+        run: |
+          ssh -i ~/.ssh/deploy_key.pem \
+            -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} \
+            "mkdir -p /home/ubuntu/report/dist"
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            --exclude '.git/' \
+            --exclude '.idea/' \
+            --exclude '.DS_Store' \
+            --exclude 'README.md' \
+            --exclude '.github/' \
+            -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" \
+            ./ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/report/dist/
+
+      - name: Reload Nginx
+        run: |
+          ssh -i ~/.ssh/deploy_key.pem \
+            -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} \
+            "sudo nginx -t && sudo systemctl reload nginx"
+
+      # ── .env 파일은 서버(/home/ubuntu/report/.env)에만 존재 ──
+      # heredoc 내부에서 source 후 변수 사용 → 토큰이 GitHub 로그에 노출되지 않음
+      - name: Notify Telegram (success)
+        if: success()
+        run: |
+          ssh -i ~/.ssh/deploy_key.pem \
+            -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
+          set -a
+          source /home/ubuntu/report/.env
+          set +a
+          curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "parse_mode=HTML" \
+            --data-urlencode "text=✅ <b>배포 완료</b>
+        사이트: gventus.store
+        시각: $(date '+%Y-%m-%d %H:%M KST')"
+          ENDSSH
+
+      - name: Notify Telegram (failure)
+        if: failure()
+        run: |
+          ssh -i ~/.ssh/deploy_key.pem \
+            -o StrictHostKeyChecking=no \
+            ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
+          set -a
+          source /home/ubuntu/report/.env
+          set +a
+          curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "parse_mode=HTML" \
+            --data-urlencode "text=❌ <b>배포 실패</b>
+        사이트: gventus.store
+        시각: $(date '+%Y-%m-%d %H:%M KST')
+          GitHub Actions 로그를 확인하세요."
+          ENDSSH

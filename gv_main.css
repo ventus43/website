@@ -6,22 +6,22 @@ Free for personal and commercial use
 
     /* ── TOKENS ── */
     :root {
-      --bg:           #E8F4F2;
-      --bg-alt:       #DFF0EE;
-      --surface:      #F4FAFA;
-      --surface-2:    #FFFFFF;
-      --accent:       #1A7A6E;
-      --accent-mid:   #2A9D8F;
-      --accent-light: #5BBFB5;
-      --accent-ghost: rgba(26,122,110,0.08);
-      --accent-border:rgba(26,122,110,0.15);
-      --text-1:       #0D1E1C;
-      --text-2:       #3A5C58;
-      --text-3:       #6B8C88;
-      --border:       rgba(13,30,28,0.08);
-      --shadow-sm:    0 2px 12px rgba(13,30,28,0.06);
-      --shadow-md:    0 8px 32px rgba(13,30,28,0.10);
-      --shadow-lg:    0 24px 64px rgba(13,30,28,0.13);
+      --bg:           #e0deda;
+      --bg-alt:       #d8d5d0;
+      --surface:      #fffefb;
+      --surface-2:    #f5f3ef;
+      --accent:       #0d0c0b;
+      --accent-mid:   #74716d;
+      --accent-light: #b0ada8;
+      --accent-ghost: rgba(13,12,11,0.06);
+      --accent-border:rgba(13,12,11,0.12);
+      --text-1:       #0d0c0b;
+      --text-2:       #74716d;
+      --text-3:       #b0ada8;
+      --border:       #cac7c2;
+      --shadow-sm:    0 2px 12px rgba(13,12,11,0.06);
+      --shadow-md:    0 8px 32px rgba(13,12,11,0.10);
+      --shadow-lg:    0 24px 64px rgba(13,12,11,0.13);
       --silk:         cubic-bezier(0.16, 1, 0.3, 1);
       --silk-dur:     0.8s;
       --radius:       16px;

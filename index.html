@@ -1,43 +1,508 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>G-Ventus</title>
+  <title>광주청년문화기획팀 — 광주의 문화를 발굴하고 잇다</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="templatemo-622-clearwave.css" />
+  <link rel="stylesheet" href="gv_main.css" />
+
+  <style>
+    /* ── Theme overrides for warm neutral palette ── */
+    .nav.scrolled {
+      background: rgba(224,222,218,0.92);
+    }
+    .hero::before {
+      background: radial-gradient(ellipse at center, rgba(176,173,168,0.22) 0%, rgba(116,113,109,0.06) 50%, transparent 75%);
+    }
+    .hero::after {
+      background: radial-gradient(ellipse at center, rgba(13,12,11,0.05) 0%, transparent 70%);
+    }
+    .btn-primary {
+      box-shadow: 0 4px 16px rgba(13,12,11,0.18);
+    }
+    .btn-primary:hover {
+      box-shadow: 0 6px 24px rgba(13,12,11,0.24);
+    }
+    .btn-primary-lg {
+      box-shadow: 0 6px 24px rgba(13,12,11,0.18);
+    }
+    .btn-primary-lg:hover {
+      box-shadow: 0 8px 32px rgba(13,12,11,0.24);
+    }
+    .section-title em {
+      color: var(--text-2);
+    }
+
+    /* ── Hero Project Card ── */
+    .hero-project-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: transform var(--silk-dur) var(--silk);
+    }
+    .hero-project-card:hover { transform: scale(1.01); }
+    .hpc-header {
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .hpc-dots { display: flex; gap: 6px; }
+    .hpc-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--border);
+    }
+    .hpc-tag {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .hpc-body { padding: 28px 24px 20px; }
+    .hpc-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-3);
+      margin-bottom: 10px;
+    }
+    .hpc-title {
+      font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em;
+      color: var(--text-1); line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .hpc-desc {
+      font-size: 0.875rem; color: var(--text-2); line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .hpc-meta {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .hpc-pill {
+      font-size: 0.75rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      background: var(--surface-2);
+    }
+    .hpc-divider {
+      height: 1px; background: var(--border); margin-bottom: 18px;
+    }
+    .hpc-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .hpc-stat {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .hpc-stat-val {
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-1); letter-spacing: -0.03em;
+    }
+    .hpc-stat-label {
+      font-size: 0.7rem; color: var(--text-3); margin-top: 2px;
+    }
+
+    /* Floating activity badge */
+    .hero-activity-badge {
+      position: absolute;
+      bottom: -18px; left: -28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-md);
+      display: flex; align-items: center; gap: 10px;
+      animation: floatBadge 4s ease-in-out infinite;
+    }
+    .hero-activity-badge-2 {
+      position: absolute;
+      top: 24px; right: -20px;
+      background: var(--text-1);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-md);
+      animation: floatBadge 4s ease-in-out infinite 2s;
+    }
+    .hab2-val {
+      font-size: 1rem; font-weight: 700; color: var(--surface);
+      letter-spacing: -0.03em;
+    }
+    .hab2-label {
+      font-size: 0.7rem; color: var(--text-3); margin-top: 1px;
+    }
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .hab-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--text-1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--surface); flex-shrink: 0;
+    }
+    .hab-text { }
+    .hab-strong { font-size: 0.8125rem; font-weight: 600; color: var(--text-1); display: block; }
+    .hab-sub { font-size: 0.72rem; color: var(--text-3); margin-top: 1px; display: block; }
+
+    /* ── About / Values ── */
+    .about-section {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+    .about-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .about-text { }
+    .about-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--text-1);
+      letter-spacing: -0.02em;
+      margin: 28px 0 24px;
+      padding-left: 20px;
+      border-left: 2px solid var(--border);
+    }
+    .about-body {
+      font-size: 1.0625rem; line-height: 1.8;
+      color: var(--text-2);
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .value-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      transition: border-color 0.3s var(--silk), transform 0.3s var(--silk), box-shadow 0.3s var(--silk);
+    }
+    .value-card:hover {
+      border-color: var(--text-1);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .value-num {
+      font-size: 0.75rem; font-weight: 700;
+      letter-spacing: 0.1em; color: var(--text-3);
+      min-width: 28px; padding-top: 3px;
+    }
+    .value-content { }
+    .value-title {
+      font-size: 1rem; font-weight: 700;
+      color: var(--text-1); letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .value-desc {
+      font-size: 0.875rem; color: var(--text-2); line-height: 1.7;
+    }
+
+    /* ── Projects ── */
+    .projects-section {
+      padding: 120px 0;
+      background: var(--surface-2);
+    }
+    .projects-header {
+      text-align: center; margin-bottom: 72px;
+    }
+    .projects-header .section-sub {
+      margin: 16px auto 0;
+    }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.3s var(--silk), transform 0.3s var(--silk), box-shadow 0.3s var(--silk);
+      cursor: default;
+    }
+    .project-card:hover {
+      border-color: var(--text-1);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .project-num {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .project-title {
+      font-size: 1.15rem; font-weight: 700; letter-spacing: -0.025em;
+      color: var(--text-1); line-height: 1.35;
+    }
+    .project-year {
+      font-size: 0.8125rem; color: var(--text-3); font-weight: 500;
+    }
+    .project-desc {
+      font-size: 0.875rem; color: var(--text-2); line-height: 1.75;
+      flex: 1;
+    }
+    .project-tags {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .project-tag {
+      font-size: 0.72rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 100px;
+      border: 1px solid var(--border);
+      color: var(--text-3);
+    }
+    .project-card-featured {
+      background: var(--text-1);
+      border-color: var(--text-1);
+    }
+    .project-card-featured .project-num,
+    .project-card-featured .project-year,
+    .project-card-featured .project-desc { color: var(--text-3); }
+    .project-card-featured .project-title { color: var(--surface); }
+    .project-card-featured .project-tag {
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text-3);
+    }
+    .project-card-featured:hover {
+      border-color: var(--text-1);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .project-card-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .project-card-featured .project-card-icon {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .project-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8125rem; font-weight: 600;
+      color: var(--text-2);
+      margin-top: 4px;
+      transition: color 0.3s;
+    }
+    .project-card:hover .project-link { color: var(--text-1); }
+    .project-card-featured .project-link { color: var(--text-3); }
+    .project-card-featured:hover .project-link { color: var(--surface); }
+
+    /* ── Team ── */
+    .team-section {
+      padding: 120px 0;
+      background: var(--bg);
+    }
+    .team-header {
+      margin-bottom: 64px;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color 0.3s var(--silk), transform 0.3s var(--silk);
+    }
+    .team-card:hover {
+      border-color: var(--border-hover, #8a8882);
+      transform: translateY(-2px);
+    }
+    .team-avatar {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text-2);
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    .team-name {
+      font-size: 1rem; font-weight: 700;
+      color: var(--text-1); letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .team-role {
+      font-size: 0.8125rem; color: var(--text-3);
+      margin-bottom: 14px;
+    }
+    .team-bio {
+      font-size: 0.8125rem; color: var(--text-2);
+      line-height: 1.7;
+    }
+    .team-all-row {
+      margin-top: 36px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ── Contact ── */
+    .contact-section {
+      padding: 120px 0;
+      background: var(--surface-2);
+    }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: flex-start;
+    }
+    .contact-left { }
+    .contact-info-list {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    .ci-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+    .ci-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-3); margin-bottom: 3px;
+    }
+    .ci-value {
+      font-size: 0.9375rem; font-weight: 500; color: var(--text-1);
+    }
+    .contact-form-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+    }
+    .form-title {
+      font-size: 1.1rem; font-weight: 700;
+      letter-spacing: -0.02em; color: var(--text-1);
+      margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--text-3); margin-bottom: 7px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--text-1);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-input::placeholder { color: var(--text-3); }
+    .form-input:focus { outline: none; border-color: var(--text-1); }
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--text-1);
+      color: var(--surface);
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .form-submit:hover { opacity: 0.82; transform: translateY(-1px); }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .about-inner { grid-template-columns: 1fr; gap: 48px; }
+      .project-grid { grid-template-columns: repeat(2, 1fr); }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    }
+    @media (max-width: 640px) {
+      .project-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .about-section, .projects-section, .team-section, .contact-section { padding: 80px 0; }
+    }
+    @media (max-width: 480px) {
+      .team-grid { grid-template-columns: 1fr; }
+      .hero-activity-badge { left: -10px; }
+      .hero-activity-badge-2 { right: -8px; }
+    }
+  </style>
 </head>
 <body>
 
   <!-- ── MOBILE MENU ── -->
   <div class="mobile-menu" id="mobileMenu" role="dialog" aria-modal="true" aria-label="Navigation">
-    <a href="#screens">App</a>
-    <a href="#features">Features</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#testimonials">Reviews</a>
-    <a href="#integrations">Integrations</a>
-    <a href="#faq">FAQ</a>
-    <a href="#" class="mobile-cta btn-primary">Start Free Trial</a>
+    <a href="#about">소개</a>
+    <a href="#projects">프로젝트</a>
+    <a href="#team">팀원</a>
+    <a href="#contact">문의</a>
+    <a href="#contact" class="mobile-cta btn-primary">함께하기</a>
   </div>
 
   <!-- ── 1. NAV ── -->
   <nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="#" class="nav-logo"><span>Ventus</span></a>
+      <a href="#" class="nav-logo">문화기획팀</a>
       <ul class="nav-links" role="list">
-        <li><a href="#screens">App</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-        <li><a href="#testimonials">Reviews</a></li>
-        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#about">소개</a></li>
+        <li><a href="#projects">프로젝트</a></li>
+        <li><a href="#team">팀원</a></li>
+        <li><a href="#contact">문의</a></li>
       </ul>
       <div class="nav-cta">
-        <a href="#" class="btn-ghost">Sign in</a>
-        <a href="#" class="btn-primary">Start Free Trial</a>
+        <a href="#contact" class="btn-primary">함께하기 →</a>
       </div>
       <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
@@ -49,345 +514,273 @@
   <section class="hero">
     <div class="container">
       <div class="hero-inner">
+
         <div class="hero-content">
           <div class="hero-badge reveal">
             <div class="hero-badge-dot">✦</div>
-            <span>Rated <strong>#1 Productivity SaaS</strong> of 2024</span>
+            <span>광주 <strong>청년문화기획팀</strong></span>
           </div>
           <h1 class="hero-title reveal reveal-delay-1">
-            Your workflow,<br><em>finally clear.</em>
+            광주의 문화를<br><em>발굴하고, 잇다.</em>
           </h1>
           <p class="hero-sub reveal reveal-delay-2">
-            Clearwave unifies your team's projects, data, and communication into one calm, focused surface. Less noise, more done.
+            광주에서 활동하는 20-30대 청년들이 모여 지역의 숨겨진 문화콘텐츠를 기획하고 더 많은 사람들에게 알립니다.
           </p>
           <div class="hero-actions reveal reveal-delay-3">
-            <a href="#" class="btn-primary-lg">
-              Start Free — No Card
+            <a href="#projects" class="btn-primary-lg">
+              프로젝트 보기
               <span class="btn-arrow">→</span>
             </a>
-            <a href="#screens" class="btn-outline-lg">
-              <span>▶</span> See it in action
+            <a href="#about" class="btn-outline-lg">
+              팀 소개
             </a>
           </div>
           <div class="hero-trust reveal reveal-delay-4">
             <div class="trust-item">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-              SOC 2 Certified
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              광주광역시
             </div>
             <div class="trust-divider"></div>
             <div class="trust-item">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              99.9% Uptime SLA
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              청년 18명
             </div>
             <div class="trust-divider"></div>
             <div class="trust-item">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              50k+ Teams
+              <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              기획 프로젝트 12+
             </div>
           </div>
         </div>
+
         <div class="hero-visual reveal reveal-delay-2">
-          <div class="hero-dashboard">
-            <div class="dashboard-bar">
-              <div class="db-dot"></div><div class="db-dot"></div><div class="db-dot"></div>
+          <div class="hero-project-card">
+            <div class="hpc-header">
+              <div class="hpc-dots">
+                <div class="hpc-dot"></div>
+                <div class="hpc-dot"></div>
+                <div class="hpc-dot"></div>
+              </div>
+              <div class="hpc-tag">최신 프로젝트</div>
             </div>
-            <div class="dashboard-body">
-              <div class="db-header">
-                <div class="db-title">Team Performance</div>
-                <div class="db-tag">Live</div>
+            <div class="hpc-body">
+              <div class="hpc-label">2025 — 기획·전시</div>
+              <div class="hpc-title">광주 골목 문화지도<br>프로젝트</div>
+              <div class="hpc-desc">구도심 양동·대인시장 일대의 골목 문화를 기록하고 더 많은 시민들이 걸어볼 수 있도록 지도로 만드는 프로젝트입니다.</div>
+              <div class="hpc-meta">
+                <span class="hpc-pill">기획</span>
+                <span class="hpc-pill">기록</span>
+                <span class="hpc-pill">아카이빙</span>
+                <span class="hpc-pill">전시</span>
               </div>
-              <div class="db-chart">
-                <div class="db-bar" style="height:35%"></div>
-                <div class="db-bar" style="height:55%"></div>
-                <div class="db-bar" style="height:42%"></div>
-                <div class="db-bar active" style="height:75%"></div>
-                <div class="db-bar" style="height:60%"></div>
-                <div class="db-bar active" style="height:88%"></div>
-                <div class="db-bar" style="height:70%"></div>
-                <div class="db-bar active" style="height:92%"></div>
-              </div>
-              <div class="db-stats">
-                <div class="db-stat">
-                  <div class="db-stat-val">94<span style="font-size:.9rem;color:var(--accent)">%</span></div>
-                  <div class="db-stat-label">Task Rate</div>
-                  <div class="db-stat-change">+12%</div>
+              <div class="hpc-divider"></div>
+              <div class="hpc-stats">
+                <div class="hpc-stat">
+                  <div class="hpc-stat-val">6개</div>
+                  <div class="hpc-stat-label">참여 골목</div>
                 </div>
-                <div class="db-stat">
-                  <div class="db-stat-val">2.4<span style="font-size:.9rem;color:var(--accent)">k</span></div>
-                  <div class="db-stat-label">Active Users</div>
-                  <div class="db-stat-change">+8%</div>
+                <div class="hpc-stat">
+                  <div class="hpc-stat-val">3일</div>
+                  <div class="hpc-stat-label">전시 기간</div>
                 </div>
-                <div class="db-stat">
-                  <div class="db-stat-val">18<span style="font-size:.9rem;color:var(--accent)">h</span></div>
-                  <div class="db-stat-label">Saved / week</div>
-                  <div class="db-stat-change">+24%</div>
+                <div class="hpc-stat">
+                  <div class="hpc-stat-val">800+</div>
+                  <div class="hpc-stat-label">방문자</div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="hero-float-badge">
-            <div class="float-badge-icon">✦</div>
-            <div class="float-badge-text">
-              <strong>New integration</strong>
-              <span>Slack connected · just now</span>
+
+          <div class="hero-activity-badge">
+            <div class="hab-icon">✦</div>
+            <div class="hab-text">
+              <strong class="hab-strong">신규 프로젝트 모집 중</strong>
+              <span class="hab-sub">2025년 2기 팀원 모집</span>
             </div>
           </div>
-          <div class="hero-float-badge-2">
-            <div class="float-badge-2-val">↑ 34%</div>
-            <div class="float-badge-2-label">Output this week</div>
+
+          <div class="hero-activity-badge-2">
+            <div class="hab2-val">12개 프로젝트</div>
+            <div class="hab2-label">3년간 진행 완료</div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ── 3. LOGO TICKER ── -->
+  <!-- ── 3. PARTNER TICKER ── -->
   <div class="ticker-section">
-    <div class="ticker-label">Trusted by forward-thinking teams at</div>
+    <div class="ticker-label">함께하는 기관 및 단체</div>
     <div class="ticker-track-wrap">
       <div class="ticker-track">
-        <!-- Set 1 -->
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>Nexaflow</div>
+        <div class="ticker-item">광주문화재단</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>Meridian</div>
+        <div class="ticker-item">광주광역시</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><polygon points="12,2 22,20 2,20"/></svg></div>Vanta Labs</div>
+        <div class="ticker-item">양림동역사문화마을</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M4 4h16v12H4z M8 20h8"/></svg></div>Pulsar HQ</div>
+        <div class="ticker-item">대인예술시장</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>Arclight</div>
+        <div class="ticker-item">국립아시아문화전당</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>Korova Co.</div>
+        <div class="ticker-item">광주청년센터</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>Stratum IO</div>
+        <div class="ticker-item">동구문화센터</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>Lumiq</div>
+        <div class="ticker-item">남구문화원</div>
         <div class="ticker-dot"></div>
-        <!-- Set 2 (duplicate for seamless loop) -->
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>Nexaflow</div>
+        <div class="ticker-item">광주문화재단</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>Meridian</div>
+        <div class="ticker-item">광주광역시</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><polygon points="12,2 22,20 2,20"/></svg></div>Vanta Labs</div>
+        <div class="ticker-item">양림동역사문화마을</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M4 4h16v12H4z M8 20h8"/></svg></div>Pulsar HQ</div>
+        <div class="ticker-item">대인예술시장</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>Arclight</div>
+        <div class="ticker-item">국립아시아문화전당</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>Korova Co.</div>
+        <div class="ticker-item">광주청년센터</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>Stratum IO</div>
+        <div class="ticker-item">동구문화센터</div>
         <div class="ticker-dot"></div>
-        <div class="ticker-item"><div class="ticker-item-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--accent)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>Lumiq</div>
+        <div class="ticker-item">남구문화원</div>
         <div class="ticker-dot"></div>
       </div>
     </div>
   </div>
 
-  <!-- ── 5. 3D PHONE CAROUSEL ── -->
-  <section class="carousel-section" id="screens">
+  <!-- ── 4. ABOUT ── -->
+  <section class="about-section" id="about">
     <div class="container">
-      <div class="carousel-header">
-        <div class="section-label reveal">Mobile App</div>
-        <h2 class="section-title reveal reveal-delay-1">Your workspace,<br><em>in your pocket</em></h2>
-        <p class="section-sub reveal reveal-delay-2">The Clearwave mobile app brings every dashboard, task, and notification to you — beautifully adapted for any screen.</p>
-      </div>
-    </div>
-    <div class="carousel-zoom">
-      <button class="zoom-btn" id="zoomOut" aria-label="Zoom out">−</button>
-      <div class="zoom-pips" id="zoomPips"></div>
-      <button class="zoom-btn" id="zoomIn" aria-label="Zoom in">+</button>
-    </div>
+      <div class="about-inner">
 
-    <div class="carousel-stage" id="carouselStage">
-      <div class="carousel-track" id="carouselTrack">
-
-        <!-- Phone screens: 5 different screen designs + extras for looping -->
-        <!-- We will render 7 cards and cycle positions -->
-
-        <div class="phone-card" data-pos="left2" data-index="0">
-          <div class="phone-shell">
-            <div class="phone-screen">
-              <img src="images/tm-622-screen-01.jpg" alt="App screen 1" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
-            </div>
-          </div>
-
+        <div class="about-text reveal">
+          <div class="section-label">About Us</div>
+          <h2 class="section-title" style="margin-top:20px">광주의 문화를<br><em>함께 만드는 팀</em></h2>
+          <blockquote class="about-quote">
+            "알려지지 않은 이야기에는 힘이 있다. 우리는 그 이야기를 찾고, 기록하고, 세상에 잇는다."
+          </blockquote>
+          <p class="about-body">
+            광주청년문화기획팀은 2022년, 광주의 문화를 더 많은 사람들에게 알리고 싶은 청년들이 모여 만든 기획 집단입니다. 지역 예술가·공간·축제·골목에 담긴 이야기를 발굴하여 콘텐츠로 만들고, 전시·행사·SNS 등 다양한 방식으로 시민들과 나눕니다.
+          </p>
         </div>
 
-        <div class="phone-card" data-pos="left1" data-index="1">
-          <div class="phone-shell">
-            <div class="phone-screen">
-              <img src="images/tm-622-screen-02.jpg" alt="App screen 2" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
+        <div class="values-grid reveal reveal-delay-1">
+          <div class="value-card">
+            <div class="value-num">01</div>
+            <div class="value-content">
+              <div class="value-title">발굴 — Discovery</div>
+              <div class="value-desc">알려지지 않은 광주의 문화자원과 예술가를 찾아냅니다. 골목, 시장, 마을 어디든 이야기가 있는 곳으로 갑니다.</div>
             </div>
           </div>
-
-        </div>
-
-        <div class="phone-card" data-pos="center" data-index="2">
-          <div class="phone-shell">
-            <div class="phone-screen">
-              <img src="images/tm-622-screen-03.jpg" alt="App screen 3" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
+          <div class="value-card">
+            <div class="value-num">02</div>
+            <div class="value-content">
+              <div class="value-title">기획 — Planning</div>
+              <div class="value-desc">찾아낸 이야기를 사람들이 경험할 수 있는 프로젝트로 기획합니다. 전시, 행사, 영상, 인쇄물까지 형식을 가리지 않습니다.</div>
             </div>
           </div>
-
-        </div>
-
-        <div class="phone-card" data-pos="right1" data-index="3">
-          <div class="phone-shell">
-            <div class="phone-screen">
-              <img src="images/tm-622-screen-04.jpg" alt="App screen 4" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
+          <div class="value-card">
+            <div class="value-num">03</div>
+            <div class="value-content">
+              <div class="value-title">연결 — Connection</div>
+              <div class="value-desc">사람과 문화, 지역과 세계를 잇습니다. 광주에서 시작한 이야기가 더 넓은 곳에 닿을 수 있도록 함께 만들어 갑니다.</div>
             </div>
           </div>
-
-        </div>
-
-        <div class="phone-card" data-pos="right2" data-index="4">
-          <div class="phone-shell">
-            <div class="phone-screen">
-              <img src="images/tm-622-screen-05.jpg" alt="App screen 5" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
-            </div>
-          </div>
-
         </div>
 
       </div>
-    </div>
-
-    <div style="display:flex;align-items:center;justify-content:center;gap:24px;width:100%;margin-top:48px;">
-      <button class="carousel-btn" id="carouselPrev" aria-label="Previous screen">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-      </button>
-      <div class="carousel-dots" id="carouselDots"></div>
-      <button class="carousel-btn" id="carouselNext" aria-label="Next screen">
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      </button>
     </div>
   </section>
 
-  <!-- ── 4. FEATURES ── -->
-  <section class="features-section" id="features">
+  <!-- ── 5. PROJECTS ── -->
+  <section class="projects-section" id="projects">
     <div class="container">
-      <div class="features-header">
-        <div class="section-label reveal">Platform Features</div>
-        <h2 class="section-title reveal reveal-delay-1">Built for <em>clarity</em><br>at every scale</h2>
-        <p class="section-sub reveal reveal-delay-2">Every feature is designed to reduce friction and surface what matters. No bloat, no configuration maze.</p>
+      <div class="projects-header reveal">
+        <div class="section-label">Projects</div>
+        <h2 class="section-title" style="margin-top:20px">지금까지 만들어온<br><em>프로젝트들</em></h2>
+        <p class="section-sub">광주 곳곳에서 진행된 문화기획 프로젝트를 소개합니다. 모든 내용은 예시이며 실제 프로젝트로 채워질 예정입니다.</p>
       </div>
 
-      <!-- Feature 1 -->
-      <div class="feature-row">
-        <div class="feature-content reveal">
-          <div class="feature-number">01 — Unified Dashboard</div>
-          <h3 class="feature-title">Every metric, one calm surface</h3>
-          <p class="feature-desc">Pull data from any source into a single, composable view. Share live dashboards with stakeholders — no exports, no screenshots.</p>
-          <div class="feature-checklist">
-            <div class="feature-check"><div class="check-icon">✓</div><span>Drag-and-drop widget builder</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>Real-time data sync across all sources</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>Role-based sharing with granular permissions</span></div>
-          </div>
-        </div>
-        <div class="feature-visual reveal reveal-delay-1">
-          <div class="feature-visual-inner">
-            <div class="fv-row">
-              <div class="fv-card">
-                <div class="fv-card-label">Monthly Revenue</div>
-                <div class="fv-card-val">$84.2k</div>
-                <div class="fv-card-bar"><div class="fv-card-bar-fill" style="width:72%"></div></div>
-              </div>
-              <div class="fv-card">
-                <div class="fv-card-label">Active Users</div>
-                <div class="fv-card-val">12,481</div>
-                <div class="fv-card-bar"><div class="fv-card-bar-fill" style="width:88%"></div></div>
-              </div>
-            </div>
-            <div class="fv-card">
-              <div class="fv-card-label">Recent Activity</div>
-              <div class="fv-list" style="margin-top:8px">
-                <div class="fv-list-item"><span class="fv-list-name">Q3 Report synced</span><span class="fv-pill green">Done</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Team review pending</span><span class="fv-pill blue">Active</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Analytics export</span><span class="fv-pill dim">Queued</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="project-grid">
 
-      <!-- Feature 2 -->
-      <div class="feature-row reverse">
-        <div class="feature-content reveal">
-          <div class="feature-number">02 — Smart Automation</div>
-          <h3 class="feature-title">Routines that run<br><em>themselves</em></h3>
-          <p class="feature-desc">Build automation flows with natural language. Clearwave understands your intent and suggests the next step — no flowchart diagrams needed.</p>
-          <div class="feature-checklist">
-            <div class="feature-check"><div class="check-icon">✓</div><span>Natural language automation builder</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>500+ pre-built trigger templates</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>Full audit trail for every action</span></div>
+        <div class="project-card project-card-featured reveal">
+          <div class="project-card-icon">🗺</div>
+          <div class="project-num">PROJECT 01 · 2025</div>
+          <div class="project-title">광주 골목<br>문화지도 프로젝트</div>
+          <div class="project-desc">구도심 양동·대인시장 일대의 오래된 골목과 가게들의 이야기를 기록해 실물 지도와 디지털 아카이브로 만든 프로젝트. 지역 주민 인터뷰, 사진, 손그림 지도로 구성되었습니다.</div>
+          <div class="project-tags">
+            <span class="project-tag">아카이빙</span>
+            <span class="project-tag">전시</span>
+            <span class="project-tag">인쇄물</span>
           </div>
+          <span class="project-link">자세히 보기 →</span>
         </div>
-        <div class="feature-visual reveal reveal-delay-1">
-          <div class="feature-visual-inner">
-            <div class="fv-card">
-              <div class="fv-card-label">Active Automations</div>
-              <div class="fv-list" style="margin-top:8px">
-                <div class="fv-list-item"><span class="fv-list-name">Weekly digest → Slack</span><span class="fv-pill green">Running</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Lead scored → Notify sales</span><span class="fv-pill green">Running</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Invoice due → Alert CFO</span><span class="fv-pill blue">Active</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Report sync → Drive</span><span class="fv-pill dim">Paused</span></div>
-              </div>
-            </div>
-            <div class="fv-row">
-              <div class="fv-card fv-wide">
-                <div class="fv-card-label">Hours Saved This Month</div>
-                <div class="fv-card-val">148h</div>
-                <div class="fv-card-bar"><div class="fv-card-bar-fill" style="width:91%"></div></div>
-              </div>
-              <div class="fv-card">
-                <div class="fv-card-label">Flows</div>
-                <div class="fv-card-val">24</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Feature 3 -->
-      <div class="feature-row">
-        <div class="feature-content reveal">
-          <div class="feature-number">03 — Team Collaboration</div>
-          <h3 class="feature-title">Comments, context,<br>and <em>clarity</em></h3>
-          <p class="feature-desc">Annotate anything, assign tasks inline, and resolve conversations without switching tabs. The work and the discussion stay together.</p>
-          <div class="feature-checklist">
-            <div class="feature-check"><div class="check-icon">✓</div><span>Inline comments on any data point</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>Threaded task assignments</span></div>
-            <div class="feature-check"><div class="check-icon">✓</div><span>Real-time presence and live cursors</span></div>
+        <div class="project-card reveal reveal-delay-1">
+          <div class="project-card-icon">🎨</div>
+          <div class="project-num">PROJECT 02 · 2024</div>
+          <div class="project-title">청년 예술가<br>쇼케이스 #3</div>
+          <div class="project-year">양림동 역사문화마을 · 3일</div>
+          <div class="project-desc">광주에서 활동하는 25세 이하 예술가 10팀을 선정하여 작품 전시와 퍼포먼스를 기획했습니다. 회화, 설치, 영상, 음악 등 다양한 장르가 모였습니다.</div>
+          <div class="project-tags">
+            <span class="project-tag">전시기획</span>
+            <span class="project-tag">퍼포먼스</span>
+            <span class="project-tag">청년예술</span>
           </div>
+          <span class="project-link">자세히 보기 →</span>
         </div>
-        <div class="feature-visual reveal reveal-delay-1">
-          <div class="feature-visual-inner">
-            <div class="fv-row">
-              <div class="fv-card fv-wide">
-                <div class="fv-card-label">Online Now</div>
-                <div style="display:flex;gap:-4px;margin-top:6px">
-                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">A</div>
-                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent-mid);border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-left:-6px">K</div>
-                  <div style="width:28px;height:28px;border-radius:50%;background:#5A6B66;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;margin-left:-6px">M</div>
-                  <div style="width:28px;height:28px;border-radius:50%;background:var(--bg-alt);border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-2);margin-left:-6px">+5</div>
-                </div>
-              </div>
-              <div class="fv-card">
-                <div class="fv-card-label">Open Tasks</div>
-                <div class="fv-card-val">37</div>
-              </div>
-            </div>
-            <div class="fv-card">
-              <div class="fv-card-label">Recent Comments</div>
-              <div class="fv-list" style="margin-top:8px">
-                <div class="fv-list-item"><span class="fv-list-name">Alex → Q3 chart updated</span><span class="fv-pill green">Resolved</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Kim → Review needed</span><span class="fv-pill blue">Open</span></div>
-                <div class="fv-list-item"><span class="fv-list-name">Maya → Approved & shipped</span><span class="fv-pill green">Done</span></div>
-              </div>
-            </div>
+
+        <div class="project-card reveal reveal-delay-2">
+          <div class="project-card-icon">🏪</div>
+          <div class="project-num">PROJECT 03 · 2024</div>
+          <div class="project-title">동네방네<br>문화장터</div>
+          <div class="project-year">5·18민주광장 일대 · 월 1회</div>
+          <div class="project-desc">지역 청년 작가와 공예가들이 참여하는 소규모 문화장터 기획. 매월 마지막 주 토요일, 시민들이 청년 예술가를 직접 만나는 자리를 만들었습니다.</div>
+          <div class="project-tags">
+            <span class="project-tag">마켓기획</span>
+            <span class="project-tag">지역연계</span>
+            <span class="project-tag">반복운영</span>
           </div>
+          <span class="project-link">자세히 보기 →</span>
         </div>
+
+        <div class="project-card reveal">
+          <div class="project-card-icon">📹</div>
+          <div class="project-num">PROJECT 04 · 2023</div>
+          <div class="project-title">광주 로컬<br>다큐멘터리</div>
+          <div class="project-year">온라인 공개 · 유튜브 채널</div>
+          <div class="project-desc">광주에서 오래 살아온 주민들의 삶과 공간을 다큐멘터리 형식으로 기록한 영상 시리즈. 총 8편, 누적 조회수 3만 회 이상.</div>
+          <div class="project-tags">
+            <span class="project-tag">영상제작</span>
+            <span class="project-tag">다큐멘터리</span>
+            <span class="project-tag">SNS</span>
+          </div>
+          <span class="project-link">자세히 보기 →</span>
+        </div>
+
+        <div class="project-card reveal reveal-delay-1">
+          <div class="project-card-icon">🎤</div>
+          <div class="project-num">PROJECT 05 · 2023</div>
+          <div class="project-title">청년문화<br>포럼 2023</div>
+          <div class="project-year">국립아시아문화전당 · 1일</div>
+          <div class="project-desc">광주 문화씬에서 활동하는 청년 기획자, 예술가, 활동가들이 모여 지역 문화의 현재와 미래를 이야기하는 포럼을 개최했습니다. 참가자 150명.</div>
+          <div class="project-tags">
+            <span class="project-tag">포럼</span>
+            <span class="project-tag">네트워킹</span>
+            <span class="project-tag">강연</span>
+          </div>
+          <span class="project-link">자세히 보기 →</span>
+        </div>
+
+        <div class="project-card reveal reveal-delay-2" style="justify-content:center; align-items:center; text-align:center; background:var(--bg); border-style:dashed;">
+          <div style="font-size:2rem; margin-bottom:12px;">＋</div>
+          <div class="project-title" style="font-size:1rem;">다음 프로젝트를<br>함께 만들어요</div>
+          <div class="project-desc" style="font-size:0.8125rem; margin-top:8px;">아이디어가 있다면 연락주세요. 같이 기획해보고 싶습니다.</div>
+          <a href="#contact" class="project-link" style="margin-top:8px; color:var(--text-1); font-weight:700;">문의하기 →</a>
+        </div>
+
       </div>
     </div>
   </section>
@@ -398,353 +791,279 @@
       <div class="stats-grid">
         <div class="stat-card reveal">
           <div class="stat-rule"></div>
-          <div class="stat-value"><span class="stat-num" data-target="50">0</span><span class="stat-suffix">k+</span></div>
-          <div class="stat-label">Teams Worldwide</div>
-          <div class="stat-sublabel">Across 80+ countries</div>
+          <div class="stat-value"><span class="stat-num" data-target="3">0</span><span class="stat-suffix">년</span></div>
+          <div class="stat-label">활동 기간</div>
+          <div class="stat-sublabel">2022년 창단 이후</div>
         </div>
         <div class="stat-card reveal reveal-delay-1">
           <div class="stat-rule"></div>
-          <div class="stat-value"><span class="stat-num" data-target="34">0</span><span class="stat-suffix">%</span></div>
-          <div class="stat-label">Avg. Productivity Gain</div>
-          <div class="stat-sublabel">Measured in first 30 days</div>
+          <div class="stat-value"><span class="stat-num" data-target="12">0</span><span class="stat-suffix">개</span></div>
+          <div class="stat-label">완료된 프로젝트</div>
+          <div class="stat-sublabel">전시·행사·영상·인쇄물</div>
         </div>
         <div class="stat-card reveal reveal-delay-2">
           <div class="stat-rule"></div>
-          <div class="stat-value"><span class="stat-num" data-target="99" data-decimal="9">0</span><span class="stat-suffix">%</span></div>
-          <div class="stat-label">Uptime SLA</div>
-          <div class="stat-sublabel">Guaranteed and monitored</div>
+          <div class="stat-value"><span class="stat-num" data-target="18">0</span><span class="stat-suffix">명</span></div>
+          <div class="stat-label">현재 팀원 수</div>
+          <div class="stat-sublabel">다양한 분야의 청년들</div>
         </div>
         <div class="stat-card reveal reveal-delay-3">
           <div class="stat-rule"></div>
-          <div class="stat-value"><span class="stat-num" data-target="18">0</span><span class="stat-suffix">h</span></div>
-          <div class="stat-label">Saved Per Team Weekly</div>
-          <div class="stat-sublabel">On average across all plans</div>
+          <div class="stat-value"><span class="stat-num" data-target="35">0</span><span class="stat-suffix">개+</span></div>
+          <div class="stat-label">협력 기관·단체</div>
+          <div class="stat-sublabel">광주 전역 문화기관 연계</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── 7. PRICING ── -->
-  <section class="pricing-section" id="pricing">
+  <!-- ── 7. TEAM ── -->
+  <section class="team-section" id="team">
     <div class="container">
-      <div class="pricing-header">
-        <div class="section-label reveal">Pricing</div>
-        <h2 class="section-title reveal reveal-delay-1">Simple, <em>transparent</em> pricing</h2>
-        <p class="section-sub reveal reveal-delay-2">No hidden fees. No surprise overages. Cancel anytime.</p>
+      <div class="team-header reveal">
+        <div class="section-label">Team</div>
+        <h2 class="section-title" style="margin-top:20px">광주 문화를<br><em>함께 만드는 사람들</em></h2>
+        <p class="section-sub">기획, 디자인, 영상, 글쓰기 — 각자 다른 영역에서 광주의 문화를 만들어가는 청년들입니다. 아래는 예시 팀원 소개입니다.</p>
       </div>
-      <div class="pricing-toggle reveal">
-        <span class="toggle-label active" id="monthlyLabel">Monthly</span>
-        <div class="toggle-switch" id="pricingToggle" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle annual billing"></div>
-        <span class="toggle-label" id="annualLabel">Annual</span>
-        <div class="toggle-badge">Save 35%</div>
+
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <div class="team-avatar">김○</div>
+          <div class="team-name">김○○</div>
+          <div class="team-role">팀장 · 문화기획 총괄</div>
+          <div class="team-bio">광주에서 나고 자란 로컬 기획자. 지역 문화행사 기획 3년 경력. 팀의 방향성을 잡고 프로젝트 전체를 총괄합니다.</div>
+        </div>
+        <div class="team-card reveal reveal-delay-1">
+          <div class="team-avatar">이○</div>
+          <div class="team-name">이○○</div>
+          <div class="team-role">콘텐츠 디렉터</div>
+          <div class="team-bio">SNS·영상·글쓰기 등 콘텐츠 전반을 담당. 광주의 이야기를 다양한 형식으로 풀어내는 역할을 합니다.</div>
+        </div>
+        <div class="team-card reveal reveal-delay-2">
+          <div class="team-avatar">박○</div>
+          <div class="team-name">박○○</div>
+          <div class="team-role">디자인 · 영상</div>
+          <div class="team-bio">시각 디자인과 영상 제작을 담당. 프로젝트의 얼굴이 되는 포스터, 팸플릿, 영상을 만들어냅니다.</div>
+        </div>
+        <div class="team-card reveal reveal-delay-3">
+          <div class="team-avatar">정○</div>
+          <div class="team-name">정○○</div>
+          <div class="team-role">지역협력 · 섭외</div>
+          <div class="team-bio">기관, 예술가, 공간 등과의 협력을 담당. 광주 문화씬의 다양한 사람들과 연결하는 가교 역할을 합니다.</div>
+        </div>
       </div>
-      <div class="pricing-grid">
-        <div class="pricing-card reveal">
-          <div class="pricing-tier">Starter</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" id="price-starter">20</span>
-            <span class="price-period">&nbsp;/ mo</span>
-          </div>
-          <div class="price-annual-note" id="annual-note-starter">&nbsp;</div>
-          <p class="pricing-desc">For individuals and small teams getting started with structured workflows.</p>
-          <div class="pricing-divider"></div>
-          <div class="pricing-features">
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Up to 5 team members</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>10 active dashboards</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Basic automations (50/mo)</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>7-day data history</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Email support</span></div>
-          </div>
-          <a href="#" class="pricing-cta">Start Free Trial</a>
-        </div>
-        <div class="pricing-card featured reveal reveal-delay-1">
-          <div class="pricing-badge">Most Popular</div>
-          <div class="pricing-tier">Professional</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" id="price-pro">60</span>
-            <span class="price-period">&nbsp;/ mo</span>
-          </div>
-          <div class="price-annual-note" id="annual-note-pro">&nbsp;</div>
-          <p class="pricing-desc">For growing teams that need powerful automation and advanced reporting.</p>
-          <div class="pricing-divider"></div>
-          <div class="pricing-features">
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Up to 25 team members</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Unlimited dashboards</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Advanced automations (unlimited)</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>90-day data history</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Priority chat support</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Mobile app access</span></div>
-          </div>
-          <a href="#" class="pricing-cta">Start Free Trial</a>
-        </div>
-        <div class="pricing-card reveal reveal-delay-2">
-          <div class="pricing-tier">Enterprise</div>
-          <div class="pricing-price">
-            <span class="price-currency">$</span>
-            <span class="price-amount" id="price-ent">150</span>
-            <span class="price-period">&nbsp;/ mo</span>
-          </div>
-          <div class="price-annual-note" id="annual-note-ent">&nbsp;</div>
-          <p class="pricing-desc">For large organizations with custom requirements and compliance needs.</p>
-          <div class="pricing-divider"></div>
-          <div class="pricing-features">
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Unlimited members</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Custom integrations & API</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>SSO & advanced permissions</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Unlimited data history</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>Dedicated success manager</span></div>
-            <div class="pricing-feature"><div class="pricing-check">✓</div><span>SOC 2 & compliance reports</span></div>
-          </div>
-          <a href="#" class="pricing-cta">Contact Sales</a>
-        </div>
+
+      <div class="team-all-row reveal">
+        <a href="#contact" class="btn-outline-lg">팀에 합류하고 싶다면 →</a>
       </div>
     </div>
   </section>
 
-  <!-- ── 8. TESTIMONIALS ── -->
-  <section class="testimonials-section" id="testimonials">
-    <div class="container">
-      <div class="testimonials-header">
-        <div class="section-label reveal">Customer Stories</div>
-        <h2 class="section-title reveal reveal-delay-1">Teams that <em>love</em> Clearwave</h2>
-        <p class="section-sub reveal reveal-delay-2">Don't take our word for it — here's what real teams say after 90 days.</p>
-      </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card tall reveal">
-          <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <p class="testimonial-quote">"We replaced three separate tools with Clearwave and actually have fewer meetings now. The automation flows handle the handoffs our team used to spend mornings sorting out. It's the calmest our workflow has ever felt."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">SL</div>
-            <div>
-              <div class="author-name">Sarah Lindqvist</div>
-              <div class="author-role">Head of Operations · Stratum IO</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal reveal-delay-1">
-          <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <p class="testimonial-quote">"The mobile app alone justified the switch. I can review dashboards and approve tasks between meetings without opening my laptop."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">MR</div>
-            <div>
-              <div class="author-name">Marcus Reyes</div>
-              <div class="author-role">Product Director · Meridian</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal reveal-delay-2">
-          <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <p class="testimonial-quote">"Onboarding our 30-person team took one afternoon. The learning curve is genuinely flat."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">PK</div>
-            <div>
-              <div class="author-name">Priya Kapoor</div>
-              <div class="author-role">Engineering Lead · Vanta Labs</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal reveal-delay-1">
-          <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <p class="testimonial-quote">"The reporting features are leagues ahead of what we had. We can finally show stakeholders live data instead of preparing decks."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">TW</div>
-            <div>
-              <div class="author-name">Tom Wainwright</div>
-              <div class="author-role">CFO · Pulsar HQ</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card reveal reveal-delay-2">
-          <div class="testimonial-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-          <p class="testimonial-quote">"Customer support actually reads your message. Had a custom integration question answered in under two hours."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">AN</div>
-            <div>
-              <div class="author-name">Aiko Nakamura</div>
-              <div class="author-role">CTO · Nexaflow</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 9. INTEGRATIONS ── -->
-  <section class="integrations-section" id="integrations">
-    <div class="container">
-      <div class="integrations-header">
-        <div class="section-label reveal">Integrations</div>
-        <h2 class="section-title reveal reveal-delay-1">Connects with your<br><em>existing stack</em></h2>
-        <p class="section-sub reveal reveal-delay-2">One-click integrations with the tools your team already uses. No dev work required.</p>
-      </div>
-      <div class="integrations-grid">
-        <div class="integration-tile reveal"><div class="integration-name">Slack</div></div>
-        <div class="integration-tile reveal reveal-delay-1"><div class="integration-name">Google Sheets</div></div>
-        <div class="integration-tile reveal reveal-delay-2"><div class="integration-name">Google Drive</div></div>
-        <div class="integration-tile reveal reveal-delay-3"><div class="integration-name">Zapier</div></div>
-        <div class="integration-tile reveal"><div class="integration-name">Stripe</div></div>
-        <div class="integration-tile reveal reveal-delay-1"><div class="integration-name">GitHub</div></div>
-        <div class="integration-tile reveal reveal-delay-2"><div class="integration-name">Notion</div></div>
-        <div class="integration-tile reveal reveal-delay-3"><div class="integration-name">Mailchimp</div></div>
-        <div class="integration-tile reveal"><div class="integration-name">HubSpot</div></div>
-        <div class="integration-tile reveal reveal-delay-1"><div class="integration-name">Airtable</div></div>
-        <div class="integration-tile reveal reveal-delay-2"><div class="integration-name">Intercom</div></div>
-        <div class="integration-tile reveal reveal-delay-3"><div class="integration-name">Salesforce</div></div>
-        <div class="integration-tile reveal"><div class="integration-name">Figma</div></div>
-        <div class="integration-tile reveal reveal-delay-1"><div class="integration-name">Linear</div></div>
-        <div class="integration-tile reveal reveal-delay-2"><div class="integration-name">Jira</div></div>
-        <div class="integration-tile reveal reveal-delay-3"><div class="integration-name">Webflow</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── 10. FAQ ── -->
-  <section class="faq-section" id="faq">
+  <!-- ── 8. FAQ ── -->
+  <section class="faq-section">
     <div class="container">
       <div class="faq-inner">
         <div class="faq-sidebar reveal">
           <div class="section-label">FAQ</div>
-          <h2 class="section-title">Questions,<br><em>answered</em></h2>
-          <p class="section-sub">Can't find what you're looking for? Reach our team at hello@clearwave.io — we reply within 2 hours.</p>
+          <h2 class="section-title">자주 묻는<br><em>질문들</em></h2>
+          <p class="section-sub">더 궁금한 점은 아래 문의 폼이나 이메일로 편하게 연락주세요.</p>
           <button class="faq-toggle-all" id="faqToggleAll">
-            <span id="faqToggleIcon">+</span> Expand all</button>
+            <span id="faqToggleIcon">+</span> 전체 펼치기</button>
         </div>
         <div class="faq-list reveal reveal-delay-1" id="faqList">
           <div class="faq-item">
             <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              Is there a free trial?
+              팀에 합류하고 싶어요. 어떻게 하면 되나요?
               <div class="faq-icon">+</div>
             </div>
-            <div class="faq-answer"><div class="faq-answer-inner">Yes — every plan starts with a 14-day free trial, no credit card required. You get full access to all features in your chosen tier so you can make a real evaluation before committing.</div></div>
+            <div class="faq-answer"><div class="faq-answer-inner">매년 상반기(3월)와 하반기(9월) 두 차례 팀원을 모집합니다. 모집 공고는 인스타그램과 카카오채널을 통해 안내드립니다. 디자인, 기획, 글쓰기, 영상 등 다양한 분야의 청년이라면 누구든 지원할 수 있습니다.</div></div>
           </div>
           <div class="faq-item">
             <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              How does pricing work for larger teams?
+              프로젝트 제안이나 협업은 어떻게 하나요?
               <div class="faq-icon">+</div>
             </div>
-            <div class="faq-answer"><div class="faq-answer-inner">Starter and Professional plans are per-workspace, not per-seat — so you won't see surprise bills as your team grows. Enterprise plans are custom-quoted based on your specific needs and contract length.</div></div>
+            <div class="faq-answer"><div class="faq-answer-inner">아래 문의 폼이나 이메일을 통해 자유롭게 제안해주세요. 단체·기관의 행사 기획 의뢰, 콘텐츠 제작 협업, 공간·장소 연계 등 다양한 형태의 협업을 환영합니다. 검토 후 2~3일 내에 답변드립니다.</div></div>
           </div>
           <div class="faq-item">
             <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              Can I migrate data from another tool?
+              활동비나 지원금이 있나요?
               <div class="faq-icon">+</div>
             </div>
-            <div class="faq-answer"><div class="faq-answer-inner">We support CSV imports and direct migration from Notion, Airtable, Asana, and Trello. Enterprise customers get a dedicated migration specialist who handles the entire process for you.</div></div>
+            <div class="faq-answer"><div class="faq-answer-inner">프로젝트 성격에 따라 광주문화재단·광주광역시 등의 지원사업을 통해 활동비가 지급될 수 있습니다. 개인 역량에 따라 외부 용역 및 강의 기회도 연계하고 있습니다. 자세한 내용은 합류 후 안내드립니다.</div></div>
           </div>
           <div class="faq-item">
             <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              What does the 99.9% uptime SLA mean?
+              광주에 살지 않아도 참여할 수 있나요?
               <div class="faq-icon">+</div>
             </div>
-            <div class="faq-answer"><div class="faq-answer-inner">It means Clearwave is contractually committed to less than 8.7 hours of downtime per year. We monitor availability 24/7, post all incidents publicly at status.clearwave.io, and issue credits automatically if SLA is breached.</div></div>
+            <div class="faq-answer"><div class="faq-answer-inner">주요 활동은 광주 현장에서 이루어지기 때문에, 광주에 거주하거나 정기적으로 방문 가능한 분을 우선으로 합니다. 단, 온라인으로 진행 가능한 콘텐츠·디자인 작업은 원격 참여를 열어두고 있으니 문의해주세요.</div></div>
           </div>
           <div class="faq-item">
             <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              Is my data secure?
+              지역 예술가인데 소개받거나 함께 작업하고 싶어요.
               <div class="faq-icon">+</div>
             </div>
-            <div class="faq-answer"><div class="faq-answer-inner">Clearwave is SOC 2 Type II certified, GDPR compliant, and ISO 27001 aligned. All data is encrypted in transit and at rest. You can request a full security report from our compliance team at any time.</div></div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-question" tabindex="0" role="button" aria-expanded="false">
-              Can I cancel anytime?
-              <div class="faq-icon">+</div>
-            </div>
-            <div class="faq-answer"><div class="faq-answer-inner">Yes. There are no lock-in contracts on monthly plans. Cancel from your account settings at any time and you won't be charged again. Annual plans are non-refundable but can be cancelled to stop renewal.</div></div>
+            <div class="faq-answer"><div class="faq-answer-inner">언제든 환영합니다! 문의 폼에 간단한 소개와 작업물 링크를 남겨주시면, 가까운 시일 내에 연락드려 이야기를 나눠보겠습니다. 전시, 영상, 인터뷰 등 다양한 방식으로 함께할 수 있습니다.</div></div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── 11. CTA BANNER ── -->
+  <!-- ── 9. CONTACT ── -->
+  <section class="contact-section" id="contact">
+    <div class="container">
+      <div class="contact-inner">
+
+        <div class="contact-left reveal">
+          <div class="section-label">Contact</div>
+          <h2 class="section-title" style="margin-top:20px">함께하고<br><em>싶다면</em></h2>
+          <p class="section-sub">팀 합류, 프로젝트 제안, 협업 문의 모두 환영합니다. 편하게 연락 주세요.</p>
+
+          <div class="contact-info-list">
+            <div class="contact-info-item">
+              <div class="ci-icon">✉</div>
+              <div>
+                <div class="ci-label">이메일</div>
+                <div class="ci-value">hello@gwangju-ycc.kr</div>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">📸</div>
+              <div>
+                <div class="ci-label">인스타그램</div>
+                <div class="ci-value">@gwangju.ycc</div>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">💬</div>
+              <div>
+                <div class="ci-label">카카오채널</div>
+                <div class="ci-value">광주청년문화기획팀</div>
+              </div>
+            </div>
+            <div class="contact-info-item">
+              <div class="ci-icon">📍</div>
+              <div>
+                <div class="ci-label">위치</div>
+                <div class="ci-value">광주광역시 동구 금남로 일대</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-box reveal reveal-delay-1">
+          <div class="form-title">문의 남기기</div>
+          <div class="form-group">
+            <label class="form-label">이름</label>
+            <input type="text" class="form-input" placeholder="홍길동" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">이메일</label>
+            <input type="email" class="form-input" placeholder="hello@example.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">문의 유형</label>
+            <select class="form-input">
+              <option value="">선택해주세요</option>
+              <option>팀 합류 문의</option>
+              <option>프로젝트 제안</option>
+              <option>협업·협력 문의</option>
+              <option>예술가 소개 요청</option>
+              <option>기타</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">내용</label>
+            <textarea class="form-input form-textarea" placeholder="자유롭게 내용을 적어주세요."></textarea>
+          </div>
+          <button type="submit" class="form-submit">보내기 →</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 10. CTA BANNER ── -->
   <section class="cta-section">
     <div class="container">
       <div class="cta-inner reveal">
         <div class="cta-content">
-          <div class="cta-label">✦ Get Started Today</div>
-          <h2 class="cta-title">Ready for a<br><em>clearer workflow?</em></h2>
-          <p class="cta-sub">Join 50,000+ teams who replaced chaos with clarity. Set up in under 10 minutes.</p>
+          <div class="cta-label">✦ 함께해요</div>
+          <h2 class="cta-title">광주의 문화,<br><em>같이 만들어볼까요?</em></h2>
+          <p class="cta-sub">기획, 디자인, 영상, 글쓰기 — 분야는 달라도 광주를 사랑하는 마음 하나면 충분합니다.</p>
         </div>
         <div class="cta-actions">
-          <a href="#" class="btn-cta-primary">
-            Start Free Trial
+          <a href="#contact" class="btn-cta-primary">
+            지금 문의하기
             <span>→</span>
           </a>
-          <a href="#" class="btn-cta-ghost">Schedule a demo</a>
+          <a href="#projects" class="btn-cta-ghost">프로젝트 둘러보기</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── 12. FOOTER ── -->
+  <!-- ── 11. FOOTER ── -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <a href="#" class="nav-logo">clear<span style="color:var(--accent-light)">wave</span></a>
-          <p class="footer-brand-desc">The calm, powerful workspace for teams that want to focus on work — not on managing it.</p>
+          <a href="#" class="nav-logo">문화기획팀</a>
+          <p class="footer-brand-desc">광주에서 활동하는 청년문화기획팀. 지역의 숨겨진 문화콘텐츠를 발굴하고 더 많은 사람들에게 알립니다.</p>
           <div class="footer-socials">
-            <a href="#" class="social-btn" aria-label="Twitter / X">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-            <a href="#" class="social-btn" aria-label="LinkedIn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            <a href="#" class="social-btn" aria-label="Instagram">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
             </a>
             <a href="#" class="social-btn" aria-label="YouTube">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </a>
-            <a href="#" class="social-btn" aria-label="TikTok">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+            <a href="#" class="social-btn" aria-label="KakaoTalk">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.5c0 2.573 1.611 4.845 4.073 6.21L4.5 21l4.71-2.45A11.92 11.92 0 0012 18.999c5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>
             </a>
           </div>
         </div>
         <div>
-          <div class="footer-col-label">Product</div>
+          <div class="footer-col-label">활동</div>
           <div class="footer-links">
-            <a href="#features">Features</a>
-            <a href="#screens">Mobile App</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#integrations">Integrations</a>
-            <a href="#">Changelog</a>
+            <a href="#projects">프로젝트</a>
+            <a href="#about">소개</a>
+            <a href="#team">팀원</a>
+            <a href="#">아카이브</a>
           </div>
         </div>
         <div>
-          <div class="footer-col-label">Company</div>
+          <div class="footer-col-label">참여</div>
           <div class="footer-links">
-            <a href="#">About</a>
-            <a href="#">Blog</a>
-            <a href="#">Careers</a>
-            <a href="#">Press Kit</a>
-            <a href="#">Status</a>
+            <a href="#contact">팀원 모집</a>
+            <a href="#contact">협업 문의</a>
+            <a href="#contact">프로젝트 제안</a>
+            <a href="#contact">예술가 소개</a>
           </div>
         </div>
         <div>
-          <div class="footer-col-label">Support</div>
+          <div class="footer-col-label">연락처</div>
           <div class="footer-links">
-            <a href="#">Help Center</a>
-            <a href="#">Documentation</a>
-            <a href="#">Security</a>
-            <a href="#">Contact</a>
-            <a href="#">Community</a>
+            <a href="#">hello@gwangju-ycc.kr</a>
+            <a href="#">@gwangju.ycc</a>
+            <a href="#">카카오채널</a>
+            <a href="#">광주광역시 동구</a>
           </div>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="footer-copy">
-          © 2026 Clearwave. Design by <a rel="nofollow" href="https://templatemo.com" target="_blank">TemplateMo</a>
+          © 2026 광주청년문화기획팀. 광주의 문화를 발굴하고 잇다.
         </div>
         <div class="footer-legal">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
+          <a href="#">개인정보처리방침</a>
+          <a href="#">이용약관</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="templatemo-622-clearwave.js"></script>
+  <script src="gv_main.js"></script>
 </body>
 </html>

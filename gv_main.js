@@ -92,7 +92,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     document.querySelectorAll('.stats-grid').forEach(el => statObserver.observe(el));
 
     /* ── 3D CAROUSEL ── */
-    const cards = Array.from(document.querySelectorAll('.phone-card'));
+    if (!document.getElementById('carouselStage')) { /* skip carousel — not on this page */ } else
+    { const cards = Array.from(document.querySelectorAll('.phone-card'));
     const totalCards = cards.length;
     let currentCenter = 2;
     let autoTimer = null;
@@ -256,6 +257,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     updatePositions();
     setZoom(zoomLevel);
     startAuto();
+    } // end carousel block
 
     /* ── PRICING TOGGLE ── */
     const prices = { starter: [20, 13], pro: [60, 39], ent: [150, 98] };
@@ -279,10 +281,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       pricingToggle.setAttribute('aria-checked', isAnnual);
     }
 
-    pricingToggle.addEventListener('click', () => { isAnnual = !isAnnual; updatePricing(); });
-    pricingToggle.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isAnnual = !isAnnual; updatePricing(); }
-    });
+    if (pricingToggle) {
+      pricingToggle.addEventListener('click', () => { isAnnual = !isAnnual; updatePricing(); });
+      pricingToggle.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); isAnnual = !isAnnual; updatePricing(); }
+      });
+    }
 
     /* ── FAQ ACCORDION ── */
     const faqItems = document.querySelectorAll('.faq-item');
