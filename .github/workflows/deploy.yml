@@ -41,7 +41,7 @@ jobs:
 
       - name: Deploy API server
         run: |
-          rsync -avz \
+          rsync -avz --delete \
             -e "ssh -i ~/.ssh/deploy_key.pem -o StrictHostKeyChecking=no" \
             ./api/ ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/report/api/
 
@@ -50,13 +50,18 @@ jobs:
           ssh -i ~/.ssh/deploy_key.pem \
             -o StrictHostKeyChecking=no \
             ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
-          cd /home/ubuntu/report/api
-          npm install --omit=dev
 
-          # PM2 글로벌 설치 (sudo 필요)
+          # 가상환경 생성 (최초 1회)
+          if [ ! -d /home/ubuntu/report/venv ]; then
+            python3 -m venv /home/ubuntu/report/venv
+          fi
+
+          # 의존성 설치
+          /home/ubuntu/report/venv/bin/pip install -r /home/ubuntu/report/api/requirements.txt --quiet
+
+          # PM2 글로벌 설치 (sudo 필요, 최초 1회)
           if ! command -v pm2 &> /dev/null; then
             sudo npm install -g pm2
-            # 서버 재시작 후 자동 실행 등록
             sudo env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
           fi
 
@@ -64,7 +69,9 @@ jobs:
           if pm2 list | grep -q "gventus-api"; then
             pm2 reload gventus-api
           else
-            pm2 start server.js --name gventus-api
+            pm2 start /home/ubuntu/report/api/server.py \
+              --name gventus-api \
+              --interpreter /home/ubuntu/report/venv/bin/python3
           fi
 
           pm2 save
