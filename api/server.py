@@ -67,6 +67,31 @@ def contact():
         return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
 
 
+@app.route('/survey', methods=['POST'])
+def survey():
+    body = request.get_json(silent=True) or {}
+
+    text = '\n'.join([
+        '📋 <b>ventus 제출양식 도착</b>',
+        '',
+        f'<b>타임스탬프:</b> {body.get("타임스탬프", "-")}',
+        f'<b>참여한 문화행사:</b> {body.get("참여한문화행사", "-")}',
+        f'<b>참여하고 싶은 문화행사:</b> {body.get("참여하고싶은문화행사", "-")}',
+        f'<b>무료 티켓 수령 의향:</b> {body.get("무료티켓의향", "-")}',
+        f'<b>인터뷰 일정:</b> {body.get("인터뷰일정", "-")}',
+        f'<b>이름:</b> {body.get("이름", "-")}',
+        f'<b>나이:</b> {body.get("나이", "-")}',
+        f'<b>연락처:</b> {body.get("연락처", "-")}',
+    ])
+
+    try:
+        send_telegram(text)
+        return jsonify({'ok': True})
+    except Exception as e:
+        app.logger.error('[Telegram 오류] %s', e)
+        return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('API_PORT', 3000))
     app.run(host='0.0.0.0', port=port)
