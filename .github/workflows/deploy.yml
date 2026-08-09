@@ -51,6 +51,9 @@ jobs:
             -o StrictHostKeyChecking=no \
             ubuntu@${{ secrets.EC2_HOST }} << 'ENDSSH'
 
+          # python3-venv 패키지 보장
+          sudo apt-get install -y python3-venv -qq
+
           # 가상환경 생성 (최초 1회)
           if [ ! -d /home/ubuntu/report/venv ]; then
             python3 -m venv /home/ubuntu/report/venv
@@ -65,16 +68,21 @@ jobs:
             sudo env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
           fi
 
-          # 실행 중이면 reload, 아니면 start
-          if pm2 list | grep -q "gventus-api"; then
-            pm2 reload gventus-api
-          else
-            pm2 start /home/ubuntu/report/api/server.py \
-              --name gventus-api \
-              --interpreter /home/ubuntu/report/venv/bin/python3
-          fi
+          # 기존 프로세스 제거 후 Python으로 새로 시작 (인터프리터 변경 보장)
+          pm2 delete gventus-api 2>/dev/null || true
+          pm2 start /home/ubuntu/report/api/server.py \
+            --name gventus-api \
+            --interpreter /home/ubuntu/report/venv/bin/python3
 
           pm2 save
+
+          # 기동 확인 (2초 대기 후 로컬 헬스체크)
+          sleep 2
+          pm2 list | grep gventus-api
+          curl -s -o /dev/null -w "health: %{http_code}\n" \
+            -X POST http://localhost:3000/contact \
+            -H "Content-Type: application/json" \
+            -d '{"name":"deploy","email":"deploy@check.com","message":"health check"}'
           ENDSSH
 
       - name: Deploy & apply Nginx config
