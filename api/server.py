@@ -38,7 +38,7 @@ def send_telegram(text: str) -> None:
             raise RuntimeError(result.get('description', 'Telegram API 오류'))
 
 
-@app.route('/contact', methods=['POST'])
+@app.route('/api/contact', methods=['POST'])
 def contact():
     body    = request.get_json(silent=True) or {}
     name    = body.get('name', '').strip()
