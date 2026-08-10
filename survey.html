@@ -4,506 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>벤투스 × 문화티켓 설문조사</title>
+  <link rel="stylesheet" href="common.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
   <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #e0deda;
-      --surface: #fffefb;
-      --surface-2: #f5f3ef;
-      --border: #cac7c2;
-      --border-hover: #8a8882;
-      --text: #0d0c0b;
-      --text-muted: #74716d;
-      --text-dim: #b0ada8;
-    }
-
-    body {
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      position: relative;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: -50%;
-      width: 200%; height: 200%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.04;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    .survey-wrap {
-      width: 100%;
-      max-width: 640px;
-      padding: 64px 24px 80px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ── Progress ── */
-    .progress-bar-container {
-      width: 100%;
-      height: 1px;
-      background-color: var(--border);
-      margin-bottom: 56px;
-    }
-    .progress-bar {
-      height: 100%;
-      background-color: var(--text);
-      width: 0%;
-      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* ── Step transitions ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .step { display: none; }
-    .step.active {
-      display: block;
-      animation: fadeUp 0.45s ease forwards;
-    }
-
-    /* ── Typography ── */
-    .step-num {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1.38;
-      letter-spacing: -0.025em;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-
-    .desc {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.75;
-      margin-bottom: 36px;
-      white-space: pre-line;
-    }
-
-    /* ── Option labels (radio) ── */
-    .option-label {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 17px 20px;
-      margin-bottom: 8px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background-color: var(--surface);
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text-muted);
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.18s, background-color 0.18s, color 0.18s;
-    }
-    .option-label:hover { border-color: var(--border-hover); color: var(--text); }
-    .option-label.selected {
-      border-color: var(--text);
-      background-color: var(--text);
-      color: #f5f3ef;
-    }
-
-    /* Radio dot */
-    .radio-ring {
-      width: 20px; height: 20px;
-      border: 1.5px solid var(--border);
-      border-radius: 50%;
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.18s;
-    }
-    .option-label.selected .radio-ring { border-color: #f5f3ef; }
-    .radio-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #f5f3ef;
-      display: none;
-    }
-    .option-label.selected .radio-dot { display: block; }
-
-    /* ── Inputs ── */
-    .input-group { margin-bottom: 18px; }
-    .input-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 8px;
-    }
-    .input-field {
-      width: 100%;
-      padding: 17px 20px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background-color: var(--surface);
-      color: var(--text);
-      font-size: 15px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-    .input-field::placeholder { color: var(--text-dim); }
-    .input-field:focus { outline: none; border-color: var(--border-hover); }
-
-    .error-msg {
-      font-size: 12.5px;
-      color: #c0392b;
-      margin-top: 8px;
-    }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background-color: var(--text);
-      color: #f5f3ef;
-      border: none;
-      padding: 16px 30px;
-      font-size: 15px;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      font-family: inherit;
-      letter-spacing: -0.01em;
-      transition: opacity 0.18s, transform 0.15s;
-      margin-top: 8px;
-    }
-    .btn:hover { opacity: 0.82; transform: translateY(-1px); }
-    .btn:active { transform: translateY(0); }
-
-    /* ── Intro ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin-bottom: 36px;
-    }
-    .badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--text);
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.25; }
-    }
-
-    .intro-title {
-      font-size: 40px;
-      font-weight: 900;
-      line-height: 1.18;
-      letter-spacing: -0.04em;
-      margin-bottom: 28px;
-      color: var(--text);
-    }
-
-    .intro-meta {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 28px;
-      flex-wrap: wrap;
-    }
-    .intro-meta-item {
-      font-size: 13px;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .intro-meta-item::before {
-      content: '';
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--border);
-    }
-
-    /* ── Category Grid ── */
-    .grid-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    .category-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 22px 10px 18px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--surface);
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.18s, background-color 0.18s, transform 0.15s;
-    }
-    .category-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
-    .category-card:active { transform: translateY(0); }
-    .category-card span {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.45;
-      word-break: keep-all;
-      transition: color 0.18s;
-    }
-    .category-card.selected {
-      border-color: var(--text);
-      background-color: var(--surface-2);
-    }
-    .category-card.selected span {
-      color: var(--text);
-      font-weight: 700;
-    }
-    .category-card.selected::after {
-      content: '';
-      position: absolute;
-      top: 8px;
-      right: 9px;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--text);
-    }
-    .grid-hint {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 4px;
-    }
-
-    /* ── Outro ── */
-    .outro-wrap { padding: 32px 0; }
-    .outro-symbol {
-      font-size: 40px;
-      margin-bottom: 36px;
-      display: block;
-      letter-spacing: -0.05em;
-      color: var(--text);
-    }
-    .outro-title {
-      font-size: 38px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1.18;
-      margin-bottom: 20px;
-    }
-
-    /* ── Privacy Modal ── */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(180,177,172,0.55);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .modal-overlay.open { display: flex; }
-
-    @keyframes modalIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.98); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 36px;
-      width: 100%;
-      max-width: 480px;
-      max-height: 88vh;
-      overflow-y: auto;
-      animation: modalIn 0.3s ease;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-    }
-    .modal-title {
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      margin-bottom: 24px;
-    }
-    .privacy-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      margin-bottom: 24px;
-    }
-    .privacy-table th, .privacy-table td {
-      padding: 11px 14px;
-      border: 1px solid var(--border);
-      text-align: left;
-      vertical-align: top;
-    }
-    .privacy-table th {
-      background: var(--surface-2);
-      color: var(--text-muted);
-      font-weight: 600;
-      width: 36%;
-    }
-    .privacy-table td { background: var(--surface); color: var(--text); }
-    .agree-label {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-    }
-    .agree-label input { width: 17px; height: 17px; accent-color: var(--text); cursor: pointer; }
-    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-    .btn-cancel {
-      background: transparent;
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 12px 22px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all 0.18s;
-    }
-    .btn-cancel:hover { border-color: var(--border-hover); color: var(--text); }
-    .btn-confirm {
-      background: var(--text);
-      color: #f5f3ef;
-      border: none;
-      padding: 12px 22px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: opacity 0.18s;
-    }
-    .btn-confirm:hover { opacity: 0.8; }
-
-    /* ── Summary ── */
-    .summary-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      margin: 40px 0 12px;
-    }
-    .summary-block {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      background: var(--surface);
-    }
-    .summary-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 13px 18px;
-      border-bottom: 1px solid var(--border);
-    }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-label {
-      color: var(--text-dim);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      min-width: 116px;
-      flex-shrink: 0;
-      padding-top: 2px;
-    }
-    .summary-value {
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 500;
-      word-break: break-word;
-    }
-
-    /* ── Home button ── */
-    #homeBtn {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background-color: var(--surface);
-      color: var(--text-muted);
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 0;
-      transition: border-color 0.18s, color 0.18s;
-    }
-    #homeBtn:hover { border-color: var(--border-hover); color: var(--text); }
-
-    /* ── Responsive ── */
-    @media (max-width: 480px) {
-      .intro-title { font-size: 30px; }
-      h1 { font-size: 22px; }
-      .survey-wrap { padding: 40px 16px 60px; }
-      .modal-box { padding: 24px; }
-      .summary-label { min-width: 90px; }
-      .category-grid { gap: 8px; }
-      .category-card { padding: 18px 8px 14px; }
-      .category-card span { font-size: 11px; }
-    }
-  </style>
 </head>
-<body>
+<body class="survey-page">
+
+<button id="infoBtn" aria-label="안내문 보기" onclick="openInfoModal()">
+  <i class="fa-solid fa-circle-info"></i>
+</button>
 
 <button id="homeBtn" aria-label="처음으로" onclick="resetSurvey()">
   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -524,10 +33,10 @@
 
       여러분이 더 가까이에서 즐겁고 유익한 여가를 즐길 수 있도록 만들어가고자 합니다 😃</p>
     <div class="intro-meta">
-      <span class="intro-meta-item">소요시간 약 3분</span>
-      <span class="intro-meta-item">총 7문항</span>
+      <span class="intro-meta-item">소요시간 약 30초</span>
+      <span class="intro-meta-item">총 3문항</span>
     </div>
-    <div class="step-num">01 / 04</div>
+    <div class="step-num">01 / 03</div>
     <p class="grid-label">광주에서 참여해본 문화행사를 골라주세요</p>
     <div class="category-grid">
       <div class="category-card" onclick="toggleCheck(this, 'q2', '전시회/팝업')">
@@ -564,7 +73,7 @@
   </div>
 
   <div class="step" id="step-1">
-    <div class="step-num">02 / 04</div>
+    <div class="step-num">02 / 03</div>
     <h1>광주에서 참여하고 싶은<br>문화행사를 골라주세요</h1>
     <p class="desc">복수 선택 가능합니다</p>
     <div class="category-grid">
@@ -602,22 +111,7 @@
   </div>
 
   <div class="step" id="step-2">
-    <div class="step-num">03 / 04</div>
-    <h1>무료 문화티켓을 받으실<br>의사가 있으신가요?</h1>
-    <div id="q4-options">
-      <div class="option-label" onclick="selectRadio(this, 'q4', '네', 2, 3)">
-        <span class="radio-ring"><span class="radio-dot"></span></span>
-        <span>네, 있습니다</span>
-      </div>
-      <div class="option-label" onclick="selectRadio(this, 'q4', '아니오', 2, 3)">
-        <span class="radio-ring"><span class="radio-dot"></span></span>
-        <span>아니오, 없습니다</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="step" id="step-3">
-    <div class="step-num">04 / 04</div>
+    <div class="step-num">03 / 03</div>
     <h1>기본 정보를 입력해 주세요</h1>
     <div class="input-group">
       <div class="input-label">이름</div>
@@ -649,7 +143,7 @@
     <button class="btn" onclick="openPrivacyModal()">제출하기</button>
   </div>
 
-  <div class="step" id="step-4">
+  <div class="step" id="step-3">
     <div class="outro-wrap">
       <span class="outro-symbol">✦</span>
       <h1 class="outro-title">제출이<br>완료되었습니다</h1>
@@ -661,6 +155,35 @@
   </div>
 
 </div><!-- /survey-wrap -->
+
+<!-- ──────────────────── Info Modal ──────────────────── -->
+<div class="info-modal-overlay" id="infoModal">
+  <div class="info-modal-box">
+    <button class="info-modal-close" onclick="closeInfoModal()" aria-label="닫기">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="info-slider-wrap">
+      <div class="info-slider" id="infoSlider">
+        <div class="info-slide">
+          <img src="./images/ventus_info1.png" alt="벤투스 안내 1" draggable="false">
+        </div>
+        <div class="info-slide">
+          <img src="./images/ventus_info2.png" alt="벤투스 안내 2" draggable="false">
+        </div>
+      </div>
+    </div>
+    <button class="info-nav info-nav-prev" onclick="slideInfo(-1)" aria-label="이전">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+    <button class="info-nav info-nav-next" onclick="slideInfo(1)" aria-label="다음">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+    <div class="info-dots">
+      <span class="info-dot active"></span>
+      <span class="info-dot"></span>
+    </div>
+  </div>
+</div>
 
 <!-- ──────────────────── Privacy Modal ──────────────────── -->
 <div class="modal-overlay" id="privacyModal">

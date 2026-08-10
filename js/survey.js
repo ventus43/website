@@ -1,6 +1,6 @@
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Oj7SxvZPefNuf3C2wKrXSlkacpzTI4rQ0v2ER2NYEi7YGOGZ3v_KUgbq75ZQjCLhA/exec'; // ← 배포 후 교체
 
-const answers = { q2: [], q3: [], q4: '', q5: '', q6: '', q7: '', q8: '' };
+const answers = { q2: [], q3: [], q5: '', q6: '', q7: '', q8: '' };
 const TOTAL = 3;
 
 /* ── Date range setup ── */
@@ -40,7 +40,7 @@ function goTo(from, to) {
 
 function setProgress(step) {
   if (step === 0) return;
-  const pct = step === 4 ? 100 : Math.round(((step - 1) / TOTAL) * 100);
+  const pct = step === 3 ? 100 : Math.round((step / TOTAL) * 100);
   document.getElementById('progressBar').style.width = pct + '%';
 }
 
@@ -91,7 +91,7 @@ function confirmAndSubmit() {
   }
   closeModal();
   renderSummary();
-  goTo(3, 4);
+  goTo(2, 3);
   const payload = buildPayload();
   sendToSheets(payload);
   sendToTelegram(payload);
@@ -104,7 +104,6 @@ function buildPayload() {
     타임스탬프:           new Date().toLocaleString('ko-KR'),
     참여한문화행사:        answers.q2.join(', '),
     참여하고싶은문화행사:  answers.q3.join(', '),
-    무료티켓의향:          answers.q4,
     인터뷰일정:           answers.q5,
     이름:                answers.q6,
     나이:                answers.q7,
@@ -135,7 +134,7 @@ function sendToTelegram(payload) {
 
 /* ── 데이터 초기화 및 첫 화면 이동 ── */
 function resetSurvey() {
-  answers.q2 = []; answers.q3 = []; answers.q4 = '';
+  answers.q2 = []; answers.q3 = [];
   answers.q5 = ''; answers.q6 = ''; answers.q7 = ''; answers.q8 = '';
 
   document.querySelectorAll('.option-label.selected, .category-card.selected').forEach(el => el.classList.remove('selected'));
@@ -162,11 +161,11 @@ function renderSummary() {
   const rows = [
     { label: '참여한 문화행사',        value: answers.q2.join(', ') },
     { label: '참여하고 싶은 문화행사', value: answers.q3.join(', ') },
-    { label: '무료 티켓 수령 의향',    value: answers.q4 },
     { label: '인터뷰 일정',           value: answers.q5 },
     { label: '이름',                  value: answers.q6 },
     { label: '나이',                  value: answers.q7 },
     { label: '연락처',                value: answers.q8 },
+    { label: '개인정보 이용동의',      value: '동의' },
   ];
   document.getElementById('summaryBlock').innerHTML = rows.map(r =>
     `<div class="summary-row">
@@ -186,6 +185,51 @@ function formatTel(el) {
   }
 }
 
+/* ── Info 이미지 모달 ── */
+let infoIndex = 0;
+const INFO_TOTAL = 2;
+
+function openInfoModal() {
+  infoIndex = 0;
+  updateInfoSlider(false);
+  document.getElementById('infoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeInfoModal() {
+  document.getElementById('infoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function slideInfo(dir) {
+  infoIndex = (infoIndex + dir + INFO_TOTAL) % INFO_TOTAL;
+  updateInfoSlider(true);
+}
+
+function updateInfoSlider(animate) {
+  const slider = document.getElementById('infoSlider');
+  slider.style.transition = animate ? 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+  slider.style.transform = `translateX(-${infoIndex * 100}%)`;
+  document.querySelectorAll('.info-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === infoIndex);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const slider = document.getElementById('infoSlider');
+  let tx = 0;
+
+  slider.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  slider.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 36) slideInfo(dx < 0 ? 1 : -1);
+  });
+
+  document.getElementById('infoModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeInfoModal();
+  });
+});
+
 /* ── 전역 노출 (HTML onclick에서 호출) ── */
 window.nextStep         = nextStep;
 window.goTo             = goTo;
@@ -196,3 +240,6 @@ window.closeModal       = closeModal;
 window.confirmAndSubmit = confirmAndSubmit;
 window.resetSurvey      = resetSurvey;
 window.formatTel        = formatTel;
+window.openInfoModal    = openInfoModal;
+window.closeInfoModal   = closeInfoModal;
+window.slideInfo        = slideInfo;
