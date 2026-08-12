@@ -1,48 +1,56 @@
+# ── 1. HTTP → HTTPS + apex 단일 리디렉트 ──────────────────────────────
 server {
+    listen 80;
     server_name gventus.store www.gventus.store;
+    return 301 https://gventus.store$request_uri;
+}
 
-    root /var/www/gventus/dist;
+# ── 2. www → apex 리디렉트 (Google 표준 URL 통일) ─────────────────────
+server {
+    listen 443 ssl;
+    server_name www.gventus.store;
+
+    ssl_certificate     /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem;   # managed by Certbot
+    include             /etc/letsencrypt/options-ssl-nginx.conf;            # managed by Certbot
+    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;                 # managed by Certbot
+
+    return 301 https://gventus.store$request_uri;
+}
+
+# ── 3. 메인 서버 (gventus.store 전용) ─────────────────────────────────
+server {
+    listen 443 ssl;
+    server_name gventus.store;
+
+    root  /var/www/gventus/dist;
     index index.html;
 
+    # Python 백엔드 프록시
     location /api/ {
-        proxy_pass http://127.0.0.1:8000/;
+        proxy_pass         http://127.0.0.1:8000/;
         proxy_http_version 1.1;
-        proxy_set_header Host              $host;
-        proxy_set_header X-Real-IP         $remote_addr;
-        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
     }
 
+    # 설문 페이지
     location = /survey {
         try_files /survey.html =404;
     }
 
+    # SPA fallback
     location / {
         try_files $uri $uri/ /index.html;
     }
 
-    location = /404.html {
-        internal;
-    }
+    location = /404.html { internal; }
     error_page 404 /404.html;
 
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-}
-
-server {
-    if ($host = www.gventus.store) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    if ($host = gventus.store) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    listen 80;
-    server_name gventus.store www.gventus.store;
-    return 404; # managed by Certbot
+    ssl_certificate     /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem;   # managed by Certbot
+    include             /etc/letsencrypt/options-ssl-nginx.conf;            # managed by Certbot
+    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;                 # managed by Certbot
 }
