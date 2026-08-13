@@ -81,6 +81,7 @@ def survey():
         f'<b>이름:</b> {body.get("이름", "-")}',
         f'<b>나이:</b> {body.get("나이", "-")}',
         f'<b>연락처:</b> {body.get("연락처", "-")}',
+        f'<b>MBTI:</b> {body.get("MBTI", "-")}',
         f'<b>개인정보 이용동의:</b> {body.get("개인정보동의", "-")}',
     ])
 

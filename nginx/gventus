@@ -23,7 +23,7 @@ server {
     listen 443 ssl;
     server_name gventus.store;
 
-    root  /var/www/gventus/dist;
+    root  /home/ubuntu/report/dist;
     index index.html;
 
     # Python 백엔드 프록시

@@ -1,6 +1,6 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj-Oj7SxvZPefNuf3C2wKrXSlkacpzTI4rQ0v2ER2NYEi7YGOGZ3v_KUgbq75ZQjCLhA/exec'; // ← 배포 후 교체
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxC8u2SI-bvB8DVWAqs3RWoswsKqcV3qnIxFJgyXW1ri5VoIZbGs_OboXgtA-Z9G0ksSg/exec'; // ← 배포 후 교체
 
-const answers = { q2: [], q3: [], q5: '', q6: '', q7: '', q8: '' };
+const answers = { q2: [], q3: [], q5: '', q6: '', q7: '', q8: '', q9: '' };
 const TOTAL = 3;
 
 /* ── Date range setup ── */
@@ -67,6 +67,7 @@ function openPrivacyModal() {
   const name    = document.getElementById('q6-name').value.trim();
   const age     = document.getElementById('q7-age').value.trim();
   const tel     = document.getElementById('q8-tel').value.trim();
+  const mbti    = document.getElementById('q9-mbti').value.trim().toUpperCase();
   const dateVal = document.getElementById('q5-date').value;
   const timeVal = document.getElementById('q5-time').value.trim();
   const err     = document.getElementById('q6-error');
@@ -74,7 +75,7 @@ function openPrivacyModal() {
   err.style.display = 'none';
   const [y, m, d] = dateVal.split('-');
   answers.q5 = `${y}년 ${parseInt(m)}월 ${parseInt(d)}일 ${timeVal}`;
-  answers.q6 = name; answers.q7 = age; answers.q8 = tel;
+  answers.q6 = name; answers.q7 = age; answers.q8 = tel; answers.q9 = mbti;
   document.getElementById('privacyModal').classList.add('open');
 }
 
@@ -108,6 +109,7 @@ function buildPayload() {
     이름:                answers.q6,
     나이:                answers.q7,
     연락처:              answers.q8,
+    MBTI:               answers.q9,
     개인정보동의:         '동의'
   };
 }
@@ -135,11 +137,11 @@ function sendToTelegram(payload) {
 /* ── 데이터 초기화 및 첫 화면 이동 ── */
 function resetSurvey() {
   answers.q2 = []; answers.q3 = [];
-  answers.q5 = ''; answers.q6 = ''; answers.q7 = ''; answers.q8 = '';
+  answers.q5 = ''; answers.q6 = ''; answers.q7 = ''; answers.q8 = ''; answers.q9 = '';
 
   document.querySelectorAll('.option-label.selected, .category-card.selected').forEach(el => el.classList.remove('selected'));
 
-  ['q5-date', 'q5-time', 'q6-name', 'q7-age', 'q8-tel'].forEach(id => {
+  ['q5-date', 'q5-time', 'q6-name', 'q7-age', 'q8-tel', 'q9-mbti'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('q6-error').style.display = 'none';
@@ -165,6 +167,7 @@ function renderSummary() {
     { label: '이름',                  value: answers.q6 },
     { label: '나이',                  value: answers.q7 },
     { label: '연락처',                value: answers.q8 },
+    { label: 'MBTI',                 value: answers.q9 },
     { label: '개인정보 이용동의',      value: '동의' },
   ];
   document.getElementById('summaryBlock').innerHTML = rows.map(r =>
