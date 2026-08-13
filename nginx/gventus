@@ -41,6 +41,11 @@ server {
         try_files /survey.html =404;
     }
 
+    # 사부작 북클럽 신청
+    location = /sabujak-book {
+        try_files /sabujak-book.html =404;
+    }
+
     # SPA fallback
     location / {
         try_files $uri $uri/ /index.html;

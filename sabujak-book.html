@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>사부작 북클럽 참여 신청</title>
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" as="style" crossorigin
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
+  <style>
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui,
+        'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      background: #fff;
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.06);
+    }
+
+    /* ── 상단 헤더 (Q 단계에서만 표시) ─── */
+    .survey-header {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 10;
+    }
+
+    .back-btn {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border-radius: 50%;
+      border: 1.5px solid #e8e8e8;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #333;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .back-btn:hover { border-color: #999; background: #fafafa; }
+
+    .progress-wrap {
+      flex: 1;
+      height: 4px;
+      background: #f0f0f0;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #111;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #bbb;
+      flex-shrink: 0;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    /* ── 스텝 공통 ─────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step { display: none; flex: 1; flex-direction: column; }
+    .step.active { display: flex; animation: fadeUp 0.35s ease; }
+
+    .step-body {
+      flex: 1;
+      padding: 36px 24px 16px;
+      overflow-y: auto;
+    }
+
+    .step-footer {
+      padding: 12px 24px 36px;
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 20px);
+    }
+
+    /* ── 랜딩 ──────────────────────────── */
+    .landing-body { text-align: center; }
+
+    .cover-image {
+      width: 100%;
+      height: 240px;
+      background: #e9ecef;
+      border-radius: 16px;
+      margin-bottom: 32px;
+      object-fit: cover;
+    }
+
+    .landing-title {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.38;
+      letter-spacing: -0.7px;
+      color: #111;
+      margin-bottom: 16px;
+      word-break: keep-all;
+    }
+
+    .landing-desc {
+      font-size: 17px;
+      color: #555;
+      line-height: 1.65;
+      word-break: keep-all;
+    }
+
+    /* ── 질문 헤더 ─────────────────────── */
+    .q-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #bbb;
+      margin-bottom: 8px;
+    }
+
+    .q-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111;
+      line-height: 1.4;
+      letter-spacing: -0.4px;
+      word-break: keep-all;
+      margin-bottom: 28px;
+    }
+
+    /* ── 라디오 옵션 ────────────────────── */
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      width: 100%;
+      padding: 16px 18px;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      margin-bottom: 9px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      color: #333;
+      user-select: none;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+    .option-item:active { transform: scale(0.99); }
+    .option-item:hover  { border-color: #bbb; }
+    .option-item.selected { background: #111; border-color: #111; color: #fff; }
+
+    .option-indicator {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #d5d5d5;
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.15s;
+    }
+    .option-item.selected .option-indicator { border-color: rgba(255,255,255,0.4); }
+    .option-item.selected .option-indicator::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 8px; height: 8px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* ── 텍스트 입력 (Q4) ──────────────── */
+    .text-answer {
+      width: 100%;
+      min-height: 140px;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: #222;
+      resize: none;
+      outline: none;
+      line-height: 1.65;
+      transition: border-color 0.15s;
+    }
+    .text-answer:focus { border-color: #111; }
+    .text-answer::placeholder { color: #c0c0c0; }
+
+    /* ── Q6 입력 필드 ──────────────────── */
+    .input-wrap { margin-bottom: 11px; }
+
+    .input-label-sm {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 6px;
+    }
+
+    .text-input {
+      width: 100%;
+      border: 1.5px solid #ebebeb;
+      border-radius: 12px;
+      padding: 15px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      color: #222;
+      outline: none;
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+    .text-input:focus { border-color: #111; }
+    .text-input::placeholder { color: #c0c0c0; }
+
+    /* ── 에러 메시지 ────────────────────── */
+    .err-msg {
+      display: none;
+      font-size: 13px;
+      color: #e53935;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    /* ── 버튼 공통 ─────────────────────── */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-6px); }
+      75%       { transform: translateX(6px); }
+    }
+    .shake { animation: shake 0.32s ease; }
+
+    .btn-main,
+    .btn-next {
+      width: 100%;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 18px 24px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.13);
+      transition: transform 0.18s, background 0.18s;
+    }
+    .btn-main:hover, .btn-next:hover { transform: translateY(-2px); background: #333; }
+    .btn-main:active, .btn-next:active { transform: translateY(0); background: #000; }
+
+    /* ── 완료 화면 ─────────────────────── */
+    #step-done .step-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 32px;
+    }
+
+    .done-icon  { font-size: 64px; margin-bottom: 28px; }
+    .done-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: #111; margin-bottom: 14px; }
+    .done-desc  { font-size: 16px; color: #888; line-height: 1.75; word-break: keep-all; }
+
+    /* ── 개인정보 바텀시트 ──────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 20px 24px 40px;
+      width: 100%; max-width: 480px;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: #e0e0e0; border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; color: #111; margin-bottom: 16px; }
+
+    .privacy-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+    .privacy-table th, .privacy-table td {
+      padding: 10px 12px; border: 1px solid #efefef; text-align: left; vertical-align: top;
+    }
+    .privacy-table th { background: #f8f8f8; color: #555; font-weight: 600; width: 36%; }
+    .privacy-table td { color: #333; }
+
+    .agree-label {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 600; color: #333;
+      margin-bottom: 20px; cursor: pointer;
+    }
+    .agree-label input { width: 18px; height: 18px; accent-color: #000; cursor: pointer; flex-shrink: 0; }
+
+    .modal-actions { display: flex; gap: 10px; }
+
+    .btn-modal-cancel {
+      flex: 1; padding: 15px;
+      background: #f5f5f5; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 600; color: #555;
+      cursor: pointer; font-family: inherit;
+    }
+    .btn-modal-confirm {
+      flex: 2; padding: 15px;
+      background: #000; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 600; color: #fff;
+      cursor: pointer; font-family: inherit; transition: background 0.2s;
+    }
+    .btn-modal-confirm:hover { background: #333; }
+  </style>
+</head>
+<body>
+<div class="form-container">
+
+  <!-- ── 상단 헤더 ──────────────────────────── -->
+  <header class="survey-header" id="surveyHeader">
+    <button class="back-btn" onclick="goPrev()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <span class="step-label" id="stepLabel"></span>
+  </header>
+
+  <!-- ── Step 0: 랜딩 ──────────────────────── -->
+  <div class="step active" id="step-0">
+    <div class="step-body landing-body">
+      <div class="cover-image"></div>
+      <h1 class="landing-title">책 읽어야지…<br>맨날 생각만 하는 나</h1>
+      <p class="landing-desc">📖가볍게 참여하는, 사부작 북클럽📖</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-main" onclick="goTo(1)">사부작 들어오기 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 1: Q1 ────────────────────────── -->
+  <div class="step" id="step-1">
+    <div class="step-body">
+      <p class="q-num">Q 1</p>
+      <h2 class="q-title">하루 일과가 끝난 후<br>당신의 모습은?</h2>
+      <div id="opts-q1">
+        <div class="option-item" onclick="selectOption('q1', 'SNS / 숏폼', this)">
+          <div class="option-indicator"></div><span>SNS / 숏폼</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q1', '자기계발 / 취미활동', this)">
+          <div class="option-indicator"></div><span>자기계발 / 취미활동</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q1', '혼자만의 시간', this)">
+          <div class="option-indicator"></div><span>혼자만의 시간</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q1', '친구와 약속', this)">
+          <div class="option-indicator"></div><span>친구와 약속</span>
+        </div>
+      </div>
+      <p class="err-msg" id="err-1">항목을 선택해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-1" onclick="validateAndNext(1)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 2: Q2 ────────────────────────── -->
+  <div class="step" id="step-2">
+    <div class="step-body">
+      <p class="q-num">Q 2</p>
+      <h2 class="q-title">독서 모임이라면<br>어떤 분위기가 좋나요?</h2>
+      <div id="opts-q2">
+        <div class="option-item" onclick="selectOption('q2', '조용히 쉬듯이 읽는 분위기', this)">
+          <div class="option-indicator"></div><span>조용히 쉬듯이 읽는 분위기</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q2', '새로운 경험 / 활동 있는 모임', this)">
+          <div class="option-indicator"></div><span>새로운 경험 / 활동 있는 모임</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q2', '책 이야기 깊게 나누는 모임', this)">
+          <div class="option-indicator"></div><span>책 이야기 깊게 나누는 모임</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q2', '사람들과 편하게 대화하는 모임', this)">
+          <div class="option-indicator"></div><span>사람들과 편하게 대화하는 모임</span>
+        </div>
+      </div>
+      <p class="err-msg" id="err-2">항목을 선택해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-2" onclick="validateAndNext(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Q3 ────────────────────────── -->
+  <div class="step" id="step-3">
+    <div class="step-body">
+      <p class="q-num">Q 3</p>
+      <h2 class="q-title">사부작 북클럽이<br>궁금하다면?</h2>
+      <div id="opts-q3">
+        <div class="option-item" onclick="selectOption('q3', '한 번 참여해보고 싶다', this)">
+          <div class="option-indicator"></div><span>한 번 참여해보고 싶다</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q3', '분위기 먼저 보고 싶다', this)">
+          <div class="option-indicator"></div><span>분위기 먼저 보고 싶다</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q3', '게스트로 참여 가능하면 좋겠다', this)">
+          <div class="option-indicator"></div><span>게스트로 참여 가능하면 좋겠다</span>
+        </div>
+      </div>
+      <p class="err-msg" id="err-3">항목을 선택해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-3" onclick="validateAndNext(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 4: Q4 ────────────────────────── -->
+  <div class="step" id="step-4">
+    <div class="step-body">
+      <p class="q-num">Q 4</p>
+      <h2 class="q-title">참여 동기를<br>자유롭게 적어주세요</h2>
+      <textarea class="text-answer" id="q4-text" placeholder="편하게 적어주세요 :)"></textarea>
+      <p class="err-msg" id="err-4">내용을 입력해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-4" onclick="validateAndNext(4)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 5: Q5 ────────────────────────── -->
+  <div class="step" id="step-5">
+    <div class="step-body">
+      <p class="q-num">Q 5</p>
+      <h2 class="q-title">참여 가능한 시간</h2>
+      <div id="opts-q5">
+        <div class="option-item" onclick="selectOption('q5', '저녁 5시~6시', this)">
+          <div class="option-indicator"></div><span>저녁 5시 ~ 6시</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q5', '저녁 6시~7시', this)">
+          <div class="option-indicator"></div><span>저녁 6시 ~ 7시</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q5', '저녁 7시~8시', this)">
+          <div class="option-indicator"></div><span>저녁 7시 ~ 8시</span>
+        </div>
+        <div class="option-item" onclick="selectOption('q5', '상관 없음', this)">
+          <div class="option-indicator"></div><span>상관 없음</span>
+        </div>
+      </div>
+      <p class="err-msg" id="err-5">항목을 선택해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-5" onclick="validateAndNext(5)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ── Step 6: Q6 ────────────────────────── -->
+  <div class="step" id="step-6">
+    <div class="step-body">
+      <p class="q-num">Q 6</p>
+      <h2 class="q-title">기본 정보를<br>입력해 주세요</h2>
+      <div class="input-wrap">
+        <div class="input-label-sm">이름</div>
+        <input type="text" class="text-input" id="q6-name" placeholder="홍길동">
+      </div>
+      <div class="input-wrap">
+        <div class="input-label-sm">나이</div>
+        <input type="number" class="text-input" id="q6-age" placeholder="25" min="1" max="99">
+      </div>
+      <div class="input-wrap">
+        <div class="input-label-sm">연락처</div>
+        <input type="tel" class="text-input" id="q6-tel" placeholder="010-0000-0000">
+      </div>
+      <p class="err-msg" id="err-6">이름, 나이, 연락처를 모두 입력해 주세요.</p>
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" id="btn-6" onclick="openModal()">제출하기</button>
+    </div>
+  </div>
+
+  <!-- ── Step Done ─────────────────────────── -->
+  <div class="step" id="step-done">
+    <div class="step-body">
+      <div class="done-icon">📚</div>
+      <div class="done-title">신청 완료!</div>
+      <div class="done-desc">소중한 답변 감사합니다.<br>곧 연락드리겠습니다 😊</div>
+    </div>
+  </div>
+
+</div><!-- /form-container -->
+
+<!-- ── 개인정보 바텀시트 ──────────────────── -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title">개인정보 수집 및 이용 동의</div>
+    <table class="privacy-table">
+      <tbody>
+        <tr><th>수집 항목</th><td>이름, 연락처</td></tr>
+        <tr><th>수집 목적</th><td>북클럽 참여 안내</td></tr>
+        <tr><th>보유 기간</th><td>모집 완료 후 1개월</td></tr>
+      </tbody>
+    </table>
+    <label class="agree-label">
+      <input type="checkbox" id="privacyConsent">
+      <span>개인정보 수집 및 이용에 동의합니다. (필수)</span>
+    </label>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-modal-confirm" onclick="confirmAndSubmit()">확인 및 제출</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TOTAL_Q = 6;
+  let currentStep = 0;
+  const answers = { q1: '', q2: '', q3: '', q4: '', q5: '' };
+
+  /* ── 네비게이션 ─────────────────── */
+  function goTo(step) {
+    document.querySelector('.step.active').classList.remove('active');
+    document.getElementById(`step-${step}`).classList.add('active');
+    currentStep = step;
+    updateHeader();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+
+  function goPrev() {
+    if (currentStep <= 1) { goTo(0); return; }
+    goTo(currentStep - 1);
+  }
+
+  function updateHeader() {
+    const header = document.getElementById('surveyHeader');
+    if (currentStep === 0 || currentStep === 'done') {
+      header.style.display = 'none';
+      return;
+    }
+    header.style.display = 'flex';
+    document.getElementById('progressFill').style.width = (currentStep / TOTAL_Q * 100) + '%';
+    document.getElementById('stepLabel').textContent = `${currentStep} / ${TOTAL_Q}`;
+  }
+
+  /* ── 라디오 선택 ─────────────────── */
+  function selectOption(group, value, el) {
+    document.querySelectorAll(`#opts-${group} .option-item`).forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[group] = value;
+  }
+
+  /* ── 단계별 유효성 검사 후 다음 ──── */
+  function validateAndNext(step) {
+    let valid = true;
+
+    if (step === 4) {
+      answers.q4 = document.getElementById('q4-text').value.trim();
+      valid = !!answers.q4;
+    } else {
+      valid = !!answers[`q${step}`];
+    }
+
+    const errEl = document.getElementById(`err-${step}`);
+
+    if (!valid) {
+      errEl.style.display = 'block';
+      const btn = document.getElementById(`btn-${step}`);
+      btn.classList.remove('shake');
+      void btn.offsetWidth; // reflow to restart animation
+      btn.classList.add('shake');
+      btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+      return;
+    }
+
+    errEl.style.display = 'none';
+    goTo(step + 1);
+  }
+
+  /* ── Q6 유효성 검사 & 모달 열기 ──── */
+  function openModal() {
+    const name = document.getElementById('q6-name').value.trim();
+    const age  = document.getElementById('q6-age').value.trim();
+    const tel  = document.getElementById('q6-tel').value.trim();
+    const err  = document.getElementById('err-6');
+
+    if (!name || !age || !tel) {
+      err.style.display = 'block';
+      const btn = document.getElementById('btn-6');
+      btn.classList.remove('shake');
+      void btn.offsetWidth;
+      btn.classList.add('shake');
+      btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+      return;
+    }
+
+    err.style.display = 'none';
+    document.getElementById('privacyModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('privacyModal').classList.remove('open');
+    document.getElementById('privacyConsent').checked = false;
+  }
+
+  /* ── 최종 제출 ──────────────────── */
+  function confirmAndSubmit() {
+    if (!document.getElementById('privacyConsent').checked) {
+      alert('개인정보 수집 및 이용에 동의해 주세요.');
+      return;
+    }
+    closeModal();
+
+    const btn = document.getElementById('btn-6');
+    btn.disabled = true;
+    btn.textContent = '제출 중...';
+
+    const payload = {
+      타임스탬프:   new Date().toLocaleString('ko-KR'),
+      하루일과후:   answers.q1 || '-',
+      모임분위기:   answers.q2 || '-',
+      참여방식:     answers.q3 || '-',
+      참여동기:     answers.q4 || '-',
+      가능시간:     answers.q5 || '-',
+      이름:         document.getElementById('q6-name').value.trim(),
+      나이:         document.getElementById('q6-age').value.trim(),
+      연락처:       document.getElementById('q6-tel').value.trim(),
+      개인정보동의: '동의',
+    };
+
+    fetch('/api/sabujak-book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .catch(() => {})
+    .finally(() => goTo('done'));
+  }
+
+  /* ── 전화번호 자동 포맷 ─────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('q6-tel').addEventListener('input', function () {
+      const d = this.value.replace(/\D/g, '').slice(0, 11);
+      this.value = d.length === 11
+        ? d.slice(0,3) + '-' + d.slice(3,7) + '-' + d.slice(7)
+        : d;
+    });
+
+    document.getElementById('privacyModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+  });
+</script>
+</body>
+</html>

@@ -93,6 +93,33 @@ def survey():
         return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
 
 
+@app.route('/sabujak-book', methods=['POST'])
+def sabujak_book():
+    body = request.get_json(silent=True) or {}
+
+    text = '\n'.join([
+        '📚 <b>사부작 북클럽 참여 신청</b>',
+        '',
+        f'<b>타임스탬프:</b> {body.get("타임스탬프", "-")}',
+        f'<b>하루 일과 후:</b> {body.get("하루일과후", "-")}',
+        f'<b>모임 분위기:</b> {body.get("모임분위기", "-")}',
+        f'<b>참여 방식:</b> {body.get("참여방식", "-")}',
+        f'<b>참여 동기:</b> {body.get("참여동기", "-")}',
+        f'<b>가능 시간:</b> {body.get("가능시간", "-")}',
+        f'<b>이름:</b> {body.get("이름", "-")}',
+        f'<b>나이:</b> {body.get("나이", "-")}',
+        f'<b>연락처:</b> {body.get("연락처", "-")}',
+        f'<b>개인정보 동의:</b> {body.get("개인정보동의", "-")}',
+    ])
+
+    try:
+        send_telegram(text)
+        return jsonify({'ok': True})
+    except Exception as e:
+        app.logger.error('[Telegram 오류] %s', e)
+        return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('API_PORT', 3000))
     app.run(host='0.0.0.0', port=port)
