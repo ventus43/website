@@ -3,104 +3,10 @@
 =================================================== */
 const $ = id => document.getElementById(id);
 
-/* ===================================================
-   트렌드 슬라이드
-=================================================== */
-const TREND_IMAGES = ['img/trend1.png','img/trend2.png','img/trend3.png','img/trend4.png'];
-let trendIdx = 0, trendBusy = false;
-
-TREND_IMAGES.forEach((_, i) => {
-  const dot = Object.assign(document.createElement('div'), {
-    id: `tdot-${i}`,
-    className: 'trend-dot' + (i === 0 ? ' active' : '')
-  });
-  $('trendDots').appendChild(dot);
-});
-
-function updateTrendDots() {
-  TREND_IMAGES.forEach((_, i) => {
-    $(`tdot-${i}`).className = 'trend-dot' + (i === trendIdx ? ' active' : '');
-  });
-}
-
-function updateTrendNav() {
-  // 첫 번째 카드에서는 이전 버튼 숨김 (캐릭터 선택으로 되돌아갈 수 없음)
-  $('trendPrevBtn').classList.toggle('hidden-nav', trendIdx === 0);
-}
-
-function trendFlip(direction) {
-  if (trendBusy) return;
-  trendBusy = true;
-
-  const wrap    = $('trendCardWrap');
-  const img     = $('trendCardImg');
-  const EASING  = 'cubic-bezier(0.4, 0, 0.2, 1)';
-  const DURATION = 280;
-
-  // next → 현재 카드 왼쪽으로 퇴장, prev → 오른쪽으로 퇴장
-  const exitTo    = direction === 'next' ? 'translateX(-108%)' : 'translateX(108%)';
-  const enterFrom = direction === 'next' ? 'translateX(108%)'  : 'translateX(-108%)';
-
-  wrap.style.transition = `transform ${DURATION}ms ${EASING}`;
-  wrap.style.transform  = exitTo;
-
-  setTimeout(() => {
-    const nextIdx = direction === 'next' ? trendIdx + 1 : trendIdx - 1;
-
-    // 마지막 카드에서 next → 설문지로 이동
-    if (direction === 'next' && nextIdx >= TREND_IMAGES.length) {
-      wrap.style.transition = 'none';
-      wrap.style.transform  = '';
-      hidePage('pageTrend');
-      showPage('pageSurvey');
-      trendIdx  = 0;
-      trendBusy = false;
-      return;
-    }
-
-    trendIdx = nextIdx;
-    img.src  = TREND_IMAGES[trendIdx];
-    updateTrendDots();
-    updateTrendNav();
-
-    // 반대편에서 즉시 배치 후 슬라이드 인
-    wrap.style.transition = 'none';
-    wrap.style.transform  = enterFrom;
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      wrap.style.transition = `transform ${DURATION}ms ${EASING}`;
-      wrap.style.transform  = 'translateX(0)';
-      setTimeout(() => { trendBusy = false; }, DURATION + 20);
-    }));
-  }, DURATION);
-}
-
 function addTapHandler(el, fn) {
   let touched = false;
   el.addEventListener('touchstart', e => { e.stopPropagation(); e.preventDefault(); touched = true; fn(); }, { passive: false });
   el.addEventListener('click',      e => { e.stopPropagation(); if (touched) { touched = false; return; } fn(); });
-}
-
-addTapHandler($('trendPrevBtn'), () => trendFlip('prev'));
-addTapHandler($('trendNextBtn'), () => trendFlip('next'));
-
-function trendSkip() {
-  if (trendBusy) return;
-  hidePage('pageTrend');
-  showPage('pageSurvey');
-  trendIdx  = 0;
-  trendBusy = false;
-}
-
-/* ===================================================
-   랜딩 페이지
-=================================================== */
-let showCardNews = false;
-
-function startFlow(withCardNews) {
-  showCardNews = withCardNews;
-  hidePage('pageLanding');
-  showPage('pageCharacter');
 }
 
 /* ===================================================
@@ -164,21 +70,7 @@ function confirmVote() {
   $('popup').classList.remove('active');
   initSurvey();
   hidePage('pageCharacter');
-
-  if (showCardNews) {
-    trendIdx = 0;
-    trendBusy = false;
-    $('trendCardImg').src = TREND_IMAGES[0];
-    updateTrendDots();
-    updateTrendNav();
-    const wrap = $('trendCardWrap');
-    wrap.style.transition = 'none';
-    wrap.style.transform  = '';
-    wrap.style.boxShadow  = '';
-    showPage('pageTrend');
-  } else {
-    showPage('pageSurvey');
-  }
+  showPage('pageSurvey');
 }
 
 // 설문 초기화
@@ -339,8 +231,8 @@ function showResultPage() {
   });
 }
 
-function resetAll() { hidePage('pageResult'); showPage('pageLanding'); selectedChar = null; }
-function backToLanding() { hidePage('pageSurvey'); hidePage('pageTrend'); showPage('pageLanding'); selectedChar = null; }
+function resetAll() { hidePage('pageResult'); showPage('pageCharacter'); selectedChar = null; }
+function backToLanding() { hidePage('pageSurvey'); showPage('pageCharacter'); selectedChar = null; }
 function showPage(id) { $(id).classList.remove('hidden'); }
 function hidePage(id) { $(id).classList.add('hidden'); }
 

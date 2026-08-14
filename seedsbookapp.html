@@ -13,39 +13,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-<!-- 랜딩 페이지 -->
-<div class="page bg-cover" id="pageLanding">
-  <div class="landing-btns">
-    <button class="landing-btn landing-btn-simple" onclick="startFlow(false)">
-      <div class="landing-btn-icon"><i class="fa-solid fa-check-to-slot"></i></div>
-      <div class="landing-btn-label">캐릭터 투표 + 설문지</div>
-      <div class="landing-btn-flow">캐릭터 선택 → 설문지</div>
-    </button>
-    <button class="landing-btn landing-btn-card" onclick="startFlow(true)">
-      <div class="landing-btn-icon"><i class="fa-regular fa-newspaper"></i></div>
-      <div class="landing-btn-label">카드뉴스 + 투표 + 설문지</div>
-      <div class="landing-btn-flow">캐릭터 선택 → 카드뉴스 → 설문지</div>
-    </button>
-  </div>
-</div>
-
-<!-- 트렌드 슬라이드 -->
-<div class="page hidden" id="pageTrend">
-  <div class="trend-scene">
-    <div class="trend-card-wrap" id="trendCardWrap">
-      <img class="trend-card-img" id="trendCardImg" src="img/trend1.png" alt="">
-    </div>
-  </div>
-  <div class="trend-footer">
-    <div class="trend-dots" id="trendDots"></div>
-    <button class="trend-skip-btn" id="trendSkipBtn" onclick="trendSkip()">넘기기 <i class="fa-solid fa-arrow-right"></i></button>
-  </div>
-  <button class="trend-nav-btn trend-nav-prev hidden-nav" id="trendPrevBtn">&#8249;</button>
-  <button class="trend-nav-btn trend-nav-next" id="trendNextBtn">&#8250;</button>
-</div>
-
 <!-- 페이지 1: 캐릭터 선택 -->
-<div class="page hidden bg-cover" id="pageCharacter">
+<div class="page bg-cover" id="pageCharacter">
   <div class="grid-container" id="characterGrid"></div>
 </div>
 
