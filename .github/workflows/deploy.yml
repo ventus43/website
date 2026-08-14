@@ -65,14 +65,11 @@ jobs:
             sudo env PATH=$PATH:/usr/local/bin pm2 startup systemd -u ubuntu --hp /home/ubuntu
           fi
 
-          # 실행 중이면 reload, 아니면 start (gunicorn, port 8000)
-          if pm2 list | grep -q "gventus-api"; then
-            pm2 delete gventus-api
-          fi
-          pm2 start /home/ubuntu/report/venv/bin/gunicorn \
+          # 기존 프로세스 삭제 후 gunicorn 재시작 (port 8000)
+          pm2 delete gventus-api 2>/dev/null || true
+          pm2 start bash \
             --name gventus-api \
-            --cwd /home/ubuntu/report/api \
-            -- -w 2 -b 0.0.0.0:8000 server:app
+            -- -c "cd /home/ubuntu/report/api && exec /home/ubuntu/report/venv/bin/gunicorn -w 2 -b 0.0.0.0:8000 server:app"
 
           pm2 save
           ENDSSH
