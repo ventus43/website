@@ -46,6 +46,11 @@ server {
         try_files /sabujak-book.html =404;
     }
 
+    # 씨앗책방
+    location = /seedsbook {
+        try_files /seedsbookapp.html =404;
+    }
+
     # SPA fallback
     location / {
         try_files $uri $uri/ /index.html;

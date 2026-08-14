@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>씨앗 책방</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="씨앗책방">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="seedsbookapp.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<!-- 랜딩 페이지 -->
+<div class="page bg-cover" id="pageLanding">
+  <div class="landing-btns">
+    <button class="landing-btn landing-btn-simple" onclick="startFlow(false)">
+      <div class="landing-btn-icon"><i class="fa-solid fa-check-to-slot"></i></div>
+      <div class="landing-btn-label">캐릭터 투표 + 설문지</div>
+      <div class="landing-btn-flow">캐릭터 선택 → 설문지</div>
+    </button>
+    <button class="landing-btn landing-btn-card" onclick="startFlow(true)">
+      <div class="landing-btn-icon"><i class="fa-regular fa-newspaper"></i></div>
+      <div class="landing-btn-label">카드뉴스 + 투표 + 설문지</div>
+      <div class="landing-btn-flow">캐릭터 선택 → 카드뉴스 → 설문지</div>
+    </button>
+  </div>
+</div>
+
+<!-- 트렌드 슬라이드 -->
+<div class="page hidden" id="pageTrend">
+  <div class="trend-scene">
+    <div class="trend-card-wrap" id="trendCardWrap">
+      <img class="trend-card-img" id="trendCardImg" src="img/trend1.png" alt="">
+    </div>
+  </div>
+  <div class="trend-footer">
+    <div class="trend-dots" id="trendDots"></div>
+    <button class="trend-skip-btn" id="trendSkipBtn" onclick="trendSkip()">넘기기 <i class="fa-solid fa-arrow-right"></i></button>
+  </div>
+  <button class="trend-nav-btn trend-nav-prev hidden-nav" id="trendPrevBtn">&#8249;</button>
+  <button class="trend-nav-btn trend-nav-next" id="trendNextBtn">&#8250;</button>
+</div>
+
+<!-- 페이지 1: 캐릭터 선택 -->
+<div class="page hidden bg-cover" id="pageCharacter">
+  <div class="grid-container" id="characterGrid"></div>
+</div>
+
+<!-- 투표 팝업 -->
+<div class="popup-overlay" id="popup">
+  <div class="popup-box">
+    <img class="popup-char-img" id="popupImage" src="" alt="캐릭터">
+    <h2>이 캐릭터에 투표하시겠습니까?</h2>
+    <div class="popup-buttons">
+      <button class="btn btn-cancel" onclick="closePopup()">취소</button>
+      <button class="btn btn-confirm" onclick="confirmVote()">투표하기</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 페이지 2: 설문지 -->
+<div class="page hidden bg-cover" id="pageSurvey">
+  <button class="btn-home-survey" onclick="backToLanding()" aria-label="처음으로">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </button>
+
+  <div class="survey-char-float" id="surveyCharFloat">
+    <img id="surveyCharImg" src="" alt="">
+    <span id="surveyCharName"></span>
+  </div>
+
+  <div class="questions-wrapper">
+    <div class="questions-track" id="questionsTrack">
+
+      <!-- Q1: 책 선호도 -->
+      <div class="q-slide">
+        <div class="q-card">
+          <div class="q-title">책을 얼마나 좋아하시나요?</div>
+          <div class="option-row">
+            <div class="opt-card sel-card" onclick="selectOpt(this,'preference','GOOD')"><span class="opt-emoji">😎</span><div class="opt-label">GOOD</div></div>
+            <div class="opt-card sel-card" onclick="selectOpt(this,'preference','SOSO')"><span class="opt-emoji">😊</span><div class="opt-label">SOSO</div></div>
+            <div class="opt-card sel-card" onclick="selectOpt(this,'preference','BAD')"><span class="opt-emoji">😅</span><div class="opt-label">BAD</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2: 책에 대한 인식 -->
+      <div class="q-slide">
+        <div class="q-card">
+          <div class="q-title">책에 대해 어떻게 생각하시나요?</div>
+          <div class="cat-grid" id="q2opts">
+            <div class="cat-card sel-card" onclick="selectList(this,'bookThought','지식을 쌓을 수 있다','q2etc')">지식을 쌓을 수 있다</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookThought','재밌다','q2etc')">재밌다</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookThought','지루하다','q2etc')">지루하다</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookThought','별 생각없다','q2etc')">별 생각없다</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookThought',null,'q2etc')" style="grid-column:span 2">기타</div>
+          </div>
+          <textarea class="q-textarea" id="q2etc" placeholder="직접 입력해주세요 ✍️" style="display:none;margin-top:10px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Q3: 책을 접하게 된 계기 -->
+      <div class="q-slide">
+        <div class="q-card">
+          <div class="q-title">최근에 책을 접하게 된 계기는?</div>
+          <div class="cat-grid" id="q3opts">
+            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','지인 추천','q3etc')">지인 추천</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','베스트셀러','q3etc')">베스트셀러</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','추천도서','q3etc')">추천도서</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','서점 방문','q3etc')">서점 방문</div>
+            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger',null,'q3etc')" style="grid-column:span 2">기타</div>
+          </div>
+          <textarea class="q-textarea" id="q3etc" placeholder="직접 입력해주세요 ✍️" style="display:none;margin-top:10px;"></textarea>
+        </div>
+      </div>
+
+      <!-- Q4: 선호 카테고리 -->
+      <div class="q-slide">
+        <div class="q-card">
+          <div class="q-title">어떤 종류의 책을 좋아하시나요? <span style="font-size:0.8rem;color:#aaa;font-weight:normal;">중복 선택 가능</span></div>
+          <div class="cat-grid">
+            <div class="cat-card sel-card" onclick="toggleCat(this,'인문/고전')"><i class="fa-solid fa-book"></i> 인문/고전</div>
+            <div class="cat-card sel-card" onclick="toggleCat(this,'과학')"><i class="fa-solid fa-flask"></i> 과학</div>
+            <div class="cat-card sel-card" onclick="toggleCat(this,'경제/경영/사회')"><i class="fa-solid fa-briefcase"></i> 경제/경영</div>
+            <div class="cat-card sel-card" onclick="toggleCat(this,'에세이')"><i class="fa-solid fa-pen-to-square"></i> 에세이</div>
+            <div class="cat-card sel-card" onclick="toggleCat(this,'만화')"><i class="fa-solid fa-palette"></i> 만화</div>
+            <div class="cat-card sel-card" onclick="toggleCat(this,'잡지')"><i class="fa-regular fa-newspaper"></i> 잡지</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5: 취미생활 -->
+      <div class="q-slide">
+        <div class="q-card">
+          <div class="q-title">가지고 계신 취미 / 해보고 싶은 활동이 있나요?</div>
+          <textarea class="q-textarea" id="hobby" placeholder="공간 활용을 위한 질문입니다 🎯"></textarea>
+        </div>
+      </div>
+
+      <!-- Q6: 마지막 -->
+      <div class="q-slide" style="justify-content:flex-end;padding-bottom:28px;">
+        <div class="q-card" style="overflow-y:auto;max-height:calc(100vh - 220px);">
+          <div style="margin-bottom:22px;">
+            <div class="info-label" style="font-size:0.95rem;color:#555;font-weight:bold;margin-bottom:12px;">추후 프로그램 참여 희망 횟수를 골라주세요
+                <button class="qbtn-nav" type="button" onclick="toggleBqTooltip(event)" aria-label="도서 추천 프로그램 안내"><i class="fa-regular fa-circle-question"></i></button>
+            </div>
+            <div class="part-row">
+              <div class="part-card sel-card" onclick="selectPart(this,'3회')"><span class="part-num">3</span><div class="part-unit">회</div></div>
+              <div class="part-card sel-card" onclick="selectPart(this,'5회')"><span class="part-num">5</span><div class="part-unit">회</div></div>
+              <div class="part-card sel-card" onclick="selectPart(this,'10회')"><span class="part-num">10</span><div class="part-unit">회</div></div>
+            </div>
+          </div>
+          <div class="info-section">
+            <div><div class="info-label">이름</div><input class="info-input" type="text" id="userName" placeholder="이름을 입력해주세요"></div>
+            <div>
+              <div class="info-label">나이</div>
+              <input class="info-input" type="number" id="userAge" value="20" min="1" max="100" placeholder="나이 입력">
+            </div>
+            <div><div class="info-label">MBTI</div><input class="info-input" type="text" id="userMbti" placeholder="예: INFP" maxlength="4" autocomplete="off" oninput="this.value=this.value.toUpperCase()"></div>
+            <div id="q6etcBtn" class="cat-card sel-card" style="text-align:center;" onclick="toggleEtc()">기타</div>
+            <input type="text" class="info-input" id="q6etc" placeholder="직접 입력해주세요 ✍️" style="display:none;">
+          </div>
+          <div class="privacy-consent-row" id="privacyConsentRow">
+            <label class="privacy-consent-label">
+              <input type="checkbox" id="privacyConsent" onchange="updatePrivacyConsent(this)">
+              <span class="privacy-check-box"><i class="fa-solid fa-check"></i></span>
+              <span class="privacy-consent-text">
+                <span class="privacy-required">(필수)</span>
+                <button type="button" class="privacy-link" onclick="showPrivacyModal(event)">개인정보 수집 및 이용</button>에 동의합니다
+              </span>
+            </label>
+          </div>
+          <div class="footer-note-small">〈 참여시 자체 제작 굿즈 제공 〉</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="survey-nav">
+    <button class="btn btn-prev" id="prevBtn" onclick="prevQ()" style="display:none;"><i class="fa-solid fa-chevron-left"></i> 이전</button>
+    <button class="btn btn-next" id="nextBtn" onclick="nextQ()">다음 <i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<!-- 제출 로딩 -->
+<div class="page hidden loading-page" id="submitLoading">
+  <div class="submit-spinner"></div>
+  <div class="submit-text">제출 중...</div>
+</div>
+
+<!-- 페이지 3: 결과 -->
+<div class="page hidden" id="pageResult">
+  <div class="result-wrap">
+    <div class="result-header">
+      <img class="result-char-img" id="resultCharImg" src="" alt="">
+      <div class="result-title">제출 완료! 🎉</div>
+      <div class="result-sub" id="resultSub"></div>
+    </div>
+    <div class="result-list" id="resultList"></div>
+    <button class="btn-reset-all" onclick="resetAll()">처음으로 돌아가기</button>
+    <div class="checklist-nav">
+      <div class="checklist-nav-title">씨앗 유형 체크리스트</div>
+      <button class="btn-checklist" onclick="showChecklist()">체크리스트 하러 가기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 도서 추천 퀴즈 오버레이 -->
+<div class="bq-overlay" id="pageBookQuiz">
+  <div class="bq-sheet">
+
+    <div class="bq-sheet-header">
+      <div class="bq-sheet-title"><i class="fa-solid fa-book-open-reader"></i>프로그램 간단 예시</div>
+      <button class="bq-close-btn" onclick="hideBookQuiz()" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- 퀴즈 영역 -->
+    <div id="bqQuizArea">
+      <div class="bq-progress-wrap">
+        <div class="bq-progress-bar-bg"><div class="bq-progress-bar-fill" id="bqProgressFill"></div></div>
+        <div class="bq-progress-text" id="bqProgressText">질문 1 / 5</div>
+      </div>
+      <div class="bq-question-card" id="bqQuestionBox"></div>
+      <div class="bq-options">
+        <button class="bq-option-btn" id="bqBtnA" onclick="bqSelectAnswer('a')"></button>
+        <button class="bq-option-btn" id="bqBtnB" onclick="bqSelectAnswer('b')"></button>
+      </div>
+    </div>
+
+    <!-- 결과 영역 -->
+    <div id="bqResultArea" style="display:none;">
+      <div class="bq-result-header">
+        <div class="bq-result-title" id="bqResultTitle"></div>
+        <div class="bq-click-hint"><i class="fa-regular fa-lightbulb"></i> 카드를 클릭하면 책 소개를 볼 수 있어요!</div>
+      </div>
+      <div class="bq-book-grid" id="bqBookGrid"></div>
+      <button class="bq-restart-btn" onclick="bqStartQuiz()"><i class="fa-solid fa-rotate-left"></i> 처음부터 다시하기</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- 페이지 4: 체크리스트 -->
+<div class="page hidden" id="pageChecklist">
+  <div class="cl-wrap">
+
+    <section class="cl-hero">
+      <div class="balloons">
+        <span class="balloon b1"></span>
+        <span class="balloon b2"></span>
+        <span class="balloon b3"></span>
+      </div>
+      <button class="cl-back" onclick="hideChecklist()">← 결과로 돌아가기</button>
+      <h1>씨앗 책방<br>유형 체크지</h1>
+      <p>각 문항을 <strong>1~5점</strong>으로 눌러 체크하면 합계와 상위 유형이 자동으로 계산돼요.</p>
+      <div class="cl-legend">
+        <strong>점수 기준</strong><br>
+        <p>1점 전혀 그렇지 않다 · 2점 대체로 그렇지 않다</p>
+        <p>3점 보통이다 · 4점 대체로 그렇다 · 5점 매우 그렇다</p>
+      </div>
+    </section>
+
+    <section class="cl-meta">
+      <div class="cl-field">
+        <label for="clCheckDate">일시</label>
+        <input id="clCheckDate" type="datetime-local">
+      </div>
+      <div class="cl-field">
+        <label for="clUserName">이름</label>
+        <input id="clUserName" type="text" placeholder="이름 입력">
+      </div>
+      <div class="cl-field">
+        <label for="clMbti">MBTI</label>
+        <input id="clMbti" type="text" placeholder="예: INFP">
+      </div>
+      <div class="cl-field">
+        <label for="clSeedResult">나의 씨앗은?</label>
+        <input id="clSeedResult" type="text" placeholder="자동 계산" readonly>
+      </div>
+    </section>
+
+    <div class="cl-topbar">
+      <div class="cl-progress-card">
+        <div class="cl-progress-row">
+          <strong id="clProgressText">문항 체크됨</strong>
+          <span id="clPercentText">0%</span>
+        </div>
+        <div class="cl-bar"><span id="clProgressBar"></span></div>
+        <div class="cl-badge-row">
+          <span class="cl-mini">저장 자동 유지</span>
+          <span class="cl-mini">상위 유형 자동 계산</span>
+          <span class="cl-mini">결과 복사 가능</span>
+        </div>
+      </div>
+    </div>
+
+    <main id="clSections"></main>
+
+    <div class="cl-actions">
+      <button class="cl-btn-main" id="clSubmitBtn" type="button">결과 제출</button>
+      <button class="cl-btn-sub" id="clResetBtn" type="button">전체 초기화</button>
+      <button class="cl-btn-sub" id="clTopBtn" type="button">맨 위로</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- 체크리스트 결과 차트 -->
+<div class="cl-chart-overlay" id="clChartModal">
+  <div class="cl-chart-sheet">
+    <div class="cl-chart-header">
+      <div class="cl-chart-title">체크리스트 결과</div>
+    </div>
+    <div class="cl-chart-canvas-wrap">
+      <canvas id="clRadarChart"></canvas>
+    </div>
+    <div class="cl-chart-rank" id="clChartRank"></div>
+    <div class="cl-chart-btns">
+      <button class="cl-chart-btn-sub" id="clChartCloseBtn">처음으로</button>
+    </div>
+  </div>
+</div>
+
+<!-- 도서 추천 말풍선 툴팁 -->
+<div class="bq-tooltip" id="bqTooltip">
+  <div class="bq-tooltip-icon"><i class="fa-solid fa-book-open-reader"></i></div>
+  <div class="bq-tooltip-title">맞춤 유형 추천</div>
+  <p class="bq-tooltip-desc">5가지 질문으로<br>알맞은 책 유형을<br>찾아드려요!</p>
+  <button class="bq-tooltip-start" onclick="closeBqTooltip(); showBookQuiz()">퀴즈 시작 <i class="fa-solid fa-arrow-right"></i></button>
+</div>
+
+<!-- 개인정보 수집·이용 동의 모달 -->
+<div class="privacy-modal-overlay" id="privacyModal">
+  <div class="privacy-modal-sheet">
+    <div class="privacy-modal-header">
+      <div class="privacy-modal-title"><i class="fa-solid fa-shield-halved"></i> 개인정보 수집 및 이용 동의서</div>
+      <button class="bq-close-btn" onclick="hidePrivacyModal()" aria-label="닫기"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="privacy-modal-body">
+      <p class="privacy-intro">씨앗책방은 프로그램 참가 신청 및 원활한 서비스 제공을 위해 아래와 같이 개인정보를 수집 및 이용합니다. 내용을 확인하신 후 동의해 주시기 바랍니다.</p>
+      <div class="privacy-table">
+        <div class="privacy-table-row">
+          <div class="privacy-table-key">수집 및 이용 목적</div>
+          <div class="privacy-table-val">
+            <ul>
+              <li>프로그램 신청 확인 및 참여자 식별</li>
+              <li>프로그램 안내 사항 및 변경 사항 고지 (알림톡/문자 발송)</li>
+              <li>프로그램 관련 문의 사항 응대</li>
+            </ul>
+          </div>
+        </div>
+        <div class="privacy-table-row">
+          <div class="privacy-table-key">수집하는 항목</div>
+          <div class="privacy-table-val">이름, 휴대전화번호</div>
+        </div>
+        <div class="privacy-table-row">
+          <div class="privacy-table-key">보유 및 이용 기간</div>
+          <div class="privacy-table-val">
+            프로그램 종료 후 3개월까지 보관 후 파기<br>
+            <span class="privacy-subtext">(단, 관계 법령의 규정에 따라 보존할 필요가 있는 경우 해당 기간 동안 보관)</span>
+          </div>
+        </div>
+      </div>
+      <p class="privacy-notice">귀하는 위 개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있습니다.<br>단, 동의를 거부하실 경우 씨앗책방에서 제공하는 프로그램 참여 신청이 제한될 수 있습니다.</p>
+    </div>
+    <div class="privacy-modal-footer">
+      <button class="btn btn-cancel" onclick="hidePrivacyModal()">닫기</button>
+      <button class="btn btn-confirm" onclick="agreeAndClose()"><i class="fa-solid fa-check"></i> 동의합니다</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/seedsbookapp.js"></script>
+</body>
+</html>
