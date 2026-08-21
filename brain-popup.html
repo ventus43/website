@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>뇌게임 상품 수령 신청서</title>
+  <link rel="icon" href="/images/brainfavicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background: url('/images/brain-bg.png') no-repeat top center / 100% auto;
+      background-color: #b8e5e0;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1em 0.5em 0.8em;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 0.6em;
+      width: 100%;
+      max-width: 360px;
+      position: relative;
+    }
+
+    /* ── 헤더 ── */
+    .tag {
+      display: inline-block;
+      background: #b8e5e0;
+      color: #1a6e68;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 4px 12px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #111;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .card-title em { color: #1a9e96; font-style: normal; }
+    .card-desc {
+      font-size: 0.875rem;
+      color: #444;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .caution-box {
+      background: #fff8ec;
+      border-left: 4px solid #f5a623;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 14px;
+      font-size: 0.8rem;
+      color: #7a5a00;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+    .caution-box strong { font-weight: 700; }
+
+    /* ── 구분선 ── */
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin-bottom: 24px; }
+
+    /* ── 필드 ── */
+    .field { margin-bottom: 22px; }
+    .field-label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .field-label .req { color: #e74c3c; font-size: 0.75rem; }
+    .field-hint { font-size: 0.75rem; color: #888; margin-bottom: 8px; }
+    .field input[type="text"],
+    .field input[type="tel"] {
+      width: 100%;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #111;
+      outline: none;
+      transition: border-color 0.18s;
+    }
+    .field input:focus { border-color: #1a9e96; }
+    .field input.error { border-color: #e74c3c; }
+
+    /* ── 객관식 칩 ── */
+    .radio-group { display: flex; flex-wrap: wrap; gap: 4px; }
+    .radio-chip input { display: none; }
+    .radio-chip label {
+      display: block;
+      padding: 9px 20px;
+      border-radius: 100px;
+      border: 1.5px solid #e0e0e0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .radio-chip input:checked + label {
+      background: #1a9e96;
+      border-color: #1a9e96;
+      color: #fff;
+    }
+
+    /* ── 체크박스 ── */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #f6fcfb;
+      border: 1.5px solid #b8e5e0;
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .check-row:has(input:checked) { background: #e6f7f6; border-color: #1a9e96; }
+    .check-row input[type="checkbox"] { display: none; }
+    .check-box {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid #ccc;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+      transition: all 0.15s;
+    }
+    .check-row:has(input:checked) .check-box { background: #1a9e96; border-color: #1a9e96; }
+    .check-box svg { display: none; }
+    .check-row:has(input:checked) .check-box svg { display: block; }
+    .check-label { font-size: 0.875rem; color: #333; line-height: 1.5; font-weight: 500; }
+
+    /* ── 에러 ── */
+    .err-msg { font-size: 0.75rem; color: #e74c3c; margin-top: 5px; display: none; }
+    .err-msg.show { display: block; }
+
+    /* ── 제출 버튼 ── */
+    .btn-submit {
+      width: 100%;
+      background: #1a9e96;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.18s, transform 0.1s;
+      letter-spacing: -0.01em;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { background: #a0ccc9; cursor: not-allowed; }
+
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)}
+      40%{transform:translateX(6px)}
+      60%{transform:translateX(-4px)}
+      80%{transform:translateX(4px)}
+    }
+    .shake { animation: shake 0.35s ease; }
+
+    /* ── 로딩 스피너 ── */
+    .spinner {
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 완료 팝업 오버레이 ── */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #fff url('/images/brain-done.png') no-repeat center / cover;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .done-overlay.show { display: flex; }
+
+    .done-text-wrap {
+      margin-top: 52px;
+      text-align: center;
+      padding: 20px 32px 24px;
+      background: rgba(255,255,255,0.82);
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .done-check {
+      width: 52px; height: 52px;
+      background: #1a9e96;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .done-check svg { width: 28px; height: 28px; color: #fff; }
+    .done-title {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #111;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      white-space: pre-line;
+    }
+    .done-sub {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1a6e68;
+      background: #e6f7f6;
+      border-radius: 8px;
+      padding: 8px 16px;
+      display: inline-block;
+    }
+
+    .done-close-wrap {
+      position: absolute;
+      bottom: 48px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .done-close-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .done-close-btn:active { transform: scale(0.92); }
+    .done-close-btn svg { width: 22px; height: 22px; color: #555; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div id="formArea">
+      <span class="tag">팝업스토어 전용</span>
+      <div class="card-title">
+        <em>&lt;너 뇌 지금 뭐해?&gt;</em><br>
+        뇌게임 상품 수령 신청서
+      </div>
+      <p class="card-desc">
+        &lt;너 뇌 지금 뭐해?&gt; 팝업스토어 뇌게임을 통과하신 것을 축하드립니다!<br>
+        아래 정보를 작성해주시면 확인 후 현장에서 즉시 상품을 증정해 드립니다.
+      </p>
+      <div class="caution-box">
+        <strong>⚠️ 주의사항</strong><br>
+        게임 통과 개수별로 증정 상품이 달라집니다. 폼 작성 후 제출 버튼을 누르기 전, 반드시 현장 스태프에게 문의하여 통과 개수 확인을 받으시기 바랍니다.
+      </div>
+
+      <hr class="divider">
+
+      <!-- 성함 -->
+      <div class="field">
+        <div class="field-label">참여자 성함 <span class="req">*</span></div>
+        <div class="field-hint">상품 수령 확인을 위한 성함을 입력해 주세요.</div>
+        <input type="text" id="f-name" placeholder="홍길동" autocomplete="name">
+        <div class="err-msg" id="err-name">성함을 입력해 주세요.</div>
+      </div>
+
+      <!-- 휴대폰 -->
+      <div class="field">
+        <div class="field-label">휴대폰 번호 <span class="req">*</span></div>
+        <div class="field-hint">연락처를 입력해 주세요. (예: 010-1234-5678)</div>
+        <input type="tel" id="f-phone" placeholder="010-0000-0000" inputmode="tel">
+        <div class="err-msg" id="err-phone">휴대폰 번호를 입력해 주세요.</div>
+      </div>
+
+      <!-- 게임 통과 개수 -->
+      <div class="field">
+        <div class="field-label">게임 통과 개수 <span class="req">*</span></div>
+        <div class="field-hint">현장 스태프에게 확인받은 최종 통과 개수를 선택해 주세요.</div>
+        <div class="radio-group">
+          <div class="radio-chip"><input type="radio" name="count" id="c1" value="1개"><label for="c1">1개</label></div>
+          <div class="radio-chip"><input type="radio" name="count" id="c2" value="2개"><label for="c2">2개</label></div>
+          <div class="radio-chip"><input type="radio" name="count" id="c3" value="3개"><label for="c3">3개</label></div>
+          <div class="radio-chip"><input type="radio" name="count" id="c4" value="4개"><label for="c4">4개</label></div>
+          <div class="radio-chip"><input type="radio" name="count" id="c5" value="5개"><label for="c5">5개</label></div>
+        </div>
+        <div class="err-msg" id="err-count">통과 개수를 선택해 주세요.</div>
+      </div>
+
+      <!-- 차후 체험 신청 -->
+      <div class="field">
+        <div class="field-label">차후 체험 신청</div>
+        <div class="field-hint">강연회 및 브레인 트레이닝 검사 신청권 선택해주세요</div>
+        <div class="radio-group">
+          <div class="radio-chip"><input type="radio" name="future" id="f1" value="1번 강연회"><label for="f1">1번 강연회</label></div>
+          <div class="radio-chip"><input type="radio" name="future" id="f2" value="2번 브레인트레이닝 검사"><label for="f2">2번 브레인트레이닝 검사</label></div>
+        </div>
+      </div>
+
+      <!-- 스태프 확인 -->
+      <div class="field">
+        <div class="field-label">스태프 확인 여부 <span class="req">*</span></div>
+        <div class="field-hint">제출 전 스태프 확인을 완료하셨나요?</div>
+        <label class="check-row" for="f-staff">
+          <input type="checkbox" id="f-staff">
+          <span class="check-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:#fff">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+          <span class="check-label">네, 스태프에게 통과 개수를 확인받았습니다.</span>
+        </label>
+        <div class="err-msg" id="err-staff">스태프 확인 여부에 체크해 주세요.</div>
+      </div>
+
+      <button class="btn-submit" id="btnSubmit" onclick="submitForm()">제출하기</button>
+    </div>
+  </div>
+
+  <!-- 완료 팝업 오버레이 -->
+  <div class="done-overlay" id="doneOverlay">
+    <div class="done-text-wrap">
+      <div class="done-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="done-title">제출이 완료되었습니다.</div>
+      <div class="done-sub">이 화면을 안내자에게 보여주세요</div>
+    </div>
+    <div class="done-close-wrap">
+      <button class="done-close-btn" onclick="closeDone()" aria-label="닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function submitForm() {
+      const name   = document.getElementById('f-name').value.trim();
+      const phone  = document.getElementById('f-phone').value.trim();
+      const count  = document.querySelector('input[name="count"]:checked');
+      const staff  = document.getElementById('f-staff').checked;
+      const future = document.querySelector('input[name="future"]:checked');
+
+      setErr('err-name',  !name,  'f-name');
+      setErr('err-phone', !phone, 'f-phone');
+      setErr('err-count', !count);
+      setErr('err-staff', !staff);
+
+      if (!name || !phone || !count || !staff) {
+        const btn = document.getElementById('btnSubmit');
+        btn.classList.remove('shake');
+        void btn.offsetWidth;
+        btn.classList.add('shake');
+        btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>제출 중...';
+
+      fetch('/api/brain-popup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone,
+          count: count.value,
+          staffConfirmed: '네, 확인받았습니다.',
+          futureProgram: future ? future.value : '미선택'
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          document.getElementById('doneOverlay').classList.add('show');
+          document.body.style.overflow = 'hidden';
+        } else {
+          alert('제출 중 오류가 발생했습니다. 다시 시도해 주세요.');
+          btn.disabled = false;
+          btn.innerHTML = '제출하기';
+        }
+      })
+      .catch(() => {
+        alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+        btn.disabled = false;
+        btn.innerHTML = '제출하기';
+      });
+    }
+
+    function closeDone() {
+      document.getElementById('doneOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    function setErr(errId, show, inputId) {
+      document.getElementById(errId).classList.toggle('show', show);
+      if (inputId) document.getElementById(inputId).classList.toggle('error', show);
+    }
+
+    document.getElementById('f-name').addEventListener('input',  () => setErr('err-name',  false, 'f-name'));
+    document.getElementById('f-phone').addEventListener('input', () => setErr('err-phone', false, 'f-phone'));
+    document.querySelectorAll('input[name="count"]').forEach(el =>
+      el.addEventListener('change', () => setErr('err-count', false))
+    );
+    document.getElementById('f-staff').addEventListener('change', () => setErr('err-staff', false));
+  </script>
+</body>
+</html>

@@ -51,6 +51,11 @@ server {
         try_files /seedsbookapp.html =404;
     }
 
+    # 뇌게임 상품 수령 신청서
+    location = /form/brain-popup {
+        try_files /brain-popup.html =404;
+    }
+
     # SPA fallback
     location / {
         try_files $uri $uri/ /index.html;
