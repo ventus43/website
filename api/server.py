@@ -17,7 +17,7 @@ if not BOT_TOKEN or not CHAT_ID:
     raise RuntimeError('[FATAL] TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID가 .env에 없습니다.')
 
 if not BRAIN_TOKEN or not BRAIN_CHAT_ID:
-    raise RuntimeError('[FATAL] TELEGRAM_BRAINFORM_TOKEN 또는 TELEGRAM_BRAINFORM_CHAT이 .env에 없습니다.')
+    print('[WARN] TELEGRAM_BRAINFORM_TOKEN 또는 TELEGRAM_BRAINFORM_CHAT이 .env에 없습니다. /brain-popup 전송 비활성화.')
 
 print(f'[OK] .env 로딩 완료 / chat_id: {CHAT_ID}')
 
@@ -47,6 +47,8 @@ def send_telegram(text: str) -> None:
 
 
 def send_brain_telegram(text: str) -> None:
+    if not BRAIN_TOKEN or not BRAIN_CHAT_ID:
+        raise RuntimeError('TELEGRAM_BRAINFORM_TOKEN 또는 TELEGRAM_BRAINFORM_CHAT이 설정되지 않았습니다.')
     _post_telegram(BRAIN_TOKEN, BRAIN_CHAT_ID, text)
 
 
