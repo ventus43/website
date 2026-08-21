@@ -441,8 +441,19 @@
       if (inputId) document.getElementById(inputId).classList.toggle('error', show);
     }
 
-    document.getElementById('f-name').addEventListener('input',  () => setErr('err-name',  false, 'f-name'));
-    document.getElementById('f-phone').addEventListener('input', () => setErr('err-phone', false, 'f-phone'));
+    document.getElementById('f-name').addEventListener('input', () => setErr('err-name', false, 'f-name'));
+
+    document.getElementById('f-phone').addEventListener('input', function () {
+      const digits = this.value.replace(/\D/g, '').slice(0, 11);
+      if (digits.length <= 3) {
+        this.value = digits;
+      } else if (digits.length <= 7) {
+        this.value = digits.slice(0, 3) + '-' + digits.slice(3);
+      } else {
+        this.value = digits.slice(0, 3) + '-' + digits.slice(3, 7) + '-' + digits.slice(7);
+      }
+      setErr('err-phone', false, 'f-phone');
+    });
     document.querySelectorAll('input[name="count"]').forEach(el =>
       el.addEventListener('change', () => setErr('err-count', false))
     );
