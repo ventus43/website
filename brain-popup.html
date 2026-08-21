@@ -214,8 +214,10 @@
       inset: 0;
       z-index: 9999;
       background: rgba(0,0,0,0.45);
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 20px;
       padding: 24px 20px;
     }
     .done-overlay.show { display: flex; }
@@ -234,23 +236,23 @@
 
     .done-text-wrap {
       text-align: center;
-      padding: 28px 28px 20px;
+      padding: 20px 28px 14px;
       width: 100%;
     }
     .done-check {
-      width: 52px; height: 52px;
+      width: 48px; height: 48px;
       background: #1a9e96;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 12px;
     }
-    .done-check svg { width: 28px; height: 28px; color: #fff; }
+    .done-check svg { width: 26px; height: 26px; color: #fff; }
     .done-title {
       font-size: 1.3rem;
       font-weight: 900;
       color: #111;
       line-height: 1.45;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .done-sub {
       font-size: 0.9rem;
@@ -258,7 +260,7 @@
       color: #1a6e68;
       background: #e6f7f6;
       border-radius: 8px;
-      padding: 8px 16px;
+      padding: 7px 16px;
       display: inline-block;
     }
     .done-img {
@@ -266,24 +268,19 @@
       display: block;
       object-fit: cover;
     }
-    .done-close-wrap {
-      padding: 20px 0 24px;
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
     .done-close-btn {
       width: 48px; height: 48px;
       border-radius: 50%;
       background: #fff;
-      border: 2px solid #e0e0e0;
+      border: none;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
       transition: transform 0.15s;
+      flex-shrink: 0;
     }
     .done-close-btn:active { transform: scale(0.92); }
-    .done-close-btn svg { width: 20px; height: 20px; color: #555; }
+    .done-close-btn svg { width: 20px; height: 20px; color: #444; }
   </style>
 </head>
 <body>
@@ -379,14 +376,12 @@
         <div class="done-sub">이 화면을 안내자에게 보여주세요</div>
       </div>
       <img class="done-img" src="/images/brain-done.png" alt="완료 이미지">
-      <div class="done-close-wrap">
-        <button class="done-close-btn" onclick="closeDone()" aria-label="닫기">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-      </div>
     </div>
+    <button class="done-close-btn" onclick="closeDone()" aria-label="닫기">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </div>
 
   <script>
