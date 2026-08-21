@@ -213,22 +213,29 @@
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: #fff url('/images/brain-done.png') no-repeat center / cover;
-      flex-direction: column;
+      background: rgba(0,0,0,0.45);
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
+      padding: 24px 20px;
     }
     .done-overlay.show { display: flex; }
 
+    .done-modal {
+      background: #fff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 400px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     .done-text-wrap {
-      margin-top: 52px;
       text-align: center;
-      padding: 20px 32px 24px;
-      background: rgba(255,255,255,0.82);
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      padding: 28px 28px 20px;
+      width: 100%;
     }
     .done-check {
       width: 52px; height: 52px;
@@ -239,12 +246,11 @@
     }
     .done-check svg { width: 28px; height: 28px; color: #fff; }
     .done-title {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 900;
       color: #111;
       line-height: 1.45;
       margin-bottom: 10px;
-      white-space: pre-line;
     }
     .done-sub {
       font-size: 0.9rem;
@@ -255,25 +261,29 @@
       padding: 8px 16px;
       display: inline-block;
     }
-
+    .done-img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
     .done-close-wrap {
-      position: absolute;
-      bottom: 48px;
-      left: 50%;
-      transform: translateX(-50%);
+      padding: 20px 0 24px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
     }
     .done-close-btn {
       width: 48px; height: 48px;
       border-radius: 50%;
       background: #fff;
-      border: none;
+      border: 2px solid #e0e0e0;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: transform 0.15s;
     }
     .done-close-btn:active { transform: scale(0.92); }
-    .done-close-btn svg { width: 22px; height: 22px; color: #555; }
+    .done-close-btn svg { width: 20px; height: 20px; color: #555; }
   </style>
 </head>
 <body>
@@ -358,21 +368,24 @@
 
   <!-- 완료 팝업 오버레이 -->
   <div class="done-overlay" id="doneOverlay">
-    <div class="done-text-wrap">
-      <div class="done-check">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
+    <div class="done-modal">
+      <div class="done-text-wrap">
+        <div class="done-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="done-title">제출이 완료되었습니다.</div>
+        <div class="done-sub">이 화면을 안내자에게 보여주세요</div>
       </div>
-      <div class="done-title">제출이 완료되었습니다.</div>
-      <div class="done-sub">이 화면을 안내자에게 보여주세요</div>
-    </div>
-    <div class="done-close-wrap">
-      <button class="done-close-btn" onclick="closeDone()" aria-label="닫기">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+      <img class="done-img" src="/images/brain-done.png" alt="완료 이미지">
+      <div class="done-close-wrap">
+        <button class="done-close-btn" onclick="closeDone()" aria-label="닫기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
