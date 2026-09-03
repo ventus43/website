@@ -54,7 +54,7 @@ const data = { preference: null, bookThought: null, bookTrigger: null, categorie
 characters.forEach(c => {
   const card = document.createElement('div');
   card.className = 'character-card';
-  card.onclick = () => showPopup(c);
+  card.onclick = (e) => { if (window.SBFX) SBFX.burstAt(e, true); showPopup(c); };
   card.innerHTML = `<img src="${c.image}" alt="${c.name}" loading="lazy">`;
   $('characterGrid').appendChild(card);
 });
@@ -67,6 +67,7 @@ $('popup').addEventListener('click', e => { if (e.target === $('popup')) closePo
 // 투표 확인
 function confirmVote() {
   if (!selectedChar) return;
+  if (window.SBFX) SBFX.burstEl($('popupImage'), true);
   $('popup').classList.remove('active');
   initSurvey();
   hidePage('pageCharacter');
@@ -116,6 +117,7 @@ function selectList(el, field, value, etcId) {
   const isEtc = value === null;
   etcEl.style.display = isEtc ? 'block' : 'none';
   $('surveyCharFloat').classList.toggle('hidden-char', isEtc);
+  if (window.SBFX) SBFX.burstEl(el, !isEtc);
   if (isEtc) {
     data[field] = etcEl.value;
     etcEl.oninput = () => data[field] = etcEl.value;
@@ -127,11 +129,17 @@ function selectList(el, field, value, etcId) {
 function selectOpt(el, field, value) {
   el.closest('.option-row').querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected'); data[field] = value;
+  if (window.SBFX) SBFX.burstEl(el, true);
 }
-function toggleCat(el, value) { data.categories[el.classList.toggle('selected') ? 'add' : 'delete'](value); }
+function toggleCat(el, value) {
+  const on = el.classList.toggle('selected');
+  data.categories[on ? 'add' : 'delete'](value);
+  if (window.SBFX) SBFX.burstEl(el, on);
+}
 function selectPart(el, value) {
   document.querySelectorAll('.part-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected'); data.participation = value;
+  if (window.SBFX) SBFX.burstEl(el, true);
 }
 function toggleEtc() {
   const etcEl = $('q6etc');
@@ -222,6 +230,7 @@ function showResultPage() {
   }
 
   hidePage('pageSurvey'); showPage('pageResult');
+  if (window.SBFX) SBFX.celebrate();
   requestAnimationFrame(() => {
     const wrap = $('pageResult').querySelector('.result-wrap');
     wrap.style.transform = 'scale(1)';
@@ -320,6 +329,7 @@ function clBuildSections() {
 
   document.querySelectorAll("#clSections input[type=radio]").forEach(input => {
     input.addEventListener("change", clSaveState);
+    input.addEventListener("change", () => { if (window.SBFX) SBFX.rippleEl(input.nextElementSibling || input); });
   });
 }
 
@@ -526,6 +536,7 @@ clUpdateSummary();
 $('clSubmitBtn').addEventListener("click", function() {
   clSendToSheet();
   showRadarChart();
+  if (window.SBFX) SBFX.celebrate();
 });
 
 $('clChartCloseBtn').addEventListener('click', function() {
@@ -670,6 +681,7 @@ function bqUpdateQuestion() {
 function bqSelectAnswer(choice) {
   const btn = choice === 'a' ? $('bqBtnA') : $('bqBtnB');
   btn.classList.add('selected');
+  if (window.SBFX) SBFX.burstEl(btn, true);
   const scores = BQ_QUESTIONS[bqQIndex][choice].scores;
   for (const k in scores) bqScores[k] += scores[k];
   setTimeout(() => {
