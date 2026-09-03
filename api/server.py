@@ -10,14 +10,8 @@ load_dotenv('/home/ubuntu/report/.env')
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 CHAT_ID   = os.environ.get('TELEGRAM_CHAT_ID')
 
-BRAIN_TOKEN   = os.environ.get('TELEGRAM_BRAINFORM_TOKEN')
-BRAIN_CHAT_ID = os.environ.get('TELEGRAM_BRAINFORM_CHAT')
-
 if not BOT_TOKEN or not CHAT_ID:
     raise RuntimeError('[FATAL] TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID가 .env에 없습니다.')
-
-if not BRAIN_TOKEN or not BRAIN_CHAT_ID:
-    print('[WARN] TELEGRAM_BRAINFORM_TOKEN 또는 TELEGRAM_BRAINFORM_CHAT이 .env에 없습니다. /brain-popup 전송 비활성화.')
 
 print(f'[OK] .env 로딩 완료 / chat_id: {CHAT_ID}')
 
@@ -45,11 +39,6 @@ def _post_telegram(token: str, chat_id: str, text: str) -> None:
 def send_telegram(text: str) -> None:
     _post_telegram(BOT_TOKEN, CHAT_ID, text)
 
-
-def send_brain_telegram(text: str) -> None:
-    if not BRAIN_TOKEN or not BRAIN_CHAT_ID:
-        raise RuntimeError('TELEGRAM_BRAINFORM_TOKEN 또는 TELEGRAM_BRAINFORM_CHAT이 설정되지 않았습니다.')
-    _post_telegram(BRAIN_TOKEN, BRAIN_CHAT_ID, text)
 
 
 @app.route('/contact', methods=['POST'])
@@ -184,36 +173,6 @@ def seedsbook():
         app.logger.error('[Telegram 오류] %s', e)
         return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
 
-
-@app.route('/brain-popup', methods=['POST'])
-def brain_popup():
-    body  = request.get_json(silent=True) or {}
-    name  = body.get('name', '').strip()
-    phone = body.get('phone', '').strip()
-    count = body.get('count', '-')
-    staff = body.get('staffConfirmed', '-')
-
-    if not name or not phone or not count:
-        return jsonify({'ok': False, 'error': '필수 항목을 입력해주세요.'}), 400
-
-    future = body.get('futureProgram', '미선택')
-
-    text = '\n'.join([
-        '🧠 <b>뇌게임 상품 수령 신청</b>',
-        '',
-        f'<b>성함:</b> {name}',
-        f'<b>연락처:</b> {phone}',
-        f'<b>통과 개수:</b> {count}',
-        f'<b>스태프 확인:</b> {staff}',
-        f'<b>차후 체험 신청:</b> {future}',
-    ])
-
-    try:
-        send_brain_telegram(text)
-        return jsonify({'ok': True})
-    except Exception as e:
-        app.logger.error('[Telegram 오류] %s', e)
-        return jsonify({'ok': False, 'error': '전송 중 오류가 발생했습니다.'}), 500
 
 
 if __name__ == '__main__':

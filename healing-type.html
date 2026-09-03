@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>힐링 유형 테스트</title>
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <meta name="description" content="9개의 질문으로 알아보는 나의 힐링 유형">
+  <meta property="og:title" content="힐링 유형 테스트">
+  <meta property="og:description" content="9개의 질문으로 알아보는 나의 힐링 유형">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ink:#2b2a33;
+      --ink-soft:#6b6a78;
+      --line:rgba(43,42,51,.10);
+      --card:rgba(255,255,255,.72);
+      --accent:#7c9cff;
+      --radius:22px;
+    }
+    html,body{height:100%}
+    body{
+      font-family:"Apple SD Gothic Neo","Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+      color:var(--ink);
+      background:#eef1f7;
+      overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    #bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+    .app{
+      position:relative;z-index:1;
+      height:100vh;
+      height:100dvh;
+      display:flex;align-items:center;justify-content:center;
+      padding:24px 20px calc(24px + env(safe-area-inset-bottom));
+    }
+    .screen{
+      width:100%;max-width:440px;
+      display:none;
+      flex-direction:column;
+      animation:rise .55s cubic-bezier(.2,.7,.2,1);
+    }
+    .screen.on{display:flex}
+    @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+    .card{
+      background:var(--card);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(255,255,255,.55);
+      border-radius:var(--radius);
+      padding:34px 28px;
+      box-shadow:0 24px 60px -24px rgba(43,42,51,.28);
+    }
+
+    .eyebrow{
+      font-size:12px;letter-spacing:.16em;font-weight:700;
+      color:var(--accent);text-transform:uppercase;margin-bottom:14px;
+    }
+    .intro h1{font-size:30px;line-height:1.32;font-weight:800;letter-spacing:-.02em}
+    .intro p{margin-top:16px;font-size:15px;line-height:1.75;color:var(--ink-soft)}
+    .meta{display:flex;gap:8px;margin-top:22px;flex-wrap:wrap}
+    .chip{
+      font-size:12px;font-weight:600;color:var(--ink-soft);
+      background:rgba(255,255,255,.6);border:1px solid var(--line);
+      border-radius:999px;padding:7px 13px;
+    }
+
+    .btn{
+      display:flex;align-items:center;justify-content:center;
+      width:100%;border:none;cursor:pointer;
+      font-family:inherit;font-size:16px;font-weight:700;
+      border-radius:16px;padding:17px 20px;
+      transition:transform .12s ease,box-shadow .2s ease,background .2s ease;
+    }
+    .btn:active{transform:scale(.975)}
+    .btn-primary{
+      margin-top:28px;color:#fff;
+      background:linear-gradient(135deg,#8aa4ff,#a78bfa);
+      box-shadow:0 16px 30px -12px rgba(124,110,250,.6);
+    }
+    .btn-ghost{
+      background:rgba(255,255,255,.55);
+      border:1px solid var(--line);color:var(--ink);
+    }
+
+    /* quiz */
+    .progress{margin-bottom:22px}
+    .progress-track{height:6px;border-radius:999px;background:rgba(43,42,51,.08);overflow:hidden}
+    .progress-fill{height:100%;width:0;border-radius:999px;
+      background:linear-gradient(90deg,#8aa4ff,#a78bfa);
+      transition:width .45s cubic-bezier(.2,.7,.2,1)}
+    .progress-label{margin-top:9px;font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--ink-soft)}
+
+    .q-num{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:12px}
+    .q-text{font-size:22px;line-height:1.5;font-weight:800;letter-spacing:-.01em;min-height:99px}
+    .answers{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+    .ans{
+      display:flex;align-items:center;gap:14px;
+      width:100%;cursor:pointer;font-family:inherit;text-align:left;
+      background:rgba(255,255,255,.62);
+      border:1.5px solid var(--line);
+      border-radius:16px;padding:18px 18px;
+      font-size:16px;font-weight:700;color:var(--ink);
+      transition:transform .12s ease,border-color .18s ease,background .18s ease;
+    }
+    .ans:active{transform:scale(.98)}
+    .ans:hover{border-color:rgba(124,156,255,.55)}
+    .ans .key{
+      flex:0 0 34px;height:34px;border-radius:11px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:800;
+      background:rgba(124,156,255,.14);color:var(--accent);
+    }
+    .ans.no .key{background:rgba(43,42,51,.07);color:var(--ink-soft)}
+
+    .back{
+      align-self:flex-start;margin-top:20px;
+      background:none;border:none;cursor:pointer;font-family:inherit;
+      font-size:13px;font-weight:700;color:var(--ink-soft);
+      padding:8px 4px;
+    }
+    .back[disabled]{opacity:.3;cursor:default}
+
+    /* pick (휴식 방법 선택) */
+    .pick h1{font-size:26px;line-height:1.35;font-weight:800;letter-spacing:-.02em}
+    .pick .hint{margin-top:12px;font-size:13px;color:var(--ink-soft)}
+    .pick-grid{
+      margin-top:24px;display:grid;
+      grid-template-columns:repeat(3,1fr);gap:11px;
+    }
+    .pick-card{
+      display:flex;flex-direction:column;align-items:center;gap:8px;
+      cursor:pointer;font-family:inherit;
+      background:rgba(255,255,255,.62);
+      border:1.5px solid var(--line);
+      border-radius:16px;padding:18px 8px 14px;
+      transition:transform .12s ease,border-color .18s ease,background .18s ease;
+    }
+    .pick-card:hover{border-color:rgba(124,156,255,.55)}
+    .pick-card:active{transform:scale(.96)}
+    .pick-card iconify-icon{font-size:46px}
+    .pick-card .lbl{font-size:13px;font-weight:700;color:var(--ink)}
+    .pick-card.sel{
+      border-color:var(--accent);
+      background:rgba(124,156,255,.14);
+      transform:scale(.97);
+    }
+    .pick-card.sel .lbl{color:var(--accent)}
+    @media (max-width:360px){ .pick-grid{grid-template-columns:repeat(2,1fr)} }
+
+    /* 퀴즈 우상단 휴식 배지 */
+    #screen-quiz .card{position:relative;padding-top:44px}
+    .rest-badge{
+      position:absolute;top:15px;right:16px;
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:11px;font-weight:800;letter-spacing:.02em;
+      color:var(--accent);background:rgba(124,156,255,.16);
+      border-radius:999px;padding:5px 10px 5px 8px;
+    }
+    .rest-badge[hidden]{display:none}
+
+    /* result */
+    .result{align-items:center;text-align:center}
+    .aura-wrap{position:relative;width:230px;height:230px;margin:4px auto 4px}
+    #aura{width:100%;height:100%;display:block}
+    .result .eyebrow{margin-top:8px}
+    .result h2{font-size:27px;font-weight:900;letter-spacing:-.02em;line-height:1.35}
+    .trait{
+      margin-top:14px;font-size:14px;font-weight:700;color:var(--accent);
+      background:rgba(124,156,255,.12);border-radius:999px;
+      padding:9px 16px;display:inline-block;
+    }
+    .detail{margin-top:20px;font-size:15px;line-height:1.85;color:var(--ink-soft)}
+    .result .btn{margin-top:0}
+    .result .btn-primary{margin-top:30px}
+    .result .btn-ghost{margin-top:10px}
+
+    @media (max-height:680px){
+      .card{padding:26px 24px}
+      .intro h1{font-size:26px}
+      .q-text{font-size:20px;min-height:84px}
+      .aura-wrap{width:180px;height:180px}
+    }
+  </style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<div class="app">
+
+  <!-- INTRO -->
+  <section class="screen on intro" id="screen-intro">
+    <div class="card">
+      <div class="eyebrow">Healing Type Test</div>
+      <h1>쉬어도 쉰 것 같지<br>않은 당신에게</h1>
+      <p>사람마다 진짜 힐링되는 방식은 다릅니다.<br>
+        9개의 질문에 YES / NO로 답하고<br>
+        나에게 맞는 회복법을 찾아보세요.</p>
+      <div class="meta">
+        <span class="chip">소요시간 약 40초</span>
+        <span class="chip">YES / NO 선택</span>
+      </div>
+      <button class="btn btn-primary" onclick="Test.pick()">테스트 시작하기</button>
+    </div>
+  </section>
+
+  <!-- PICK: 나의 휴식 방법 -->
+  <section class="screen pick" id="screen-pick">
+    <div class="card">
+      <div class="eyebrow">Step 0</div>
+      <h1>나의 휴식 방법은?</h1>
+      <p class="hint">가장 가까운 하나를 골라주세요.</p>
+      <div class="pick-grid" id="pickGrid">
+        <button class="pick-card" onclick="Test.choose('잠','night-landscape',this)"><iconify-icon icon="flat-color-icons:night-landscape" width="46" height="46"></iconify-icon><span class="lbl">잠</span></button>
+        <button class="pick-card" onclick="Test.choose('산책','landscape',this)"><iconify-icon icon="flat-color-icons:landscape" width="46" height="46"></iconify-icon><span class="lbl">산책</span></button>
+        <button class="pick-card" onclick="Test.choose('여행','globe',this)"><iconify-icon icon="flat-color-icons:globe" width="46" height="46"></iconify-icon><span class="lbl">여행</span></button>
+        <button class="pick-card" onclick="Test.choose('파티','music',this)"><iconify-icon icon="flat-color-icons:music" width="46" height="46"></iconify-icon><span class="lbl">파티</span></button>
+        <button class="pick-card" onclick="Test.choose('운동','sports-mode',this)"><iconify-icon icon="flat-color-icons:sports-mode" width="46" height="46"></iconify-icon><span class="lbl">운동</span></button>
+        <button class="pick-card" onclick="Test.choose('독서','reading',this)"><iconify-icon icon="flat-color-icons:reading" width="46" height="46"></iconify-icon><span class="lbl">독서</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="screen-quiz">
+    <div class="card">
+      <div class="rest-badge" id="restBadge" hidden></div>
+      <div class="progress">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">STEP 1</div>
+      </div>
+      <div class="q-num" id="qNum">Q1</div>
+      <div class="q-text" id="qText">—</div>
+      <div class="answers">
+        <button class="ans yes" onclick="Test.answer(true)">
+          <span class="key">YES</span><span>그렇다</span>
+        </button>
+        <button class="ans no" onclick="Test.answer(false)">
+          <span class="key">NO</span><span>아니다</span>
+        </button>
+      </div>
+    </div>
+    <button class="back" id="backBtn" onclick="Test.back()">← 이전 질문</button>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen result" id="screen-result">
+    <div class="card">
+      <div class="aura-wrap"><canvas id="aura" width="460" height="460"></canvas></div>
+      <div class="eyebrow">Your Healing Type</div>
+      <h2 id="rName">—</h2>
+      <div class="trait" id="rTrait">—</div>
+      <p class="detail" id="rDetail">—</p>
+      <button class="btn btn-primary" onclick="Test.pick()">다시 테스트하기</button>
+      <button class="btn btn-ghost" onclick="Test.home()">처음으로</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------------- 질문 흐름 (설계도) ---------------- */
+const FLOW = {
+  Q1:{n:1,t:"쉬는 날에 넷플릭스·유튜브가 없으면\n뭘 해야 할지 모르겠다",                       yes:"Q4", no:"Q2"},
+  Q2:{n:2,t:"일기를 적는 습관이 있다",                                              yes:"Q5", no:"Q3"},
+  Q3:{n:3,t:"힘든 일이 생겨도 누구한테 말하기보다\n그냥 혼자 삭힌다",                yes:"Q6", no:"Q5"},
+  Q4:{n:4,t:"아무것도 안 하고 쉬려는데\n오히려 생각이 더 많아진다",                 yes:"Q7", no:"Q5"},
+  Q5:{n:5,t:"머릿속이 복잡할 때\n폰 메모장에 적어둔 글이 많다",                     yes:"Q8", no:"Q6"},
+  Q6:{n:6,t:"친구 실수는 금방 넘어가면서\n내 실수는 계속 곱씹는다",                 yes:"Q9", no:"Q8"},
+  Q7:{n:7,t:"유튜브든 음악이든\n뭔가 들어야 기분이 좋다",                          yes:"R_SENSE", no:"Q8"},
+  Q8:{n:8,t:"뭐라도 적고 나면\n아까보다 기분이 나아진다",                          yes:"R_WRITE", no:"Q9"},
+  Q9:{n:9,t:"사람들이랑 있다가\n혼자 있는 시간이 행복하다",                        yes:"R_ALONE", no:"R_SENSE"},
+};
+
+const RESULTS = {
+  R_SENSE:{
+    key:"sense",
+    name:"감각적으로 사색하지형",
+    trait:"가만히 있으면 오히려 생각이 더 많아지는 타입",
+    detail:"전시회를 보거나 반신욕을 하듯, 힐링되는 행동을 하면서 쉬는 사람이에요. 쉬는 날에도 넷플릭스나 유튜브가 없으면 뭘 해야 할지 모르겠는 편이라, 오감을 자극하는 활동 속에서 마음이 정리돼요.",
+  },
+  R_WRITE:{
+    key:"write",
+    name:"쓰면서 회복해형",
+    trait:"자기 전에 오늘 일을 정리하지 않으면 잠이 안 오는 타입",
+    detail:"손으로 쓰거나 폰 메모장에라도 적어야 그제야 좀 후련해지는 사람이에요. 긴 일기보다는 짧게라도 끄적이는 방식이 더 잘 맞고, 글로 뱉어내는 순간 머릿속이 가벼워져요.",
+  },
+  R_ALONE:{
+    key:"alone",
+    name:"나 혼자 있고 싶어형",
+    trait:"힘들어도 말하기보다 혼자 삭히는 타입",
+    detail:"누가 말 걸어주는 것보다 혼자 조용히 있어야 머리가 비워지는 사람이에요. 친구 실수는 금방 넘어가면서 내 실수는 며칠씩 붙잡고 있을 때도 있어서, 혼자만의 시간이 꼭 필요한 회복 루틴이에요.",
+  },
+};
+
+const MAX_STEPS = 7;
+
+const Test = {
+  node:"Q1",
+  history:[],
+  currentType:"sense",
+  rest:"",
+  restIcon:"",
+
+  show(id){
+    document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+    document.getElementById(id).classList.add("on");
+  },
+  home(){ this.show("screen-intro"); },
+  pick(){
+    document.querySelectorAll("#pickGrid .pick-card").forEach(c=>c.classList.remove("sel"));
+    this.show("screen-pick");
+  },
+  choose(method,icon,el){
+    this.rest=method; this.restIcon=icon;
+    document.querySelectorAll("#pickGrid .pick-card").forEach(c=>c.classList.remove("sel"));
+    if(el) el.classList.add("sel");
+    setTimeout(()=>this.start(),260);
+  },
+  start(){
+    this.node="Q1";
+    this.history=[];
+    this.render();
+    this.show("screen-quiz");
+  },
+  render(){
+    const q=FLOW[this.node];
+    const badge=document.getElementById("restBadge");
+    if(this.rest){
+      badge.innerHTML=(this.restIcon?'<iconify-icon icon="flat-color-icons:'+this.restIcon+'" width="14" height="14"></iconify-icon>':'')+"<span>"+this.rest+"</span>";
+      badge.hidden=false;
+    } else { badge.hidden=true; }
+    document.getElementById("qNum").textContent="Q"+q.n;
+    document.getElementById("qText").textContent=q.t;
+    const step=this.history.length+1;
+    document.getElementById("progressLabel").textContent="STEP "+step;
+    const pct=Math.min(100,Math.round((this.history.length/MAX_STEPS)*100));
+    document.getElementById("progressFill").style.width=Math.max(pct,8)+"%";
+    document.getElementById("backBtn").disabled=this.history.length===0;
+    BG.target=0.25+(this.history.length/MAX_STEPS)*0.6;
+  },
+  answer(isYes){
+    const q=FLOW[this.node];
+    this.history.push(this.node);
+    const next=isYes?q.yes:q.no;
+    if(next.startsWith("R_")){ this.finish(next); }
+    else { this.node=next; this.render(); }
+  },
+  back(){
+    if(!this.history.length) return;
+    this.node=this.history.pop();
+    this.render();
+  },
+  finish(rkey){
+    const r=RESULTS[rkey];
+    this.currentType=r.key;
+    document.getElementById("progressFill").style.width="100%";
+    document.getElementById("rName").textContent=r.name;
+    document.getElementById("rTrait").textContent=r.trait;
+    document.getElementById("rDetail").textContent=r.detail;
+    Aura.set(r.key);
+    this.show("screen-result");
+  },
+};
+
+/* ---------------- 배경 캔버스 (은은한 오브) ---------------- */
+const BG = {
+  c:document.getElementById("bg"),
+  ctx:null, w:0, h:0, dpr:1,
+  orbs:[], t:0, mood:0.25, target:0.25,
+  init(){
+    this.ctx=this.c.getContext("2d");
+    this.resize();
+    addEventListener("resize",()=>this.resize());
+    const palette=[[138,164,255],[167,139,250],[143,214,196],[255,184,119]];
+    for(let i=0;i<5;i++){
+      this.orbs.push({
+        x:Math.random(), y:Math.random(),
+        r:0.28+Math.random()*0.34,
+        col:palette[i%palette.length],
+        sx:(Math.random()-0.5)*0.00016,
+        sy:(Math.random()-0.5)*0.00016,
+        ph:Math.random()*Math.PI*2,
+      });
+    }
+    requestAnimationFrame(()=>this.loop());
+  },
+  resize(){
+    this.dpr=Math.min(devicePixelRatio||1,2);
+    this.w=this.c.width=innerWidth*this.dpr;
+    this.h=this.c.height=innerHeight*this.dpr;
+    this.c.style.width=innerWidth+"px";
+    this.c.style.height=innerHeight+"px";
+  },
+  loop(){
+    this.t+=1;
+    this.mood+=(this.target-this.mood)*0.02;
+    const ctx=this.ctx;
+    const g=ctx.createLinearGradient(0,0,0,this.h);
+    g.addColorStop(0,"#f4f6fb");
+    g.addColorStop(1,"#e7ebf5");
+    ctx.fillStyle=g; ctx.fillRect(0,0,this.w,this.h);
+    ctx.globalCompositeOperation="lighter";
+    for(const o of this.orbs){
+      o.x+=o.sx; o.y+=o.sy;
+      if(o.x<-0.3||o.x>1.3)o.sx*=-1;
+      if(o.y<-0.3||o.y>1.3)o.sy*=-1;
+      const pulse=0.85+Math.sin(this.t*0.006+o.ph)*0.15;
+      const cx=o.x*this.w, cy=o.y*this.h;
+      const rad=o.r*Math.min(this.w,this.h)*pulse;
+      const rg=ctx.createRadialGradient(cx,cy,0,cx,cy,rad);
+      const a=(0.10+this.mood*0.16);
+      rg.addColorStop(0,`rgba(${o.col[0]},${o.col[1]},${o.col[2]},${a})`);
+      rg.addColorStop(1,`rgba(${o.col[0]},${o.col[1]},${o.col[2]},0)`);
+      ctx.fillStyle=rg;
+      ctx.beginPath();ctx.arc(cx,cy,rad,0,Math.PI*2);ctx.fill();
+    }
+    ctx.globalCompositeOperation="source-over";
+    requestAnimationFrame(()=>this.loop());
+  },
+};
+
+/* ---------------- 결과 아우라 캔버스 ---------------- */
+const Aura = {
+  c:document.getElementById("aura"),
+  ctx:null, type:"sense", t:0, parts:[], running:false,
+  PAL:{
+    sense:[[255,184,119],[255,143,177],[255,214,165]],
+    write:[[124,156,255],[160,180,255],[95,107,216]],
+    alone:[[143,214,196],[191,232,221],[107,191,174]],
+  },
+  set(type){
+    this.type=type; this.t=0;
+    this.ctx=this.ctx||this.c.getContext("2d");
+    this.parts=[];
+    const N=type==="alone"?4:34;
+    for(let i=0;i<N;i++){
+      this.parts.push({
+        a:Math.random()*Math.PI*2,
+        r:40+Math.random()*150,
+        sp:0.004+Math.random()*0.012,
+        sz:type==="write"?1.4+Math.random()*2.2:2+Math.random()*4,
+        off:Math.random()*Math.PI*2,
+        ph:i/N,
+      });
+    }
+    if(!this.running){ this.running=true; requestAnimationFrame(()=>this.loop()); }
+  },
+  loop(){
+    if(!document.getElementById("screen-result").classList.contains("on")){
+      this.running=false; return;
+    }
+    this.t+=1;
+    const ctx=this.ctx, W=this.c.width, H=this.c.height, cx=W/2, cy=H/2;
+    const pal=this.PAL[this.type];
+    ctx.clearRect(0,0,W,H);
+
+    // 코어
+    const coreR=48+Math.sin(this.t*0.03)*7;
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,coreR*2.4);
+    cg.addColorStop(0,`rgba(${pal[0][0]},${pal[0][1]},${pal[0][2]},.55)`);
+    cg.addColorStop(1,`rgba(${pal[0][0]},${pal[0][1]},${pal[0][2]},0)`);
+    ctx.fillStyle=cg;
+    ctx.beginPath();ctx.arc(cx,cy,coreR*2.4,0,Math.PI*2);ctx.fill();
+
+    if(this.type==="sense"){
+      for(const p of this.parts){
+        p.a+=p.sp;
+        const rr=p.r+Math.sin(this.t*0.02+p.off)*18;
+        const x=cx+Math.cos(p.a)*rr;
+        const y=cy+Math.sin(p.a)*rr*0.82;
+        const col=pal[Math.floor(p.ph*pal.length)];
+        ctx.fillStyle=`rgba(${col[0]},${col[1]},${col[2]},.85)`;
+        ctx.beginPath();ctx.arc(x,y,p.sz,0,Math.PI*2);ctx.fill();
+      }
+    } else if(this.type==="write"){
+      ctx.lineWidth=2.4;ctx.lineCap="round";
+      for(let k=0;k<5;k++){
+        const col=pal[k%pal.length];
+        ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},.5)`;
+        ctx.beginPath();
+        for(let x=40;x<=W-40;x+=6){
+          const prog=(x-40)/(W-80);
+          const y=cy+Math.sin(prog*7+this.t*0.05-k*0.8)*(30+k*10)*Math.sin(prog*Math.PI);
+          x===40?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+      for(const p of this.parts){
+        p.a+=p.sp*2;
+        const prog=(Math.sin(p.a)+1)/2;
+        const x=40+prog*(W-80);
+        const y=cy+Math.sin(prog*7+this.t*0.05)*40;
+        ctx.fillStyle=`rgba(${pal[0][0]},${pal[0][1]},${pal[0][2]},.9)`;
+        ctx.beginPath();ctx.arc(x,y,p.sz,0,Math.PI*2);ctx.fill();
+      }
+    } else { // alone — 고요한 파문
+      for(let i=0;i<this.parts.length;i++){
+        const p=this.parts[i];
+        const life=((this.t*0.9)+p.ph*260)%260;
+        const rr=life* (Math.min(W,H)/2/260);
+        const alpha=Math.max(0,0.5*(1-life/260));
+        const col=pal[i%pal.length];
+        ctx.strokeStyle=`rgba(${col[0]},${col[1]},${col[2]},${alpha})`;
+        ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(cx,cy,rr,0,Math.PI*2);ctx.stroke();
+      }
+      ctx.fillStyle=`rgba(${pal[2][0]},${pal[2][1]},${pal[2][2]},.95)`;
+      ctx.beginPath();ctx.arc(cx,cy,7+Math.sin(this.t*0.05)*2,0,Math.PI*2);ctx.fill();
+    }
+    requestAnimationFrame(()=>this.loop());
+  },
+};
+
+BG.init();
+</script>
+</body>
+</html>

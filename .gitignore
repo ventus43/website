@@ -1,0 +1,9 @@
+# OS
+.DS_Store
+
+# 로그
+*.log
+
+# 별도로 관리·배포되는 하위 프로젝트 (report/dist 정적 배포에서 제외)
+/outreach-app/
+/choi3/

@@ -51,10 +51,16 @@ server {
         try_files /seedsbookapp.html =404;
     }
 
-    # 뇌게임 상품 수령 신청서
-    location = /form/brain-popup {
-        try_files /brain-popup.html =404;
+    # 힐링 유형 테스트
+    location = /healing-type {
+        try_files /healing-type.html =404;
     }
+
+    # 참여 페이지 모음 (허브)
+    location = /hub {
+        try_files /hub.html =404;
+    }
+
 
     # SPA fallback
     location / {
