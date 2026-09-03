@@ -41,8 +41,8 @@ server {
         try_files /survey.html =404;
     }
 
-    # 사부작 북클럽 신청
-    location = /sabujak-book {
+    # 사부작 (배포용 폼)
+    location = /form/hskcM5sSYK {
         try_files /sabujak-book.html =404;
     }
 
