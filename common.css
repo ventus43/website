@@ -1087,7 +1087,7 @@ body.survey-page::before {
   .contact-inner { grid-template-columns: 1fr; gap: 48px; }
 }
 @media (max-width: 768px) {
-  .container { padding: 0 20px; }
+  .container { padding: 0 5%; }
   .nav-links, .nav-cta { display: none; }
   .nav-hamburger { display: flex; }
   .footer-grid { grid-template-columns: 1fr; }
