@@ -313,7 +313,6 @@
     .result-emoji { font-size: 50px; margin-bottom: 16px; }
     .result-title { font-size: 23px; margin: 0 0 14px; font-weight: 700; }
     .result-desc { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.6; margin: 0 0 36px; }
-    .result-actions { display: flex; gap: 10px; width: 100%; }
     .btn-ghost {
       flex: 1;
       background: var(--accent);
@@ -513,10 +512,6 @@
     <div class="result-emoji">🛸</div>
     <h2 class="result-title">착륙 준비 완료🛸</h2>
     <p class="result-desc">"곧 첫 만남 안내를 보내드릴게요."</p>
-    <div class="result-actions">
-      <button class="btn-ghost" id="btn-restart">다시 시작하기</button>
-      <button class="btn-ghost" id="btn-share">친구에게 공유하기</button>
-    </div>
   </section>
 
 </div>
@@ -717,44 +712,8 @@
       }, 4000);
     }
 
-    // RESULT actions
-    document.getElementById('btn-restart').addEventListener('click', () => {
-      state.answers = {};
-      submitted = false;
-      inputQ1Name.value = '';
-      inputQ1Birth.value = '';
-      inputQ1Phone.value = '';
-      consentCheck.checked = false;
-      validateQ1();
-      document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
-      inputQ4.value = '';
-      inputQ5.value = '';
-      hintQ4.classList.remove('show');
-      hintQ5.classList.remove('show');
-      document.getElementById('loading-text').innerHTML = '지구인 신호 수신 중<span class="loading-dots"><span></span><span></span><span></span></span>';
-      show('screen-start');
-    });
-
     // 첫 진입 로딩 (0.8초 후 시작 화면)
     setTimeout(() => show('screen-start'), 800);
-
-    document.getElementById('btn-share').addEventListener('click', async () => {
-      const shareUrl = location.href;
-      const shareData = {
-        title: '사부작 · 책에서 시작하는 만남 🛸',
-        text: '책에서 시작해 각자의 세계를 넓혀가는 모임, 사부작에 함께해요 🛸',
-        url: shareUrl
-      };
-      if (navigator.share) {
-        try { await navigator.share(shareData); return; } catch (e) {}
-      }
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        alert('참여 링크가 복사되었어요!\n함께하고 싶은 친구에게 공유해 주세요 🛸');
-      } catch (e) {
-        alert('참여 링크\n' + shareUrl);
-      }
-    });
   })();
 </script>
 
