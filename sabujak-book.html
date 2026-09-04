@@ -147,6 +147,13 @@
       white-space: pre-line;
       margin: 0 0 32px;
     }
+    .q-text-sub {
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.55;
+      white-space: pre-line;
+      margin: 0 0 32px;
+    }
 
     /* ---- inputs (dark TextInput) ---- */
     .form-input { margin-bottom: 8px; }
@@ -490,8 +497,9 @@
     </div>
     <div class="q-count">Q5.</div>
     <p class="q-text">참여 가능한 날짜를 선택해주세요 🛸</p>
+    <p class="q-text-sub">2주 이내로 선택이 가능해요</p>
     <div class="form-input">
-      <input type="date" id="input-q5" min="2026-09-03" max="2026-09-19">
+      <input type="date" id="input-q5">
       <div class="input-error" id="hint-q5">&nbsp;</div>
     </div>
     <div class="next-btn-wrap">
@@ -660,13 +668,24 @@
       goNext();
     });
 
-    // Q5 — date
+    // Q5 — date (오늘부터 2주 이내)
     const inputQ5 = document.getElementById('input-q5');
     const hintQ5 = document.getElementById('hint-q5');
+    const fmtDate = (d) => {
+      const p = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+    };
+    const q5Min = new Date();
+    const q5Max = new Date();
+    q5Max.setDate(q5Max.getDate() + 14);
+    const Q5_MIN = fmtDate(q5Min);
+    const Q5_MAX = fmtDate(q5Max);
+    inputQ5.min = Q5_MIN;
+    inputQ5.max = Q5_MAX;
     document.getElementById('btn-q5-next').addEventListener('click', () => {
       const v = inputQ5.value;
-      if (v && (v < '2026-09-03' || v > '2026-09-19')) {
-        hintQ5.textContent = '2026-09-03 ~ 2026-09-19 사이 날짜만 선택할 수 있어요.';
+      if (v && (v < Q5_MIN || v > Q5_MAX)) {
+        hintQ5.textContent = `오늘부터 2주 이내(${Q5_MIN} ~ ${Q5_MAX}) 날짜만 선택할 수 있어요.`;
         hintQ5.classList.add('show');
         return;
       }
