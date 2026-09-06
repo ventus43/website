@@ -10,10 +10,13 @@ load_dotenv('/home/ubuntu/report/.env')
 BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 CHAT_ID   = os.environ.get('TELEGRAM_CHAT_ID')
 
+# 사부작(/sabujak-book) 전용 채팅방. 없으면 기본 CHAT_ID 로 전송.
+SABUJAK_CHAT_ID = os.environ.get('TELEGRAM_SABUJAK_CHAT') or CHAT_ID
+
 if not BOT_TOKEN or not CHAT_ID:
     raise RuntimeError('[FATAL] TELEGRAM_BOT_TOKEN 또는 TELEGRAM_CHAT_ID가 .env에 없습니다.')
 
-print(f'[OK] .env 로딩 완료 / chat_id: {CHAT_ID}')
+print(f'[OK] .env 로딩 완료 / chat_id: {CHAT_ID} / sabujak_chat_id: {SABUJAK_CHAT_ID}')
 
 app = Flask(__name__)
 
@@ -36,8 +39,8 @@ def _post_telegram(token: str, chat_id: str, text: str) -> None:
             raise RuntimeError(result.get('description', 'Telegram API 오류'))
 
 
-def send_telegram(text: str) -> None:
-    _post_telegram(BOT_TOKEN, CHAT_ID, text)
+def send_telegram(text: str, chat_id: str = None) -> None:
+    _post_telegram(BOT_TOKEN, chat_id or CHAT_ID, text)
 
 
 
@@ -115,7 +118,7 @@ def sabujak_book():
     ])
 
     try:
-        send_telegram(text)
+        send_telegram(text, SABUJAK_CHAT_ID)
         return jsonify({'ok': True})
     except Exception as e:
         app.logger.error('[Telegram 오류] %s', e)
