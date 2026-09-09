@@ -38,6 +38,17 @@ function goTo(from, to) {
   }, 110);
 }
 
+/* ── 이전(뒤로가기): 선택값은 그대로 두고 이전 문항으로 ── */
+function prevStep(from, to) {
+  goTo(from, to);
+  if (to === 0) {
+    // 인트로로 돌아가면 진행바·홈 버튼을 첫 화면 상태로 되돌림
+    document.getElementById('progressContainer').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('homeBtn').style.display = 'none';
+  }
+}
+
 function setProgress(step) {
   if (step === 0) return;
   const pct = step === 3 ? 100 : Math.round((step / TOTAL) * 100);
@@ -235,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ── 전역 노출 (HTML onclick에서 호출) ── */
 window.nextStep         = nextStep;
+window.prevStep         = prevStep;
 window.goTo             = goTo;
 window.selectRadio      = selectRadio;
 window.toggleCheck      = toggleCheck;
