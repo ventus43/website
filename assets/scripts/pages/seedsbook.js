@@ -35,15 +35,15 @@ function sendToTelegram(payload) {
 }
 
 const characters = [
-  { name:'현미',     image:'img/brown_rice.png' },
-  { name:'완두',     image:'img/pea.png' },
-  { name:'백미',     image:'img/white_rice.png' },
-  { name:'흑미',     image:'img/black_rice.png' },
-  { name:'렌틸콩',   image:'img/lentils.png' },
-  { name:'보리',     image:'img/barley.png' },
-  { name:'옥수수',   image:'img/corner.png' },
-  { name:'강낭콩',   image:'img/kidney_bean.png' },
-  { name:'백미찹쌀', image:'img/white_glutinous.png' }
+  { name:'현미',     image:'/assets/images/seedsbook/characters/brown_rice.png' },
+  { name:'완두',     image:'/assets/images/seedsbook/characters/pea.png' },
+  { name:'백미',     image:'/assets/images/seedsbook/characters/white_rice.png' },
+  { name:'흑미',     image:'/assets/images/seedsbook/characters/black_rice.png' },
+  { name:'렌틸콩',   image:'/assets/images/seedsbook/characters/lentils.png' },
+  { name:'보리',     image:'/assets/images/seedsbook/characters/barley.png' },
+  { name:'옥수수',   image:'/assets/images/seedsbook/characters/corner.png' },
+  { name:'강낭콩',   image:'/assets/images/seedsbook/characters/kidney_bean.png' },
+  { name:'백미찹쌀', image:'/assets/images/seedsbook/characters/white_glutinous.png' }
 ];
 
 const TOTAL_Q = 6;
@@ -612,46 +612,46 @@ const BQ_RESULTS = {
   A: {
     title: "<i class='fa-solid fa-book'></i> '공감 100%' 현실/드라마 소설",
     books: [
-      { title: "불편한 편의점\n(김호연)", desc: "이웃들의 고단한 삶을 따뜻하게 위로하는 편의점 이야기", img: "img/BQbooks/A_1.png" },
-      { title: "아몬드\n(손원평)",        desc: "감정을 느끼지 못하는 소년의 특별한 성장과 교감",        img: "img/BQbooks/A_2.png" },
-      { title: "소년이 온다\n(한강)",     desc: "역사의 아픔 속에서 피어난 인간의 존엄성과 사랑",        img: "img/BQbooks/A_3.png" },
-      { title: "모순\n(양귀자)",          desc: "인생의 모순을 탐구하며 나다운 삶을 찾아가는 여정",      img: "img/BQbooks/A_4.png" }
+      { title: "불편한 편의점\n(김호연)", desc: "이웃들의 고단한 삶을 따뜻하게 위로하는 편의점 이야기", img: "/assets/images/seedsbook/books/A_1.png" },
+      { title: "아몬드\n(손원평)",        desc: "감정을 느끼지 못하는 소년의 특별한 성장과 교감",        img: "/assets/images/seedsbook/books/A_2.png" },
+      { title: "소년이 온다\n(한강)",     desc: "역사의 아픔 속에서 피어난 인간의 존엄성과 사랑",        img: "/assets/images/seedsbook/books/A_3.png" },
+      { title: "모순\n(양귀자)",          desc: "인생의 모순을 탐구하며 나다운 삶을 찾아가는 여정",      img: "/assets/images/seedsbook/books/A_4.png" }
     ]
   },
   B: {
     title: "<i class='fa-solid fa-rocket'></i> '상상력 자극' 환상/SF 소설",
     books: [
-      { title: "우리가 빛의 속도로\n갈 수 없다면", desc: "차가운 우주 속에서 피어나는 따뜻한 SF 단편집",         img: "img/BQbooks/B_1.png" },
-      { title: "달러구트 꿈 백화점\n(이미예)",     desc: "잠들어야만 입장할 수 있는 꿈 백화점의 비밀",           img: "img/BQbooks/B_2.png" },
-      { title: "지구 끝의 온실\n(김초엽)",         desc: "멸망한 세계 속에서 식물들이 만들어낸 희망의 연대기",   img: "img/BQbooks/B_3.png" },
-      { title: "천 개의 파랑\n(천선란)",           desc: "휴머노이드 로봇과 경주마가 나누는 따뜻한 교감",         img: "img/BQbooks/B_4.png" }
+      { title: "우리가 빛의 속도로\n갈 수 없다면", desc: "차가운 우주 속에서 피어나는 따뜻한 SF 단편집",         img: "/assets/images/seedsbook/books/B_1.png" },
+      { title: "달러구트 꿈 백화점\n(이미예)",     desc: "잠들어야만 입장할 수 있는 꿈 백화점의 비밀",           img: "/assets/images/seedsbook/books/B_2.png" },
+      { title: "지구 끝의 온실\n(김초엽)",         desc: "멸망한 세계 속에서 식물들이 만들어낸 희망의 연대기",   img: "/assets/images/seedsbook/books/B_3.png" },
+      { title: "천 개의 파랑\n(천선란)",           desc: "휴머노이드 로봇과 경주마가 나누는 따뜻한 교감",         img: "/assets/images/seedsbook/books/B_4.png" }
     ]
   },
   C: {
     title: "<i class='fa-solid fa-mug-hot'></i> '마음 힐링' 따뜻한 에세이",
     books: [
-      { title: "나는 나로\n살기로 했다",       desc: "냉담한 세상 속에서 온전한 나로 당당하게 사는 법",       img: "img/BQbooks/C_1.png" },
-      { title: "언어의 온도\n(이기주)",         desc: "말과 글이 가진 따뜻한 온도로 마음을 채우는 글",         img: "img/BQbooks/C_2.png" },
-      { title: "기분이 태도가\n되지 않게",      desc: "내 감정의 주인이 되어 일상을 현명하게 지키는 법",       img: "img/BQbooks/C_3.png" },
-      { title: "죽고 싶지만\n떡볶이는 먹고 싶어", desc: "가벼운 우울감 속에서 나를 찾아가는 솔직한 고백",     img: "img/BQbooks/C_4.png" }
+      { title: "나는 나로\n살기로 했다",       desc: "냉담한 세상 속에서 온전한 나로 당당하게 사는 법",       img: "/assets/images/seedsbook/books/C_1.png" },
+      { title: "언어의 온도\n(이기주)",         desc: "말과 글이 가진 따뜻한 온도로 마음을 채우는 글",         img: "/assets/images/seedsbook/books/C_2.png" },
+      { title: "기분이 태도가\n되지 않게",      desc: "내 감정의 주인이 되어 일상을 현명하게 지키는 법",       img: "/assets/images/seedsbook/books/C_3.png" },
+      { title: "죽고 싶지만\n떡볶이는 먹고 싶어", desc: "가벼운 우울감 속에서 나를 찾아가는 솔직한 고백",     img: "/assets/images/seedsbook/books/C_4.png" }
     ]
   },
   D: {
     title: "<i class='fa-solid fa-brain'></i> '깊은 사유' 역사/철학/인문",
     books: [
-      { title: "사피엔스\n(유발 하라리)",          desc: "유인원에서 지구의 지배자가 된 인류의 거대한 역사",       img: "img/BQbooks/D_1.png" },
-      { title: "총, 균, 쇠\n(재레드 다이아몬드)",  desc: "무기와 질병이 바꾼 인류 문명의 불평등에 대한 해답",     img: "img/BQbooks/D_2.png" },
-      { title: "마흔에 읽는\n쇼펜하우어",          desc: "냉정한 철학자가 건네는 삶의 격조와 지혜",               img: "img/BQbooks/D_3.png" },
-      { title: "도둑맞은 집중력\n(요한 하리)",      desc: "현대 사회가 우리의 집중력을 어떻게 빼앗아 갔는가",     img: "img/BQbooks/D_4.png" }
+      { title: "사피엔스\n(유발 하라리)",          desc: "유인원에서 지구의 지배자가 된 인류의 거대한 역사",       img: "/assets/images/seedsbook/books/D_1.png" },
+      { title: "총, 균, 쇠\n(재레드 다이아몬드)",  desc: "무기와 질병이 바꾼 인류 문명의 불평등에 대한 해답",     img: "/assets/images/seedsbook/books/D_2.png" },
+      { title: "마흔에 읽는\n쇼펜하우어",          desc: "냉정한 철학자가 건네는 삶의 격조와 지혜",               img: "/assets/images/seedsbook/books/D_3.png" },
+      { title: "도둑맞은 집중력\n(요한 하리)",      desc: "현대 사회가 우리의 집중력을 어떻게 빼앗아 갔는가",     img: "/assets/images/seedsbook/books/D_4.png" }
     ]
   },
   E: {
     title: "<i class='fa-solid fa-lightbulb'></i> '세상의 이치' 과학/경제/실용",
     books: [
-      { title: "코스모스\n(칼 세이건)",        desc: "광활한 우주 속에서 인간이라는 존재의 경이로움",           img: "img/BQbooks/E_1.png" },
-      { title: "이기적 유전자\n(리처드 도킨스)", desc: "인간과 생물의 행동을 지배하는 유전자의 생존 전략",       img: "img/BQbooks/E_2.png" },
-      { title: "부자의 그릇\n(이즈미 마사토)", desc: "돈을 다루는 능력을 키워주는 소설 형식의 경제 기본서",     img: "img/BQbooks/E_3.png" },
-      { title: "돈의 속성\n(김승호)",          desc: "진짜 부자가 되기 위해 알아야 할 돈의 5가지 속성",         img: "img/BQbooks/E_4.png" }
+      { title: "코스모스\n(칼 세이건)",        desc: "광활한 우주 속에서 인간이라는 존재의 경이로움",           img: "/assets/images/seedsbook/books/E_1.png" },
+      { title: "이기적 유전자\n(리처드 도킨스)", desc: "인간과 생물의 행동을 지배하는 유전자의 생존 전략",       img: "/assets/images/seedsbook/books/E_2.png" },
+      { title: "부자의 그릇\n(이즈미 마사토)", desc: "돈을 다루는 능력을 키워주는 소설 형식의 경제 기본서",     img: "/assets/images/seedsbook/books/E_3.png" },
+      { title: "돈의 속성\n(김승호)",          desc: "진짜 부자가 되기 위해 알아야 할 돈의 5가지 속성",         img: "/assets/images/seedsbook/books/E_4.png" }
     ]
   }
 };

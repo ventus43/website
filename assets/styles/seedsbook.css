@@ -14,7 +14,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 
 .page { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; transition: opacity 0.45s ease, transform 0.45s ease; }
 .page.hidden { opacity: 0; pointer-events: none; transform: scale(0.97); }
-.bg-cover { background: url("../img/backimg2.png") center/cover no-repeat; }
+.bg-cover { background: url("/assets/images/seedsbook/decorations/backimg2.png") center/cover no-repeat; }
 
 /* ===== 랜딩 페이지 ===== */
 #pageLanding { justify-content: flex-start; padding: 0; }
@@ -156,7 +156,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 
 /* ===== 트렌드 슬라이드 ===== */
 #pageTrend {
-  background: url("../img/backimg2.png") center/cover no-repeat;
+  background: url("/assets/images/seedsbook/decorations/backimg2.png") center/cover no-repeat;
   justify-content: center;
   align-items: center;
   cursor: pointer;

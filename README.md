@@ -12,8 +12,9 @@
 
 ### 프론트엔드
 - 빌드 스텝 없음(번들러·패키지 매니저 없음). 저장소 루트의 HTML 파일을 그대로 배포합니다.
-- `common.css`, `gv_main.js`: 대부분 페이지에서 공유하는 네비게이션, 모바일 메뉴, 스크롤 리빌, 스무스 스크롤 등 공통 UI 로직.
-- 페이지별 로직은 `js/app.js`, `js/survey.js`, `js/seedsbookapp.js`로 분리되어 있거나, `sabujak-book.html`·`healing-type.html`처럼 페이지 내부 `<script>`에 인라인으로 작성되어 있습니다(파일마다 관례가 다르므로 작업 전 해당 페이지를 직접 확인 필요).
+- `assets/styles/`: 공통 및 페이지별 CSS. `common.css`는 공통 UI, `seedsbook.css`는 씨앗책방 전용 스타일입니다.
+- `assets/scripts/core/`: 공통 UI 스크립트, `assets/scripts/pages/`: 페이지별 스크립트입니다. 사용하지 않는 기존 스크립트는 `assets/scripts/legacy/`에 보관합니다.
+- `assets/images/`: `site`, `healing`, `sabujak`, `seedsbook` 기능 단위로 정리한 정적 이미지입니다.
 
 ### 백엔드 (`api/server.py`)
 - Flask 단일 파일 앱. 폼별로 라우트 하나씩 존재: `/contact`, `/survey`, `/sabujak-book`, `/seedsbook`.
@@ -39,7 +40,7 @@ Nginx가 특정 클린 URL을 정적 파일로 매핑합니다 (SPA 라우터가
 새 캠페인 페이지를 추가할 때는 HTML 파일 생성과 `nginx/gventus`의 `location` 블록 추가를 함께 해야 합니다.
 
 ### 폼 제출 흐름
-프론트엔드 폼은 동일 출처의 `/api/<name>` 엔드포인트로 POST하며, 일부 페이지(`js/survey.js`, `js/seedsbookapp.js`)는 이와 별개로 구글 앱스 스크립트 URL(`APPS_SCRIPT_URL`, 코드에 하드코딩)로도 병렬 전송을 시도합니다. 이 앱스 스크립트 전송은 스프레드시트 백업 로그용이며 실패해도 무시됩니다(텔레그램 전송과는 독립적).
+프론트엔드 폼은 동일 출처의 `/api/<name>` 엔드포인트로 POST하며, 일부 페이지(`assets/scripts/pages/survey.js`, `assets/scripts/pages/seedsbook.js`)는 이와 별개로 구글 앱스 스크립트 URL(`APPS_SCRIPT_URL`, 코드에 하드코딩)로도 병렬 전송을 시도합니다. 이 앱스 스크립트 전송은 스프레드시트 백업 로그용이며 실패해도 무시됩니다(텔레그램 전송과는 독립적).
 
 ### 배포 (`.github/workflows/deploy.yml`)
 `main` 브랜치에 push하면 즉시 프로덕션(EC2)에 배포됩니다. 별도 스테이징 환경 없음.
@@ -53,16 +54,16 @@ Nginx가 특정 클린 URL을 정적 파일로 매핑합니다 (SPA 라우터가
 |---|---|---|
 | `index.html` | `/` | 메인 소개 페이지. VENTUS 소개, 팀, 진행 프로젝트, FAQ, 참여/문의 폼(`/api/contact`)을 포함하는 원페이지 랜딩. |
 | `hub.html` | `/hub` | 진행 중인 참여 페이지(설문, 씨앗 책방, 힐링 유형 테스트) 링크를 모아놓은 허브 페이지. |
-| `survey.html` | `/survey` | "벤투스 × 문화티켓" 설문조사 폼. 제출 시 `/api/survey` + 구글 앱스 스크립트로 전송(`js/survey.js`). |
+| `survey.html` | `/survey` | "벤투스 × 문화티켓" 설문조사 폼. 제출 시 `/api/survey` + 구글 앱스 스크립트로 전송(`assets/scripts/pages/survey.js`). |
 | `sabujak-book.html` | `/form/hskcM5sSYK` | "사부작" 모임 참여 신청 폼(이름, 출생연도, 연락처, 참여 이유 등). 제출 시 `/api/sabujak-book`로 전송, 전용 텔레그램 채팅방으로 알림. 로직은 페이지 내부 인라인 스크립트. |
-| `seedsbookapp.html` | `/seedsbook` | "씨앗 책방" — 캐릭터 기반 설문 및 체크리스트 참여 페이지. 제출 시 `/api/seedsbook` + 구글 앱스 스크립트로 전송(`js/seedsbookapp.js`). |
+| `seedsbookapp.html` | `/seedsbook` | "씨앗 책방" — 캐릭터 기반 설문 및 체크리스트 참여 페이지. 제출 시 `/api/seedsbook` + 구글 앱스 스크립트로 전송(`assets/scripts/pages/seedsbook.js`). |
 | `healing-type.html` | `/healing-type` | 9개의 YES/NO 질문으로 힐링 유형을 진단하는 인터랙티브 테스트(결과는 캔버스로 시각화). 폼 제출/API 연동 없음, 클라이언트 로직만으로 완결. |
 | `timer.html` | (직접 접근) | `timermo.com`으로 즉시 리다이렉트하는 자리표시 페이지. 실질적인 콘텐츠 없음. |
 | `choi3/` | `choi3.gventus.store` | 이 저장소와 별개로 관리·배포되는 하위 프로젝트(별도 git 저장소, 별도 CI/CD, 별도 EC2 서브도메인). `.gitignore`로 제외되어 있으며 본 저장소의 배포 파이프라인과 무관. |
 
 ## 로컬 실행
 
-프론트엔드는 정적 파일이라 별도 서버 없이 HTML을 열거나(`python3 -m http.server` 등으로 루트 서빙) 확인 가능합니다. 단, `/js/...`, `/img/...` 같은 루트 상대 경로를 쓰므로 저장소 루트를 기준으로 서빙해야 합니다.
+프론트엔드는 정적 파일이라 별도 서버 없이 HTML을 열거나(`python3 -m http.server` 등으로 루트 서빙) 확인 가능합니다. `/assets/...` 경로를 사용하므로 저장소 루트를 기준으로 서빙해야 합니다.
 
 API 서버:
 ```bash

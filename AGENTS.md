@@ -79,7 +79,7 @@ A static marketing/campaign website for gventus (`gventus.store`) plus its small
 
 ## Running locally
 
-Frontend: no server is required for static pages — open the HTML files directly, or serve the directory root with any static file server (e.g. `python3 -m http.server`) since pages reference assets with root-relative paths (`/js/...`, `/img/...`).
+Frontend: no server is required for static pages — open the HTML files directly, or serve the directory root with any static file server (e.g. `python3 -m http.server`) since pages reference assets with root-relative paths under `/assets/...`.
 
 API (`api/server.py`):
 ```bash
@@ -102,11 +102,11 @@ There are no tests or linters configured in this repo.
 
 When adding a new campaign page, add both the HTML file at repo root and a corresponding `location` block in `nginx/gventus`.
 
-**Frontend → API flow.** Forms POST to same-origin `/api/<name>` endpoints (e.g. `js/survey.js` → `/api/survey`, `sabujak-book.html` → `/api/sabujak-book`, `index.html` contact form → `/api/contact`, `js/seedsbookapp.js` → `/api/seedsbook`). In production, nginx proxies `/api/` to the Flask app on `127.0.0.1:8000`. Some pages (`js/survey.js`, `js/seedsbookapp.js`) *also* fire a parallel, best-effort `fetch` to a hardcoded Google Apps Script URL (`APPS_SCRIPT_URL`) for a secondary spreadsheet log — this is separate from and redundant with the Telegram path, and failures there are silently ignored.
+**Frontend → API flow.** Forms POST to same-origin `/api/<name>` endpoints (e.g. `assets/scripts/pages/survey.js` → `/api/survey`, `sabujak-book.html` → `/api/sabujak-book`, `index.html` contact form → `/api/contact`, `assets/scripts/pages/seedsbook.js` → `/api/seedsbook`). In production, nginx proxies `/api/` to the Flask app on `127.0.0.1:8000`. Some pages (`assets/scripts/pages/survey.js`, `assets/scripts/pages/seedsbook.js`) *also* fire a parallel, best-effort `fetch` to a hardcoded Google Apps Script URL (`APPS_SCRIPT_URL`) for a secondary spreadsheet log — this is separate from and redundant with the Telegram path, and failures there are silently ignored.
 
 **API backend (`api/server.py`).** A single-file Flask app with one route per form (`/contact`, `/survey`, `/sabujak-book`, `/seedsbook`). Every route: validates/extracts fields from the JSON body, formats an HTML-formatted message, and posts it to Telegram via `send_telegram()`/`_post_telegram()` (raw `urllib`, no external HTTP lib). `/seedsbook` is multiplexed by a `type` field in the body (`survey` vs `checklist`) into different message formats. Routes intentionally use Korean field names from the request bodies (e.g. `이름`, `나이`, `연락처`) because the frontend forms are Korean and send those keys directly — keep new fields consistent with whatever the corresponding HTML form/JS sends. `/sabujak-book` sends to a distinct Telegram chat (`SABUJAK_CHAT_ID`) if configured, everything else goes to the default `CHAT_ID`.
 
-**Shared frontend assets.** `common.css` and `gv_main.js` are shared across most pages (nav, mobile menu, scroll reveal, smooth scroll). Page-specific behavior lives in `js/app.js`, `js/survey.js`, `js/seedsbookapp.js`, or inline `<script>` blocks in the HTML itself (e.g. `sabujak-book.html`, `healing-type.html`) — there's no single convention, check the specific page for where its logic lives.
+**Shared frontend assets.** `assets/styles/common.css` and `assets/scripts/core/site.js` are shared across most pages (nav, mobile menu, scroll reveal, smooth scroll). Page-specific behavior lives in `assets/scripts/pages/`, or inline `<script>` blocks in the HTML itself (e.g. `sabujak-book.html`, `healing-type.html`). Images are grouped by feature below `assets/images/`; an unreferenced historical script remains in `assets/scripts/legacy/`.
 
 ## Deployment
 
