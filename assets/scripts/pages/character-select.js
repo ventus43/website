@@ -96,9 +96,9 @@
       if (this.variant === 'deck') this.renderDeck(mount);
       else if (this.variant === 'roulette') this.renderRoulette(mount);
       else this.renderSlider(mount);
-      // transform으로 줄인 실제 높이만 확보해 하단에 빈 레이아웃 공간이 남지 않게 한다.
+      // transform으로 조정한 실제 높이만 확보해 하단에 빈 레이아웃 공간이 남지 않게 한다.
       const frame = this.root.querySelector('.character-select__frame');
-      const updateHeight = () => { frame.style.height = `${mount.offsetHeight * 0.8}px`; };
+      const updateHeight = () => { frame.style.height = `${mount.offsetHeight * 0.92}px`; };
       this.resizeObserver = new ResizeObserver(updateHeight);
       this.resizeObserver.observe(mount);
       updateHeight();
@@ -125,7 +125,7 @@
         <section class="select-panel slider-select" aria-labelledby="sliderTitle">
           <header class="select-heading">
             <span class="select-kicker">A · SLIDE &amp; RANDOM</span>
-            <h1 id="sliderTitle">오늘은 누구와<br>시작해볼까요?</h1>
+            <h1 id="sliderTitle">어떤 친구를<br>만나볼까요?</h1>
           </header>
           <div class="slider-stage" tabindex="0" aria-label="캐릭터 슬라이더. 좌우 방향키로 이동할 수 있습니다.">
             <div class="slider-peek slider-peek--prev" aria-hidden="true"></div>
@@ -184,7 +184,7 @@
         void stage.offsetWidth;
         stage.classList.add('is-changing');
         stage.setAttribute('aria-label', `${current.name}. ${current.shortMessage}. 좌우 방향키로 이동할 수 있습니다.`);
-        if (announce) name.textContent = `오늘의 친구 · ${current.name}`;
+        if (announce) name.textContent = `처음 만난 친구 · ${current.name}`;
       };
 
       const move = direction => {
@@ -277,7 +277,7 @@
         <section class="select-panel deck-select" aria-labelledby="deckTitle">
           <header class="select-heading">
             <span class="select-kicker">D · CHARACTER DECK</span>
-            <h1 id="deckTitle">오늘의 친구를<br>골라보세요.</h1>
+            <h1 id="deckTitle">친구 한 명을<br>골라보세요.</h1>
           </header>
           <div class="deck-stage">
             <div class="deck-stack" aria-hidden="true">
@@ -312,7 +312,7 @@
           return `
             <button type="button" class="photo-card photo-card--back" data-card-index="${characterIndex}"
               style="--card-offset:${offset};--card-rise:${Math.abs(offset) * 5}px;--card-order:${position}" aria-label="${position + 1}번째 카드 뒤집기">
-              <span class="photo-card__face photo-card__back"><b>SEEDS<br>BOOK</b><i>?</i><small>오늘의 친구</small></span>
+              <span class="photo-card__face photo-card__back"><b>SEEDS<br>BOOK</b><i>?</i><small>처음 만난 친구</small></span>
               <span class="photo-card__face photo-card__front"></span>
             </button>`;
         }).join('');
@@ -349,10 +349,9 @@
           result.hidden = false;
           result.innerHTML = `
             <div class="picked-card">
-              <span class="picked-card__eyebrow">TODAY'S FRIEND · ${pad(this.characters.indexOf(character) + 1)}</span>
               ${characterImage(character, 'picked-card__image')}
               <strong>${character.name}</strong>
-              <p>“어? 나 골랐어?”</p>
+              <p class="picked-card__message">“${character.shortMessage}”</p>
             </div>
             <div class="select-actions">
               <button type="button" class="select-primary" data-deck-confirm>이 친구와 시작</button>
@@ -389,7 +388,7 @@
         <section class="select-panel roulette-select" aria-labelledby="rouletteTitle">
           <header class="select-heading">
             <span class="select-kicker">E · CHARACTER ROULETTE</span>
-            <h1 id="rouletteTitle">오늘 누구랑<br>책 읽어볼까?</h1>
+            <h1 id="rouletteTitle" style="margin-bottom: 30px;">누구랑 책 읽어볼까?</h1>
           </header>
           <div class="roulette-stage">
             <span class="roulette-pointer" aria-hidden="true"></span>
@@ -431,9 +430,9 @@
         result.innerHTML = `
           <div class="roulette-result__card">
             <div>${characterImage(character, 'roulette-result__image')}</div>
-            <span>오늘 만난 친구는</span>
+            <span>만난 친구는</span>
             <strong>${character.name}</strong>
-            <p>“나 불렀어?”</p>
+            <p class="roulette-result__message">“${character.shortMessage}”</p>
           </div>
           <div class="select-actions">
             <button type="button" class="select-primary" data-roulette-confirm>이 친구 선택</button>
@@ -455,7 +454,7 @@
         actions.hidden = false;
         spinButton.disabled = true;
         mount.querySelector('[data-roulette-direct]').disabled = true;
-        status.textContent = '오늘의 친구를 찾는 중…';
+        status.textContent = '친구를 찾는 중…';
         currentRotation = rouletteRotation(currentRotation, targetIndex, this.characters.length, prefersReducedMotion());
         wheel.classList.remove('has-landed');
         wheel.classList.add('is-spinning');
@@ -463,7 +462,7 @@
         this.later(() => {
           wheel.classList.remove('is-spinning');
           wheel.classList.add('has-landed');
-          status.textContent = `${selected.name}! 오늘은 이 친구가 왔어요.`;
+          status.textContent = `${selected.name}! 반가워요.`;
           spinButton.disabled = false;
           mount.querySelector('[data-roulette-direct]').disabled = false;
           wheel.setAttribute('aria-label', `룰렛 결과: ${selected.name}`);
