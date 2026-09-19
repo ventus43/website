@@ -436,6 +436,24 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   .roulette-result .select-actions { margin-top: 7px; }
 }
 
+/* 모바일에서는 남는 높이를 콘텐츠 위로 보내고 하단 여백을 줄인다. */
+@media (max-width: 768px) {
+  #pageCharacter {
+    --select-top-space: max(14px, env(safe-area-inset-top));
+    --select-bottom-space: max(8px, env(safe-area-inset-bottom));
+    padding-top: var(--select-top-space);
+    padding-bottom: var(--select-bottom-space);
+  }
+  .select-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: calc(100dvh - var(--select-top-space) - var(--select-bottom-space) - 62px);
+    padding-bottom: 10px;
+  }
+  .select-panel > * { flex-shrink: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #sb-petals, #sb-fx { display: none; }
   .photo-card.is-flipped { transform: none !important; }

@@ -4,15 +4,15 @@
 
 프로젝트 루트에서 `python3 -m http.server 4173 --bind 127.0.0.1` 실행 후:
 
-- A: http://127.0.0.1:4173/seedsbook.html?characterVariant=slider
-- D: http://127.0.0.1:4173/seedsbook.html?characterVariant=deck
-- E: http://127.0.0.1:4173/seedsbook.html?characterVariant=roulette
+- A: http://127.0.0.1:4173/seedsbook-new.html?characterVariant=slider
+- D: http://127.0.0.1:4173/seedsbook-new.html?characterVariant=deck
+- E: http://127.0.0.1:4173/seedsbook-new.html?characterVariant=roulette
 
 상단 Slider / Deck / Roulette 버튼으로 비교한다. URL 파라미터가 없거나 잘못되면 Slider가 기본이다. 비교용 탭은 현재 시제품에 노출된다. 최종안 확정 시 `CharacterSelect.render()`의 variant nav와 각 안의 영문 prototype kicker를 제거하고 초기 variant를 고정하면 된다. 현재 작업은 로컬 변경이며 배포하지 않았다.
 
 ## 이전 화면과 모바일 조정
 
-- 배포 경로 `/seedsbook` → `seedsbook.html`, `/seedsbook-old` → `seedsbook-old.html`. hub에서 두 화면으로 이동할 수 있다. 기존 `seedsbookapp*.html` 주소는 nginx에서 해당 경로로 리디렉트한다.
+- 배포 경로 `/seedsbook` → `seedsbook.html`은 기존 화면이고, `/seedsbook-new` → `seedsbook-new.html`은 신규 화면이다. hub에서 두 화면으로 이동한다. `/seedsbook-old`와 기존 `seedsbookapp*.html` 주소는 `/seedsbook`으로 리디렉트한다.
 - 이전 HTML은 `choi3/seedsbookapp-old.html`을 보존하여 복사하고, 존재하지 않던 참조를 별도의 `seedsbook-old.css` / `seedsbook-old.js`로 연결했다. 두 asset은 작업 전 Git 버전으로 고정하여 새 UI 변경의 영향을 받지 않는다. `choi3` 안 원본은 유지했다.
 - 모바일 선택 패널의 흰색 불투명도를 94% → 64%로 낮추고 배경 blur를 추가했다. 대사 부분은 별도 반투명 표면을 유지하고, 주요 버튼 글자를 진하게 조정했다.
 - 모바일 variant 탭·방향 버튼·텍스트 버튼의 터치 높이를 최소 44px로 맞췄다. prototype 영문 kicker는 모바일에서 숨겨 첫 화면의 정보량을 줄였다.
@@ -21,7 +21,7 @@
 ## 기존 구조와 연결
 
 - 정적 HTML + 바닐라 JS/CSS이며 새 런타임 의존성은 없다.
-- `seedsbook.html`의 `#characterSelect`에 `new CharacterSelect({ root, characters, onSelect, initialVariant })`를 마운트한다.
+- `seedsbook-new.html`의 `#characterSelect`에 `new CharacterSelect({ root, characters, onSelect, initialVariant })`를 마운트한다.
 - `renderSlider`, `renderDeck`, `renderRoulette`는 같은 데이터와 최종 확인 콜백을 사용한다.
 - `assets/scripts/data/seedsbook-characters.js`에 기존 9개의 이름·이미지를 유지하고 안정적인 ID와 짧은 대사를 추가했다. 대사는 비교용 초안이다. 기존 캐릭터→유형 매핑이 없으므로 type은 임의 추가하지 않았다.
 - `assets/scripts/data/character-random.js`는 동일 확률 추첨, Fisher–Yates 섞기, 룰렛 목표 각도를 담당한다. 같은 캐릭터가 연속으로 나올 수 있다.

@@ -51,9 +51,18 @@ server {
         try_files /seedsbook.html =404;
     }
 
-    # 변경 전 씨앗책방
+    # 신규 캐릭터 선택 화면
+    location = /seedsbook-new {
+        try_files /seedsbook-new.html =404;
+    }
+
+    # 변경 전 화면 주소 호환
     location = /seedsbook-old {
-        try_files /seedsbook-old.html =404;
+        return 302 /seedsbook$is_args$args;
+    }
+
+    location = /seedsbook-old.html {
+        return 302 /seedsbook$is_args$args;
     }
 
     # 기존 파일 주소 호환
@@ -62,7 +71,7 @@ server {
     }
 
     location = /seedsbookapp-old.html {
-        return 302 /seedsbook-old$is_args$args;
+        return 302 /seedsbook$is_args$args;
     }
 
     # 힐링 유형 테스트
