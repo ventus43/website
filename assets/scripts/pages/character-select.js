@@ -417,6 +417,7 @@
           </dialog>
         </section>`;
 
+      const heading = mount.querySelector('.select-heading');
       const wheel = mount.querySelector('.roulette-wheel');
       const status = mount.querySelector('.roulette-status');
       const actions = mount.querySelector('.roulette-actions');
@@ -425,25 +426,48 @@
       const spinButton = mount.querySelector('[data-roulette-spin]');
 
       const showResult = character => {
-        result.hidden = false;
-        actions.hidden = true;
-        result.innerHTML = `
-          <div class="roulette-result__card">
-            <div>${characterImage(character, 'roulette-result__image')}</div>
-            <span>만난 친구는</span>
-            <strong>${character.name}</strong>
-            <p class="roulette-result__message">“${character.shortMessage}”</p>
-          </div>
-          <div class="select-actions">
-            <button type="button" class="select-primary" data-roulette-confirm>이 친구 선택</button>
-            <button type="button" class="select-secondary" data-roulette-again>다시 돌리기</button>
-          </div>`;
-        const confirmButton = result.querySelector('[data-roulette-confirm]');
-        confirmButton.focus({ preventScroll: true });
-        confirmButton.addEventListener('click', () => this.confirm(character, confirmButton));
-        result.querySelector('[data-roulette-again]').addEventListener('click', () => {
-          spinTo(this.characters.indexOf(getRandomCharacter(this.characters)));
+        const selectedIndex = this.characters.indexOf(character);
+        wheel.querySelectorAll('.roulette-face').forEach((face, index) => {
+          face.classList.toggle('is-selected', index === selectedIndex);
         });
+        wheel.classList.remove('has-landed');
+        wheel.classList.add('is-exiting');
+        heading.hidden = true;
+        status.hidden = true;
+        actions.hidden = true;
+        // 룰렛이 화면에서 완전히 사라진 뒤에 결과 화면으로 전환한다.
+        this.later(() => {
+          mount.classList.add('has-roulette-result');
+          result.hidden = false;
+          result.classList.remove('is-visible');
+          result.innerHTML = `
+            <div class="roulette-result__card">
+              <div>${characterImage(character, 'roulette-result__image')}</div>
+              <span>만난 친구는</span>
+              <strong>${character.name}</strong>
+              <p class="roulette-result__message">“${character.shortMessage}”</p>
+            </div>
+            <div class="select-actions">
+              <button type="button" class="select-primary" data-roulette-confirm>이 친구 선택</button>
+              <button type="button" class="select-secondary" data-roulette-again>다시 돌리기</button>
+            </div>`;
+          const confirmButton = result.querySelector('[data-roulette-confirm]');
+          confirmButton.focus({ preventScroll: true });
+          confirmButton.addEventListener('click', () => this.confirm(character, confirmButton));
+          result.querySelector('[data-roulette-again]').addEventListener('click', () => {
+            const nextIndex = this.characters.indexOf(getRandomCharacter(this.characters));
+            mount.classList.remove('has-roulette-result');
+            wheel.classList.remove('is-exiting');
+            wheel.classList.add('is-reappearing');
+            result.classList.remove('is-visible');
+            status.hidden = false;
+            this.later(() => {
+              wheel.classList.remove('is-reappearing');
+              spinTo(nextIndex);
+            }, prefersReducedMotion() ? 0 : 220);
+          });
+          this.later(() => { result.classList.add('is-visible'); }, prefersReducedMotion() ? 0 : 20);
+        }, prefersReducedMotion() ? 0 : 560);
       };
 
       const spinTo = targetIndex => {
@@ -451,12 +475,17 @@
         busy = true;
         selected = this.characters[targetIndex];
         result.hidden = true;
+        mount.classList.remove('has-roulette-result');
+        heading.hidden = false;
         actions.hidden = false;
+        result.classList.remove('is-visible');
+        status.hidden = false;
         spinButton.disabled = true;
         mount.querySelector('[data-roulette-direct]').disabled = true;
         status.textContent = '친구를 찾는 중…';
         currentRotation = rouletteRotation(currentRotation, targetIndex, this.characters.length, prefersReducedMotion());
-        wheel.classList.remove('has-landed');
+        wheel.classList.remove('has-landed', 'is-spinning');
+        void wheel.offsetWidth; // 직전 애니메이션(is-reappearing 등)을 리셋해 다시 돌리기가 멈춰 보이지 않게 한다.
         wheel.classList.add('is-spinning');
         wheel.style.setProperty('--wheel-rotation', `${currentRotation}deg`);
         this.later(() => {
@@ -467,8 +496,8 @@
           mount.querySelector('[data-roulette-direct]').disabled = false;
           wheel.setAttribute('aria-label', `룰렛 결과: ${selected.name}`);
           busy = false;
-          showResult(selected);
-          this.later(() => wheel.classList.remove('has-landed'), 450);
+          // has-landed 바운스가 다 보인 뒤에 결과 전환을 시작한다 (룰렛이 사라지는 동안은 showResult가 처리).
+          this.later(() => showResult(selected), prefersReducedMotion() ? 0 : 420);
         }, prefersReducedMotion() ? 120 : 2450);
       };
 
