@@ -8,7 +8,9 @@
 - D: http://127.0.0.1:4173/seedsbook-new.html?characterVariant=deck
 - E: http://127.0.0.1:4173/seedsbook-new.html?characterVariant=roulette
 
-상단 Slider / Deck / Roulette 버튼으로 비교한다. URL 파라미터가 없거나 잘못되면 Slider가 기본이다. 비교용 탭은 현재 시제품에 노출된다. 최종안 확정 시 `CharacterSelect.render()`의 variant nav와 각 안의 영문 prototype kicker를 제거하고 초기 variant를 고정하면 된다. 현재 작업은 로컬 변경이며 배포하지 않았다.
+우측 상단 ‘화면 선택’ 버튼을 누르면 상단 X와 Slider / Deck / Roulette 선택 항목이 열린다. X 또는 Escape로 닫으며 선택 후 메뉴도 닫힌다. URL 파라미터가 없거나 잘못되면 Slider가 기본이다. 최종안 확정 시 `CharacterSelect.render()`의 variant 버튼·dialog와 각 안의 영문 prototype kicker를 제거하고 초기 variant를 고정하면 된다. 현재 작업은 로컬 변경이며 배포하지 않았다.
+
+신규 콘텐츠는 화면 방향과 무관하게 가로·세로 80%로 축소한다. 축소된 실제 높이에 맞춰 영역을 확보하여 하단 빈 공간이 생기지 않게 한다. 화면 선택 버튼과 메뉴는 조작성을 위해 원래 크기를 유지한다.
 
 ## 이전 화면과 모바일 조정
 

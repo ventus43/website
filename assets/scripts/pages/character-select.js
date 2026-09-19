@@ -53,32 +53,55 @@
       url.searchParams.set('characterVariant', variant);
       window.history.replaceState({}, '', url);
       this.render();
-      this.root.querySelector(`[data-variant="${variant}"]`).focus();
+      this.root.querySelector('[data-variant-toggle]').focus();
     }
 
     render() {
       this.clearTimers();
+      if (this.resizeObserver) this.resizeObserver.disconnect();
       this.confirmed = false;
       this.root.classList.remove('is-confirming');
       this.root.innerHTML = `
-        <div class="character-select__frame">
-          <nav class="variant-switcher" aria-label="캐릭터 선택 프로토타입 비교">
+        <button type="button" class="variant-toggle" data-variant-toggle aria-haspopup="dialog" aria-expanded="false" aria-controls="variantMenu">☰</button>
+        <dialog id="variantMenu" class="variant-switcher" aria-label="캐릭터 선택 화면 변경">
+            <button type="button" class="variant-close" data-variant-close aria-label="화면 선택 닫기">×</button>
             ${VARIANTS.map(item => `
               <button type="button" data-variant="${item.id}" aria-pressed="${item.id === this.variant}">
                 ${item.label}
               </button>`).join('')}
-          </nav>
+        </dialog>
+        <div class="character-select__frame">
           <div class="character-select__prototype" data-prototype="${this.variant}"></div>
         </div>`;
 
+      const menu = this.root.querySelector('#variantMenu');
+      const toggle = this.root.querySelector('[data-variant-toggle]');
+      toggle.addEventListener('click', () => {
+        menu.showModal();
+        toggle.setAttribute('aria-expanded', 'true');
+      });
+      this.root.querySelector('[data-variant-close]').addEventListener('click', () => menu.close());
+      menu.addEventListener('close', () => {
+        toggle.setAttribute('aria-expanded', 'false');
+        if (toggle.isConnected) toggle.focus();
+      });
       this.root.querySelectorAll('[data-variant]').forEach(button => {
-        button.addEventListener('click', () => this.setVariant(button.dataset.variant));
+        button.addEventListener('click', () => {
+          menu.close();
+          this.setVariant(button.dataset.variant);
+        });
       });
 
       const mount = this.root.querySelector('.character-select__prototype');
       if (this.variant === 'deck') this.renderDeck(mount);
       else if (this.variant === 'roulette') this.renderRoulette(mount);
       else this.renderSlider(mount);
+      // transform으로 줄인 실제 높이만 확보해 하단에 빈 레이아웃 공간이 남지 않게 한다.
+      const frame = this.root.querySelector('.character-select__frame');
+      const updateHeight = () => { frame.style.height = `${mount.offsetHeight * 0.8}px`; };
+      this.resizeObserver = new ResizeObserver(updateHeight);
+      this.resizeObserver.observe(mount);
+      updateHeight();
     }
 
     confirm(character, trigger) {
