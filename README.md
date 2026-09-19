@@ -32,7 +32,7 @@ Nginx가 특정 클린 URL을 정적 파일로 매핑합니다 (SPA 라우터가
 | `/` | `index.html` (그 외 미매칭 경로는 SPA 폴백으로도 연결) |
 | `/survey` | `survey.html` |
 | `/form/hskcM5sSYK` | `sabujak-book.html` (외부 배포용 난독화 경로) |
-| `/seedsbook` | `seedsbookapp.html` |
+| `/seedsbook` | `seedsbook.html` |
 | `/healing-type` | `healing-type.html` |
 | `/hub` | `hub.html` |
 | `/api/*` | Flask API (`127.0.0.1:8000`)로 프록시 |
@@ -56,7 +56,7 @@ Nginx가 특정 클린 URL을 정적 파일로 매핑합니다 (SPA 라우터가
 | `hub.html` | `/hub` | 진행 중인 참여 페이지(설문, 씨앗 책방, 힐링 유형 테스트) 링크를 모아놓은 허브 페이지. |
 | `survey.html` | `/survey` | "벤투스 × 문화티켓" 설문조사 폼. 제출 시 `/api/survey` + 구글 앱스 스크립트로 전송(`assets/scripts/pages/survey.js`). |
 | `sabujak-book.html` | `/form/hskcM5sSYK` | "사부작" 모임 참여 신청 폼(이름, 출생연도, 연락처, 참여 이유 등). 제출 시 `/api/sabujak-book`로 전송, 전용 텔레그램 채팅방으로 알림. 로직은 페이지 내부 인라인 스크립트. |
-| `seedsbookapp.html` | `/seedsbook` | "씨앗 책방" — 캐릭터 기반 설문 및 체크리스트 참여 페이지. 제출 시 `/api/seedsbook` + 구글 앱스 스크립트로 전송(`assets/scripts/pages/seedsbook.js`). |
+| `seedsbook.html` | `/seedsbook` | "씨앗 책방" — 캐릭터 기반 설문 및 체크리스트 참여 페이지. 제출 시 `/api/seedsbook` + 구글 앱스 스크립트로 전송(`assets/scripts/pages/seedsbook.js`). |
 | `healing-type.html` | `/healing-type` | 9개의 YES/NO 질문으로 힐링 유형을 진단하는 인터랙티브 테스트(결과는 캔버스로 시각화). 폼 제출/API 연동 없음, 클라이언트 로직만으로 완결. |
 | `timer.html` | (직접 접근) | `timermo.com`으로 즉시 리다이렉트하는 자리표시 페이지. 실질적인 콘텐츠 없음. |
 | `choi3/` | `choi3.gventus.store` | 이 저장소와 별개로 관리·배포되는 하위 프로젝트(별도 git 저장소, 별도 CI/CD, 별도 EC2 서브도메인). `.gitignore`로 제외되어 있으며 본 저장소의 배포 파이프라인과 무관. |

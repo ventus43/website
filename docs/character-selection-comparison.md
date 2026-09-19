@@ -1,0 +1,75 @@
+# 씨앗책방 캐릭터 선택 비교
+
+## 실행 및 전환
+
+프로젝트 루트에서 `python3 -m http.server 4173 --bind 127.0.0.1` 실행 후:
+
+- A: http://127.0.0.1:4173/seedsbook.html?characterVariant=slider
+- D: http://127.0.0.1:4173/seedsbook.html?characterVariant=deck
+- E: http://127.0.0.1:4173/seedsbook.html?characterVariant=roulette
+
+상단 Slider / Deck / Roulette 버튼으로 비교한다. URL 파라미터가 없거나 잘못되면 Slider가 기본이다. 비교용 탭은 현재 시제품에 노출된다. 최종안 확정 시 `CharacterSelect.render()`의 variant nav와 각 안의 영문 prototype kicker를 제거하고 초기 variant를 고정하면 된다. 현재 작업은 로컬 변경이며 배포하지 않았다.
+
+## 이전 화면과 모바일 조정
+
+- 배포 경로 `/seedsbook` → `seedsbook.html`, `/seedsbook-old` → `seedsbook-old.html`. hub에서 두 화면으로 이동할 수 있다. 기존 `seedsbookapp*.html` 주소는 nginx에서 해당 경로로 리디렉트한다.
+- 이전 HTML은 `choi3/seedsbookapp-old.html`을 보존하여 복사하고, 존재하지 않던 참조를 별도의 `seedsbook-old.css` / `seedsbook-old.js`로 연결했다. 두 asset은 작업 전 Git 버전으로 고정하여 새 UI 변경의 영향을 받지 않는다. `choi3` 안 원본은 유지했다.
+- 모바일 선택 패널의 흰색 불투명도를 94% → 64%로 낮추고 배경 blur를 추가했다. 대사 부분은 별도 반투명 표면을 유지하고, 주요 버튼 글자를 진하게 조정했다.
+- 모바일 variant 탭·방향 버튼·텍스트 버튼의 터치 높이를 최소 44px로 맞췄다. prototype 영문 kicker는 모바일에서 숨겨 첫 화면의 정보량을 줄였다.
+- 이전 HTML 보존, 구버전 CSS/JS 일치, 두 nginx 매핑·hub 링크·로컬 asset 참조를 코드로 검증했다. nginx 실서버 반영과 모바일 화면 실측은 아직 수행하지 않았다.
+
+## 기존 구조와 연결
+
+- 정적 HTML + 바닐라 JS/CSS이며 새 런타임 의존성은 없다.
+- `seedsbook.html`의 `#characterSelect`에 `new CharacterSelect({ root, characters, onSelect, initialVariant })`를 마운트한다.
+- `renderSlider`, `renderDeck`, `renderRoulette`는 같은 데이터와 최종 확인 콜백을 사용한다.
+- `assets/scripts/data/seedsbook-characters.js`에 기존 9개의 이름·이미지를 유지하고 안정적인 ID와 짧은 대사를 추가했다. 대사는 비교용 초안이다. 기존 캐릭터→유형 매핑이 없으므로 type은 임의 추가하지 않았다.
+- `assets/scripts/data/character-random.js`는 동일 확률 추첨, Fisher–Yates 섞기, 룰렛 목표 각도를 담당한다. 같은 캐릭터가 연속으로 나올 수 있다.
+- 확인 버튼 → `handleCharacterSelect(character)` → `selectedChar` 설정 → 기존 `initSurvey()` → `pageSurvey`.
+- 설문, 제출 payload, 체크리스트 유형 계산, 도서 추천 로직은 보존한다. 숨겨진 페이지는 `inert`로 키보드 탐색에서 제외하고 설문 진입 시 다음 버튼으로 포커스를 옮긴다.
+- 기존 PNG 9장은 약 1MiB이며 195~256px이다. 원본 일러스트는 변경하지 않았다. 첫 이미지는 preload하고 전체보기/결과 이미지는 lazy loading 및 고정 비율로 배치한다. 룰렛은 9장이 모두 보이므로 즉시 로드한다. WebP/AVIF 변환과 더 큰 원본 확보는 후속 최적화 후보다.
+
+## 비교 기록
+
+아래는 구현된 조작 흐름을 기준으로 한 설계 평가다. 브라우저 접근 권한이 없어 실제 사용감·화면 실측을 완료하지 못했으며 사용자 테스트 점수로 해석하면 안 된다.
+
+| 항목 | Slider + Random | Card Deck | Roulette |
+|---|---|---|---|
+| 첫 화면 이해도 | 캐릭터와 선택 버튼이 바로 보임 | 섞기·펼치기 후 카드 선택 필요 | 원판과 돌리기로 동작 예측 가능 |
+| 캐릭터 관찰 가능성 | 한 명을 크게 비교하기 좋음 | 뒤집기 전에는 관찰 불가 | 원판 얼굴은 작고 결과에서 크게 보임 |
+| 재미 | 넘기기와 랜덤 중 선택 | 숨겨진 카드의 공개 순간 | 감속과 포인터 정지 순간 |
+| 반복 동기 | 다음 대사·다시 뽑기 | 다른 카드의 정체 | 다음 회전의 결과 |
+| 세계관 전달 | 캐릭터별 대사가 가장 잘 드러남 | 포토카드 테두리·번호·뒷면 강조 | 9명의 얼굴이 집단으로 보임 |
+| 모바일 조작 | 내부 영역 swipe, 방향 버튼 보조 | 가로 스크롤 후 카드 tap | 큰 버튼 tap |
+| 확정까지 단계 | 현재 캐릭터 1회, 랜덤 2회 | 펼치기/섞기 → 카드 → 확인, 3회 | 돌리기 → 확인, 2회 |
+| 구현 복잡도 | 중간: 방향·스와이프·랜덤 상태 | 중상: 섞기·펼침·뒤집기·공개 상태 | 중상: 회전 각도·시간·결과 상태 |
+| 유지보수성 | 대사와 이미지 교체가 쉬움 | 카드 비율 변경 시 모바일 재점검 | 캐릭터 수 변경 시 원판 색 구간 CSS도 수정 필요 |
+
+우선 비교할 방향은 A안이다. 캐릭터 관찰과 즉시 선택을 모두 지원하며 랜덤을 선택적으로 제공한다. D안은 굿즈 연결성, E안은 첫 행동의 명확성을 중심으로 실제 사용 후 비교한다. 아직 최종안을 확정하지 않았다.
+
+## 완료된 코드 검증
+
+`node --test tests/character-selection.test.cjs`
+
+- 9명 고유 ID, 이미지 파일 및 대사 존재
+- 9개 동일 확률 난수 구간과 반복 당첨 허용
+- 카드 섞기의 원본 보존·누락/중복 방지
+- 9개 결과 × 여러 시작 각도 × 기본/모션 감소에서 포인터 각도 일치
+- 최종 확인 콜백 중복 호출 방지
+
+수정 JS 구문 검사와 `git diff --check` 통과. 위 검증은 DOM 렌더링이나 브라우저 콘솔 검증을 대체하지 않는다.
+
+## 남은 실제 브라우저 검증
+
+현재 브라우저 연결이 없고 native 앱 제어도 `Computer Use permissions are not granted`로 거부되어 다음 항목은 미검증이다.
+
+| 조건 | 확인할 항목 | 상태 |
+|---|---|---|
+| 360 / 390 / 430px | 이미지 크기, 전체보기 스크롤, 버튼 잘림, 카드 가로 스크롤 | 미검증 |
+| 768px / desktop | 카드 9장 접근, 드래그, 룰렛 포인터 시각 일치 | 미검증 |
+| 세 안 공통 | 최종 확인 → 설문, 홈 → 다시 선택, 콘솔 오류 | 미검증 |
+| 빠른 반복 입력 | 섞기/랜덤/회전 중 입력, variant 전환 시 timer 취소 | 코드 가드 반영, 실기 미검증 |
+| 키보드 | Tab/Enter, slider 방향키, dialog Escape·포커스 복귀 | 코드 반영, 실기 미검증 |
+| reduced motion | 회전 즉시 종료, 카드 flip 생략, slider 최소 모션 | 코드·각도 검사, 실기 미검증 |
+
+회귀 검증 시 실사용 이름을 입력하거나 제출 API를 호출할 필요가 없다. 선택 후 설문 진입 및 홈 복귀를 먼저 확인한다. 실제 사진 카드 디자인 파일은 제공되지 않아 현재 카드는 기존 코랄·크림 색과 원본 캐릭터를 바탕으로 만든 비교용 스타일이다.

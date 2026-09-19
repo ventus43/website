@@ -34,28 +34,45 @@ function sendToTelegram(payload) {
   }).catch(err => console.error('텔레그램 전송 실패:', err));
 }
 
-const characters = window.SEEDSBOOK_CHARACTERS;
+const characters = [
+  { name:'현미',     image:'/assets/images/seedsbook/characters/brown_rice.png' },
+  { name:'완두',     image:'/assets/images/seedsbook/characters/pea.png' },
+  { name:'백미',     image:'/assets/images/seedsbook/characters/white_rice.png' },
+  { name:'흑미',     image:'/assets/images/seedsbook/characters/black_rice.png' },
+  { name:'렌틸콩',   image:'/assets/images/seedsbook/characters/lentils.png' },
+  { name:'보리',     image:'/assets/images/seedsbook/characters/barley.png' },
+  { name:'옥수수',   image:'/assets/images/seedsbook/characters/corner.png' },
+  { name:'강낭콩',   image:'/assets/images/seedsbook/characters/kidney_bean.png' },
+  { name:'백미찹쌀', image:'/assets/images/seedsbook/characters/white_glutinous.png' }
+];
 
 const TOTAL_Q = 6;
 let selectedChar = null, currentQ = 0, privacyConsented = false;
 const data = { preference: null, bookThought: null, bookTrigger: null, categories: new Set(), participation: null };
 
-// 세 프로토타입은 최종 선택 시 모두 이 기존 설문 진입 흐름을 사용한다.
-function handleCharacterSelect(character) {
-  selectedChar = character;
+// 캐릭터 그리드 생성
+characters.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'character-card';
+  card.onclick = (e) => { if (window.SBFX) SBFX.burstAt(e, true); showPopup(c); };
+  card.innerHTML = `<img src="${c.image}" alt="${c.name}" loading="lazy">`;
+  $('characterGrid').appendChild(card);
+});
+
+// 팝업
+function showPopup(char) { selectedChar = char; $('popupImage').src = char.image; $('popup').classList.add('active'); }
+function closePopup()    { $('popup').classList.remove('active'); selectedChar = null; }
+$('popup').addEventListener('click', e => { if (e.target === $('popup')) closePopup(); });
+
+// 투표 확인
+function confirmVote() {
+  if (!selectedChar) return;
+  if (window.SBFX) SBFX.burstEl($('popupImage'), true);
+  $('popup').classList.remove('active');
   initSurvey();
   hidePage('pageCharacter');
   showPage('pageSurvey');
-  $('nextBtn').focus({ preventScroll: true });
 }
-
-const requestedVariant = new URLSearchParams(window.location.search).get('characterVariant') || 'slider';
-const characterSelect = new window.CharacterSelect({
-  root: $('characterSelect'),
-  characters,
-  onSelect: handleCharacterSelect,
-  initialVariant: requestedVariant
-});
 
 // 설문 초기화
 function initSurvey() {
@@ -223,11 +240,10 @@ function showResultPage() {
   });
 }
 
-function resetAll() { hidePage('pageResult'); characterSelect.reset(); showPage('pageCharacter'); selectedChar = null; }
-function backToLanding() { hidePage('pageSurvey'); characterSelect.reset(); showPage('pageCharacter'); selectedChar = null; }
-function showPage(id) { $(id).classList.remove('hidden'); $(id).inert = false; }
-function hidePage(id) { $(id).classList.add('hidden'); $(id).inert = true; }
-document.querySelectorAll('.page.hidden').forEach(page => { page.inert = true; });
+function resetAll() { hidePage('pageResult'); showPage('pageCharacter'); selectedChar = null; }
+function backToLanding() { hidePage('pageSurvey'); showPage('pageCharacter'); selectedChar = null; }
+function showPage(id) { $(id).classList.remove('hidden'); }
+function hidePage(id) { $(id).classList.add('hidden'); }
 
 /* ===================================================
    체크리스트 파트

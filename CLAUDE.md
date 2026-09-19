@@ -96,7 +96,7 @@ There are no tests or linters configured in this repo.
 - `/` → `index.html` (main site, SPA-fallback for anything unmatched)
 - `/survey` → `survey.html`
 - `/form/hskcM5sSYK` → `sabujak-book.html` (obfuscated path intentionally — external form link)
-- `/seedsbook` → `seedsbookapp.html`
+- `/seedsbook` → `seedsbook.html`
 - `/healing-type` → `healing-type.html`
 - `/hub` → `hub.html`
 
