@@ -170,7 +170,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 }
 .select-heading { text-align: center; position: relative; z-index: 2; }
 .select-kicker { display: block; margin-bottom: 8px; color: #674737; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.16em; }
-.select-heading h1 { color: var(--select-ink); font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.18; letter-spacing: -0.05em; }
+.select-heading h1, .select-heading h2 { color: var(--select-ink); font-size: clamp(1.65rem, 5vw, 2.35rem); line-height: 1.18; letter-spacing: -0.05em; }
 
 .select-actions { width: min(100%, 330px); margin: 16px auto 0; display: grid; gap: 9px; position: relative; z-index: 4; }
 .select-primary,
@@ -283,8 +283,25 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 
 /* D안: 카드 덱 */
 .deck-select { min-height: min(720px, calc(100dvh - 78px)); }
+.deck-warmup { width: min(100%, 430px); margin: auto; text-align: center; transition: opacity 220ms ease, transform 220ms ease; }
+.deck-warmup.is-leaving { opacity: 0; transform: translateY(-10px); }
+.deck-warmup__hint { margin: 14px 0 18px; color: #67554a; font-size: 0.88rem; font-weight: 700; }
+.deck-taste-options { display: grid; gap: 10px; }
+.deck-taste-options button { min-height: 58px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--select-line); border-radius: 16px; color: #4f3e35; background: rgba(255,255,255,.82); font-weight: 800; text-align: left; cursor: pointer; box-shadow: 0 5px 14px rgba(73,50,34,.08); transition: transform 180ms ease, border-color 180ms ease, background 180ms ease; }
+.deck-taste-options button:hover { transform: translateY(-2px); border-color: #ca9c7f; background: #fff; }
+.deck-taste-options button:disabled { opacity: .56; cursor: default; transform: none; }
+.deck-taste-options span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: #f5e5ce; font-size: 1.05rem; }
+.deck-taste-reaction { margin-top: 17px; opacity: 0; transform: translateY(8px); transition: opacity 220ms ease, transform 220ms ease; }
+.deck-taste-reaction.is-visible { opacity: 1; transform: none; }
+.deck-taste-reaction__friends { height: 72px; display: flex; justify-content: center; align-items: end; }
+.deck-taste-reaction__friends img { width: 68px; height: 68px; margin: 0 -5px; object-fit: contain; filter: drop-shadow(0 5px 4px rgba(67,46,32,.16)); }
+.deck-taste-reaction__friends img:nth-child(2) { width: 78px; height: 78px; z-index: 1; }
+.deck-taste-reaction strong { display: block; margin-top: 7px; color: #6b4939; font-size: .92rem; word-break: keep-all; }
+.deck-warmup__skip { display: block; margin: 12px auto 0; }
+.deck-main { opacity: 0; transform: translateY(12px); }
+.deck-main.is-entering { animation: deckMainIn 420ms cubic-bezier(.2,1,.35,1) forwards; }
 .deck-stage { position: relative; width: 100%; min-height: clamp(350px, 51vh, 430px); display: grid; place-items: center; }
-.deck-stack { position: relative; width: 184px; aspect-ratio: 0.72; margin-top: 14px; }
+.deck-stack { position: relative; width: 210px; aspect-ratio: 0.72; margin-top: 14px; }
 .deck-stack > span {
   position: absolute;
   inset: 0;
@@ -301,8 +318,8 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .deck-stack > span:nth-child(1) { transform: rotate(-9deg) translate(-16px, 4px); background: #dda070; }
 .deck-stack > span:nth-child(2) { transform: rotate(7deg) translate(14px, 2px); background: #7c9e75; }
 .deck-stack > span:nth-child(3) { transform: rotate(-1deg); }
-.deck-stack b, .photo-card__back b { font-family: Georgia, serif; font-size: 1.25rem; line-height: 1; text-align: center; letter-spacing: 0.08em; }
-.deck-stack i, .photo-card__back i { margin-top: 26px; font-family: Georgia, serif; font-size: 3rem; font-style: normal; }
+.deck-stack b, .photo-card__back b { font-family: Georgia, serif; font-size: 1.05rem; line-height: 1; text-align: center; letter-spacing: 0.06em; }
+.deck-stack i, .photo-card__back i { margin-top: 22px; font-family: Georgia, serif; font-size: 2.7rem; font-style: normal; }
 .deck-stack.is-shuffling > span:nth-child(1) { animation: shuffleLeft 700ms ease-in-out; }
 .deck-stack.is-shuffling > span:nth-child(2) { animation: shuffleRight 700ms ease-in-out; }
 .deck-stack.is-shuffling > span:nth-child(3) { animation: shuffleCenter 700ms ease-in-out; }
@@ -311,7 +328,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   position: absolute;
   left: 50%;
   top: 54%;
-  width: clamp(108px, 15vw, 142px);
+  width: clamp(128px, 17vw, 166px);
   aspect-ratio: 0.72;
   padding: 0;
   border: 0;
@@ -324,21 +341,21 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   transition: transform 620ms cubic-bezier(.16,1,.3,1), opacity 320ms ease, filter 220ms ease;
   transition-delay: calc(var(--card-order) * 32ms);
 }
-.deck-spread.is-open .photo-card { opacity: 1; transform: translate(calc(-50% + var(--card-offset) * 62px), calc(-48% + var(--card-rise))) rotate(calc(var(--card-offset) * 3.4deg)); }
-.photo-card:hover:not(:disabled) { z-index: 12; filter: brightness(1.04); transform: translate(calc(-50% + var(--card-offset) * 62px), calc(-55% + var(--card-rise))) rotate(calc(var(--card-offset) * 3.4deg)); }
+.deck-spread.is-open .photo-card { opacity: 1; transform: translate(calc(-50% + var(--card-offset) * 70px), calc(-48% + var(--card-rise))) rotate(calc(var(--card-offset) * 3.4deg)); }
+.photo-card:hover:not(:disabled) { z-index: 12; filter: brightness(1.04); transform: translate(calc(-50% + var(--card-offset) * 70px), calc(-55% + var(--card-rise))) rotate(calc(var(--card-offset) * 3.4deg)); }
 .photo-card__face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 6px solid #fff7e9; border-radius: inherit; backface-visibility: hidden; box-shadow: 0 14px 28px rgba(59,42,29,0.2); overflow: hidden; }
 .photo-card__back { color: #fff7e9; background: #4e7551; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.3), 0 14px 28px rgba(59,42,29,0.2); }
 .photo-card__back small { position: absolute; bottom: 12px; font-size: 0.55rem; letter-spacing: 0.1em; }
 .photo-card__front { transform: rotateY(180deg); color: #654536; background: #fff3dc; }
-.photo-card__front strong { position: absolute; bottom: 12px; }
-.photo-card__number { position: absolute; top: 9px; left: 9px; color: #a46c4f; font-size: 0.68rem; font-weight: 900; }
-.photo-card__image { width: 94%; height: auto; aspect-ratio: 1; object-fit: contain; }
+.photo-card__front strong { position: absolute; z-index: 2; bottom: 8px; padding: 2px 7px; border-radius: 999px; background: rgba(255,243,220,.88); font-size: .75rem; }
+.photo-card__number { position: absolute; z-index: 2; top: 7px; left: 7px; color: #a46c4f; font-size: 0.58rem; font-weight: 900; }
+.photo-card__image { width: 88%; height: auto; aspect-ratio: 1; object-fit: contain; }
 .photo-card:focus-visible { z-index: 25; }
 .photo-card.is-flipped { z-index: 20; transform: translate(-50%, -50%) rotateY(180deg) scale(1.25) !important; opacity: 1; transition-delay: 0ms; }
-.picked-card { width: min(238px, 68vw); aspect-ratio: 0.72; margin: 16px auto 0; padding: 18px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 8px solid #fff; border-radius: 20px; color: #604638; background: #f6d79e; box-shadow: 0 20px 42px rgba(78,53,35,0.24), inset 0 0 0 2px rgba(129,84,54,0.16); animation: cardArrive 500ms cubic-bezier(.2,1.4,.4,1); }
+.picked-card { width: min(260px, 72vw); aspect-ratio: 0.72; margin: 16px auto 0; padding: 18px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 8px solid #fff; border-radius: 20px; color: #604638; background: #f6d79e; box-shadow: 0 20px 42px rgba(78,53,35,0.24), inset 0 0 0 2px rgba(129,84,54,0.16); animation: cardArrive 500ms cubic-bezier(.2,1.4,.4,1); }
 .picked-card__image { width: 78%; height: auto; aspect-ratio: 1; object-fit: contain; }
-.picked-card strong { font-size: 1.2rem; }
-.picked-card__message { max-width: 18ch; margin-top: 8px; font-size: 0.9rem; font-weight: 700; line-height: 1.45; text-align: center; word-break: keep-all; }
+.picked-card strong { font-size: 1.08rem; }
+.picked-card__message { max-width: 20ch; margin-top: 7px; font-size: 0.82rem; font-weight: 700; line-height: 1.45; text-align: center; word-break: keep-all; }
 .deck-result { width: 100%; }
 .deck-result .select-actions { margin-top: 10px; }
 
@@ -386,6 +403,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 @keyframes shuffleLeft { 45% { transform: translate(-90px, -14px) rotate(-22deg); } }
 @keyframes shuffleRight { 45% { transform: translate(90px, -14px) rotate(22deg); } }
 @keyframes shuffleCenter { 50% { transform: translateY(-22px) rotate(4deg); } }
+@keyframes deckMainIn { to { opacity: 1; transform: none; } }
 @keyframes cardArrive { from { opacity: 0; transform: translateY(28px) rotate(-3deg) scale(0.9); } }
 @keyframes rouletteLand { 45% { transform: rotate(var(--wheel-rotation)) scale(1.025); } }
 @keyframes selectedFace { 45% { transform: rotate(calc(-1 * var(--wheel-rotation))) scale(1.08); } }
@@ -404,6 +422,9 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   .select-kicker { margin-bottom: 5px; }
   .variant-switcher button { min-height: 44px; padding: 7px 12px; font-size: 0.75rem; }
   .select-kicker { display: none; }
+  .deck-warmup { width: min(100%, 360px); }
+  .deck-warmup__hint { margin: 10px 0 14px; }
+  .deck-taste-options button { min-height: 54px; }
   .slider-copy { padding: 8px; border-radius: 14px; background: rgba(255,250,240,0.72); }
   .roulette-status { color: #49392f; }
   .slider-stage { height: min(285px, 36vh); grid-template-columns: 0.35fr minmax(210px, 1.7fr) 0.35fr; }
@@ -416,12 +437,17 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   .select-primary, .select-secondary { min-height: 48px; }
 
   .deck-stage { min-height: min(405px, 54vh); }
-  .deck-spread { width: calc(100% + 24px); height: 350px; overflow-x: auto; overflow-y: hidden; display: flex; align-items: center; gap: 10px; padding: 28px 18px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-  .photo-card,
-  .deck-spread.is-open .photo-card,
-  .photo-card:hover:not(:disabled) { position: relative; left: auto; top: auto; width: 132px; flex: 0 0 132px; opacity: 1; transform: none; scroll-snap-align: center; }
-  .photo-card.is-flipped { transform: rotateY(180deg) scale(1.04) !important; }
-  .picked-card { width: min(220px, 64vw); margin-top: 6px; }
+  .deck-spread { position: relative; width: 100%; height: 350px; overflow: visible; display: block; padding: 0; }
+  .deck-stack { width: 190px; }
+  .photo-card { position: absolute; left: 50%; top: 54%; width: 90px; opacity: 0; transform: translate(-50%, -45%) rotate(calc(var(--card-offset) * 1.4deg)); }
+  .deck-spread.is-open .photo-card { opacity: 1; transform: translate(calc(-50% + var(--card-offset) * 32px), calc(-48% + var(--card-rise))) rotate(calc(var(--card-offset) * 2.4deg)); }
+  .photo-card:hover:not(:disabled) { transform: translate(calc(-50% + var(--card-offset) * 32px), calc(-54% + var(--card-rise))) rotate(calc(var(--card-offset) * 2.4deg)); }
+  .photo-card.is-flipped { transform: translate(-50%, -50%) rotateY(180deg) scale(1.55) !important; }
+  .photo-card__face { border-width: 4px; }
+  .photo-card__back b { font-size: .64rem; }
+  .photo-card__back i { margin-top: 12px; font-size: 1.8rem; }
+  .photo-card__back small { bottom: 7px; font-size: .38rem; }
+  .picked-card { width: min(240px, 70vw); margin-top: 6px; }
 
   .roulette-stage { width: min(390px, 88vw); margin-top: 8px; }
   .roulette-result__card > div { width: 150px; height: 150px; }
@@ -429,7 +455,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 
 @media (max-width: 380px), (max-height: 720px) {
   .select-panel { padding-top: 14px; }
-  .select-heading h1 { font-size: 1.42rem; }
+  .select-heading h1, .select-heading h2 { font-size: 1.42rem; }
   .slider-stage { height: 230px; }
   .slider-character { width: 195px; height: 195px; }
   .slider-orbit { width: 200px; }
@@ -437,9 +463,13 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
   .select-actions { gap: 7px; }
   .select-primary, .select-secondary { min-height: 44px; }
   .deck-stage { min-height: 330px; }
-  .deck-stack { width: 150px; }
+  .deck-stack { width: 170px; }
   .deck-spread { height: 300px; }
-  .picked-card { width: 184px; }
+  .photo-card { width: 80px; }
+  .deck-spread.is-open .photo-card { transform: translate(calc(-50% + var(--card-offset) * 28px), calc(-48% + var(--card-rise))) rotate(calc(var(--card-offset) * 2.2deg)); }
+  .photo-card:hover:not(:disabled) { transform: translate(calc(-50% + var(--card-offset) * 28px), calc(-54% + var(--card-rise))) rotate(calc(var(--card-offset) * 2.2deg)); }
+  .photo-card.is-flipped { transform: translate(-50%, -50%) rotateY(180deg) scale(1.55) !important; }
+  .picked-card { width: 205px; }
   .roulette-stage { width: min(330px, 82vw); }
   .roulette-result { padding: 12px; }
   .roulette-result__card > div { width: 120px; height: 120px; }

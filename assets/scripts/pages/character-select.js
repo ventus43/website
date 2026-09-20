@@ -272,30 +272,94 @@
       let order = this.characters.map((_, index) => index);
       let busy = false;
       let revealed = null;
+      let deckEntered = false;
 
       mount.innerHTML = `
-        <section class="select-panel deck-select" aria-labelledby="deckTitle">
-          <header class="select-heading">
-            <span class="select-kicker">D · CHARACTER DECK</span>
-            <h1 id="deckTitle">친구 한 명을<br>골라보세요.</h1>
-          </header>
-          <div class="deck-stage">
-            <div class="deck-stack" aria-hidden="true">
-              <span></span><span></span><span><b>SEEDS<br>BOOK</b><i>?</i></span>
+        <section class="select-panel deck-select" aria-label="카드 덱으로 친구 고르기">
+          <div class="deck-warmup">
+            <header class="select-heading">
+              <span class="select-kicker">D · CHARACTER DECK</span>
+              <h1 id="deckTitle">책을 고를 때<br>나는…</h1>
+            </header>
+            <p class="deck-warmup__hint">마음이 가는 쪽을 하나 골라보세요.</p>
+            <div class="deck-taste-options" role="group" aria-label="책을 고르는 방식">
+              <button type="button" data-deck-taste="comfortable"><span>📖</span>익숙하고 편한 책</button>
+              <button type="button" data-deck-taste="new"><span>🚪</span>새로운 세계의 책</button>
+              <button type="button" data-deck-taste="instinct"><span>✨</span>그냥 마음이 가는 책</button>
             </div>
-            <div class="deck-spread" role="group" aria-label="펼쳐진 캐릭터 카드" hidden></div>
-            <div class="deck-result" hidden></div>
+            <div class="deck-taste-reaction" role="status" aria-live="polite" hidden></div>
+            <button type="button" class="text-button deck-warmup__skip" data-deck-skip>바로 카드 고르기</button>
           </div>
-          <div class="select-actions deck-initial-actions">
-            <button type="button" class="select-primary" data-deck-shuffle>카드 섞기</button>
-            <button type="button" class="text-button" data-deck-spread>직접 펼쳐보기</button>
+          <div class="deck-main" hidden>
+            <header class="select-heading">
+              <span class="select-kicker">D · CHARACTER DECK</span>
+              <h2>친구 한 명을<br>골라보세요.</h2>
+            </header>
+            <div class="deck-stage">
+              <div class="deck-stack" aria-hidden="true">
+                <span></span><span></span><span><b>SEEDS<br>BOOK</b><i>?</i></span>
+              </div>
+              <div class="deck-spread" role="group" aria-label="펼쳐진 캐릭터 카드" hidden></div>
+              <div class="deck-result" hidden></div>
+            </div>
           </div>
         </section>`;
 
+      const warmup = mount.querySelector('.deck-warmup');
+      const main = mount.querySelector('.deck-main');
+      const reaction = mount.querySelector('.deck-taste-reaction');
       const stack = mount.querySelector('.deck-stack');
       const spread = mount.querySelector('.deck-spread');
       const result = mount.querySelector('.deck-result');
-      const actions = mount.querySelector('.deck-initial-actions');
+
+      const tasteReactions = {
+        comfortable: {
+          ids: ['white-rice', 'brown-rice', 'glutinous-rice'],
+          message: '편안하게 시작하는 거, 우리도 좋아!'
+        },
+        new: {
+          ids: ['black-rice', 'barley', 'corn'],
+          message: '새로운 세계라면 우리도 함께 갈래!'
+        },
+        instinct: {
+          ids: ['pea', 'lentil', 'kidney-bean'],
+          message: '마음이 가는 게 제일 중요하지!'
+        }
+      };
+
+      const enterDeck = () => {
+        if (deckEntered) return;
+        deckEntered = true;
+        warmup.classList.add('is-leaving');
+        this.later(() => {
+          warmup.hidden = true;
+          main.hidden = false;
+          busy = false;
+          requestAnimationFrame(() => main.classList.add('is-entering'));
+          this.later(runShuffle, prefersReducedMotion() ? 0 : 260);
+        }, prefersReducedMotion() ? 0 : 240);
+      };
+
+      const reactToTaste = taste => {
+        if (busy) return;
+        busy = true;
+        warmup.querySelectorAll('button').forEach(button => { button.disabled = true; });
+        const choice = tasteReactions[taste];
+        const friends = choice.ids.map(id => this.characters.find(character => character.id === id));
+        reaction.innerHTML = `
+          <div class="deck-taste-reaction__friends">
+            ${friends.map(character => characterImage(character, '')).join('')}
+          </div>
+          <strong>${choice.message}</strong>`;
+        reaction.hidden = false;
+        requestAnimationFrame(() => reaction.classList.add('is-visible'));
+        this.later(enterDeck, prefersReducedMotion() ? 80 : 1050);
+      };
+
+      mount.querySelectorAll('[data-deck-taste]').forEach(button => {
+        button.addEventListener('click', () => reactToTaste(button.dataset.deckTaste));
+      });
+      mount.querySelector('[data-deck-skip]').addEventListener('click', enterDeck);
 
       const shuffleOrder = () => {
         order = shuffleCharacters(order);
@@ -305,7 +369,6 @@
         revealed = null;
         result.hidden = true;
         stack.hidden = true;
-        actions.hidden = true;
         spread.hidden = false;
         spread.innerHTML = order.map((characterIndex, position) => {
           const offset = position - (order.length - 1) / 2;
@@ -323,9 +386,13 @@
       const runShuffle = () => {
         if (busy) return;
         busy = true;
-        actions.querySelectorAll('button').forEach(button => { button.disabled = true; });
-        stack.classList.add('is-shuffling');
+        revealed = null;
+        result.hidden = true;
+        spread.hidden = true;
+        spread.classList.remove('is-open');
+        stack.hidden = false;
         shuffleOrder();
+        requestAnimationFrame(() => stack.classList.add('is-shuffling'));
         this.later(() => {
           stack.classList.remove('is-shuffling');
           busy = false;
@@ -361,10 +428,7 @@
           confirmButton.focus({ preventScroll: true });
           confirmButton.addEventListener('click', () => this.confirm(character, confirmButton));
           result.querySelector('[data-deck-again]').addEventListener('click', () => {
-            busy = false;
-            spread.classList.remove('is-open');
-            shuffleOrder();
-            showSpread();
+            runShuffle();
           });
           busy = false;
         }, prefersReducedMotion() ? 80 : 650);
@@ -374,8 +438,6 @@
         const button = event.target.closest('[data-card-index]');
         if (button) revealCard(button);
       });
-      mount.querySelector('[data-deck-shuffle]').addEventListener('click', runShuffle);
-      mount.querySelector('[data-deck-spread]').addEventListener('click', () => { if (!busy) { shuffleOrder(); showSpread(); } });
     }
 
     renderRoulette(mount) {
