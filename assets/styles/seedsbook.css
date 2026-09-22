@@ -728,13 +728,21 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .questions-track { display: flex; height: 100%; will-change: transform; transition: transform 0.42s cubic-bezier(0.4,0,0.2,1); }
 .q-slide { min-width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 20px 16px; }
 .q-card { background: rgba(255,255,255,0.96); border-radius: 22px; padding: 28px 22px 24px; width: 100%; max-width: 460px; box-shadow: 0 10px 36px rgba(0,0,0,0.14); }
-.q-title { font-size: 1.2rem; font-weight: bold; color: #8a5442; margin-bottom: 22px; line-height: 1.5; }
+.q-title { font-size: 1.35rem; font-weight: bold; color: #8a5442; margin-bottom: 22px; line-height: 1.4; }
 
 /* 선택 카드 공통 */
-.sel-card { border: 2.5px solid rgba(224,122,90,0.22); text-align: center; cursor: pointer; background: #fff6ee; user-select: none; }
+.sel-card { position: relative; border: 2.5px solid rgba(224,122,90,0.22); text-align: center; cursor: pointer; background: #fff6ee; user-select: none; }
 .sel-card:hover  { border-color: var(--c); background: #fff5f0; }
 .sel-card:active { transform: scale(0.96); }
 .sel-card.selected { border-color: var(--c); background: var(--c); color: #fff; }
+/* 선택 표시를 테두리 색만이 아니라 체크마크 배지로도 — 색약/야외 가독성 대응 */
+.sel-card.selected::after {
+  content: '✓'; position: absolute; top: 6px; right: 6px; width: 18px; height: 18px;
+  border-radius: 50%; background: var(--c); color: #fff; font-size: 0.65rem; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+  animation: badgePop 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
 
 .option-row { display: flex; gap: 10px; }
 .opt-card { flex: 1; padding: 18px 6px 14px; border-radius: 16px; transition: all 0.25s ease; }
@@ -750,10 +758,24 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .list-card { padding: 13px 16px; border-radius: 12px; font-size: 0.95rem; text-align: left; transition: all 0.22s ease; }
 .list-card.selected { box-shadow: 0 3px 12px rgba(255,139,106,0.4); }
 .cat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
-.cat-card { padding: 14px 10px; border-radius: 14px; font-weight: bold; font-size: 0.88rem; transition: all 0.22s ease; }
+.cat-card { padding: 16px 10px; border-radius: 14px; font-weight: bold; font-size: 0.88rem; transition: all 0.22s ease; }
 .cat-card i { color: var(--c); margin-right: 4px; }
 .cat-card.selected { box-shadow: 0 3px 12px rgba(255,139,106,0.4); }
 .cat-card.selected i { color: #fff; }
+.cat-card-etc { border-style: dashed; }
+
+/* Q4(중복 선택)만 체크박스형으로 형태 차별화 — 단일선택(원형 체크)과 구분 */
+#q4opts .cat-card { text-align: left; padding-right: 36px; }
+#q4opts .cat-card i { margin-right: 6px; }
+#q4opts .cat-card::after {
+  content: ''; position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
+  width: 18px; height: 18px; border-radius: 5px; border: 2px solid rgba(224,122,90,0.4);
+  background: #fff; transition: background 0.2s ease, border-color 0.2s ease; animation: none;
+}
+#q4opts .cat-card.selected::after {
+  content: '✓'; background: var(--c); border-color: var(--c); color: #fff;
+  font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; justify-content: center;
+}
 
 .part-row { display: flex; gap: 12px; }
 .part-card { flex: 1; padding: 22px 10px 18px; border-radius: 18px; transition: all 0.25s ease; }
@@ -801,9 +823,9 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .qbtn-nav:active { transform: scale(0.9); }
 
 .survey-nav { width: 100%; padding: 10px 16px 16px; background: rgba(255,255,255,0.88); backdrop-filter: blur(10px); box-shadow: 0 -2px 12px rgba(0,0,0,0.08); display: flex; gap: 10px; flex-shrink: 0; }
-.btn-prev { padding: 14px 18px; background: #efefef; color: #666; border-radius: 14px; flex-shrink: 0; font-size: 0.95rem; }
+.btn-prev { padding: 16px 18px; background: #efefef; color: #666; border-radius: 14px; flex-shrink: 0; font-size: 0.95rem; }
 .btn-prev:hover { background: #e0e0e0; }
-.btn-next { flex: 1; padding: 14px; background: var(--c); color: #fff; border-radius: 14px; font-size: 1.02rem; box-shadow: 0 4px 16px rgba(255,139,106,0.4); transition: background 0.2s; }
+.btn-next { flex: 1; padding: 16px; background: var(--c); color: #fff; border-radius: 14px; font-size: 1.02rem; box-shadow: 0 4px 16px rgba(255,139,106,0.4); transition: background 0.2s; }
 .btn-next:hover { background: var(--cd); }
 .btn-next.submit-mode { background: #4a9d5a; box-shadow: 0 4px 16px rgba(74,157,90,0.4); }
 .btn-next.submit-mode:hover { background: #3a8a4a; }
@@ -838,7 +860,7 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .btn-checklist-green:hover { background: #4a9d5a; color: #fff; }
 
 @media (max-width: 400px) {
-  .q-title { font-size: 1.05rem; }
+  .q-title { font-size: 1.15rem; }
   .opt-emoji { font-size: 1.7rem; }
   .part-num { font-size: 1.8rem; }
   .q-card { padding: 22px 16px 20px; }

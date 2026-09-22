@@ -76,7 +76,7 @@
             <div class="cat-card sel-card" onclick="selectList(this,'bookThought','재밌다','q2etc')">재밌다</div>
             <div class="cat-card sel-card" onclick="selectList(this,'bookThought','지루하다','q2etc')">지루하다</div>
             <div class="cat-card sel-card" onclick="selectList(this,'bookThought','별 생각없다','q2etc')">별 생각없다</div>
-            <div class="cat-card sel-card" onclick="selectList(this,'bookThought',null,'q2etc')" style="grid-column:span 2">기타</div>
+            <div class="cat-card sel-card cat-card-etc" onclick="selectList(this,'bookThought',null,'q2etc')" style="grid-column:span 2">✏️ 기타</div>
           </div>
           <textarea class="q-textarea" id="q2etc" placeholder="직접 입력해주세요 ✍️" style="display:none;margin-top:10px;"></textarea>
         </div>
@@ -91,7 +91,7 @@
             <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','베스트셀러','q3etc')">베스트셀러</div>
             <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','추천도서','q3etc')">추천도서</div>
             <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger','서점 방문','q3etc')">서점 방문</div>
-            <div class="cat-card sel-card" onclick="selectList(this,'bookTrigger',null,'q3etc')" style="grid-column:span 2">기타</div>
+            <div class="cat-card sel-card cat-card-etc" onclick="selectList(this,'bookTrigger',null,'q3etc')" style="grid-column:span 2">✏️ 기타</div>
           </div>
           <textarea class="q-textarea" id="q3etc" placeholder="직접 입력해주세요 ✍️" style="display:none;margin-top:10px;"></textarea>
         </div>
@@ -101,7 +101,7 @@
       <div class="q-slide">
         <div class="q-card">
           <div class="q-title">어떤 종류의 책을 좋아하시나요? <span style="font-size:0.8rem;color:#aaa;font-weight:normal;">중복 선택 가능</span></div>
-          <div class="cat-grid">
+          <div class="cat-grid" id="q4opts">
             <div class="cat-card sel-card" onclick="toggleCat(this,'인문/고전')"><i class="fa-solid fa-book"></i> 인문/고전</div>
             <div class="cat-card sel-card" onclick="toggleCat(this,'과학')"><i class="fa-solid fa-flask"></i> 과학</div>
             <div class="cat-card sel-card" onclick="toggleCat(this,'경제/경영/사회')"><i class="fa-solid fa-briefcase"></i> 경제/경영</div>
