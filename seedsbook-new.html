@@ -123,13 +123,21 @@
             </div>
           </div>
           <div class="info-section">
-            <div><div class="info-label">이름</div><input class="info-input" type="text" id="userName" placeholder="이름을 입력해주세요"></div>
-            <div>
-              <div class="info-label">나이</div>
-              <input class="info-input" type="number" id="userAge" value="20" min="1" max="100" placeholder="나이 입력">
+            <div class="info-field">
+              <div class="info-label"><i class="fa-solid fa-user"></i>이름</div>
+              <input class="info-input" type="text" id="userName" placeholder="이름을 입력해주세요">
             </div>
-            <div><div class="info-label">MBTI</div><input class="info-input" type="text" id="userMbti" placeholder="예: INFP" maxlength="4" autocomplete="off" oninput="this.value=this.value.toUpperCase()"></div>
-            <div id="q6etcBtn" class="cat-card sel-card" style="text-align:center;" onclick="toggleEtc()">기타</div>
+            <div class="info-row-split">
+              <div class="info-field">
+                <div class="info-label"><i class="fa-solid fa-cake-candles"></i>나이</div>
+                <input class="info-input" type="number" id="userAge" value="20" min="1" max="100" placeholder="나이 입력">
+              </div>
+              <div class="info-field">
+                <div class="info-label"><i class="fa-solid fa-puzzle-piece"></i>MBTI</div>
+                <input class="info-input" type="text" id="userMbti" placeholder="예: INFP" maxlength="4" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
+              </div>
+            </div>
+            <button type="button" id="q6etcBtn" class="info-etc-toggle" onclick="toggleEtc()"><i class="fa-solid fa-pen"></i>더 하고 싶은 말이 있나요?</button>
             <input type="text" class="info-input" id="q6etc" placeholder="직접 입력해주세요 ✍️" style="display:none;">
           </div>
           <div class="privacy-consent-row" id="privacyConsentRow">
