@@ -36,9 +36,10 @@ function render() {
   $('mode-note').textContent = state.solo ? '체크와 성장을 먼저 경험해 보세요. 언제든 그룹 화면으로 돌아갈 수 있어요.' : '그룹의 첫 구성원으로 시작해 보세요.';
   $('date').textContent = new Date().toLocaleDateString('ko-KR', {month:'long',day:'numeric',weekday:'short'});
   $('character-select').value = state.character;
-  $('character').textContent = characters[state.character][0]; $('character-name').textContent = characters[state.character][1];
+  $('character-name').textContent = characters[state.character][1];
   $('character-message').textContent = done ? '오늘의 실천 덕분에 조금 더 자랐어요.' : '쉬었다 돌아와도 괜찮아요. 오늘부터 함께해요.';
   const total = Object.values(state.days).reduce((sum,day) => sum + count(day),0);
+  $('character').replaceChildren(seedArt(state.character,total,done));
   $('growth').value = total % 15; $('growth-label').textContent = `성장 ${Math.floor(total/15)+1}단계 · 누적 ${total}개 실천 · 다음 단계까지 ${15-total%15}개`;
   for (const button of document.querySelectorAll('[data-item]')) {
     const checked = state.days[today]?.[button.dataset.item] === true;
@@ -56,7 +57,11 @@ function render() {
 }
 $('solo').addEventListener('change', event => { state.solo = event.target.checked; save(); });
 $('character-select').addEventListener('change', event => { state.character = Number(event.target.value); save(); });
-$('settings').addEventListener('click', () => { $('group-input').value = state.name; $('group-dialog').showModal(); });
+$('settings').addEventListener('click', () => {
+  if(remoteGroup?.role==='manager') { $('manage-form').scrollIntoView({block:'center'}); $('manage-form').elements.name.focus({preventScroll:true}); return; }
+  if(remoteGroup) return;
+  $('group-input').value = state.name; $('group-dialog').showModal();
+});
 $('cancel').addEventListener('click', () => $('group-dialog').close());
 $('group-form').addEventListener('submit', event => {
   event.preventDefault(); const name = $('group-input').value.trim();

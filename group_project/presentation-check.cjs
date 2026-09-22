@@ -1,0 +1,15 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const source=fs.readFileSync(`${__dirname}/group.js`,'utf8');
+const fn=source.slice(source.indexOf('function gardenSummary'),source.indexOf('function renderPresentation'));
+const context=vm.createContext({count:day=>['read','gratitude','reflection'].filter(key=>day?.[key]===true).length});
+vm.runInContext(fn,context);
+const sample={today:'2026-09-20',members:[{role:'manager',days:{'2026-09-20':{read:true}}},{role:'member',days:{'2026-09-19':{read:true},'2026-09-20':{read:true,gratitude:true}}},{role:'member',days:{}}]};
+context.group=sample;
+assert.equal(vm.runInContext('gardenSummary(group).today',context),2);
+assert.equal(vm.runInContext('gardenSummary(group).total',context),3);
+assert.equal(vm.runInContext('gardenSummary(group).members.length',context),2);
+context.group={today:'2026-09-20',members:[]};
+assert.equal(vm.runInContext('gardenSummary(group).total',context),0);
+console.log('PASS: garden totals exclude manager, include past checks, handle empty group');

@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const source=fs.readFileSync(`${__dirname}/group.js`,'utf8');
+const helper=source.slice(source.indexOf('function invitationUrl'),source.indexOf('const invitation='));
+const context=vm.createContext({URL,URLSearchParams,location:{href:'https://example.test/group_project/?old=1#old'}});
+vm.runInContext(helper,context);
+const result=vm.runInContext('invitationUrl("abc&+=")',context);
+const url=new URL(result);
+assert.equal(url.pathname,'/group_project/');
+assert.equal(url.search,'');
+assert.equal(new URLSearchParams(url.hash.slice(1)).get('invite'),'abc&+=');
+console.log('PASS: invitation preserves page path, removes old query, encodes code in fragment');
