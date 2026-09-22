@@ -1,0 +1,106 @@
+# Routes
+Static HTML served by nginx. /survey → survey.html; / → index.html; /seedsbook → seedsbook.html; /seedsbook-new → seedsbook-new.html; /healing-type → healing-type.html; /hub → hub.html.
+```nginx
+# ── 1. HTTP → HTTPS + apex 단일 리디렉트 ──────────────────────────────
+server {
+    listen 80;
+    server_name gventus.store www.gventus.store;
+    return 301 https://gventus.store$request_uri;
+}
+
+# ── 2. www → apex 리디렉트 (Google 표준 URL 통일) ─────────────────────
+server {
+    listen 443 ssl;
+    server_name www.gventus.store;
+
+    ssl_certificate     /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem;   # managed by Certbot
+    include             /etc/letsencrypt/options-ssl-nginx.conf;            # managed by Certbot
+    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;                 # managed by Certbot
+
+    return 301 https://gventus.store$request_uri;
+}
+
+# ── 3. 메인 서버 (gventus.store 전용) ─────────────────────────────────
+server {
+    listen 443 ssl;
+    server_name gventus.store;
+
+    root  /home/ubuntu/report/dist;
+    index index.html;
+
+    # Python 백엔드 프록시
+    location /api/ {
+        proxy_pass         http://127.0.0.1:8000/;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              $host;
+        proxy_set_header   X-Real-IP         $remote_addr;
+        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+
+    # 설문 페이지
+    location = /survey {
+        try_files /survey.html =404;
+    }
+
+    # 사부작 (배포용 폼)
+    location = /form/hskcM5sSYK {
+        try_files /sabujak-book.html =404;
+    }
+
+    # 씨앗책방
+    location = /seedsbook {
+        try_files /seedsbook.html =404;
+    }
+
+    # 신규 캐릭터 선택 화면
+    location = /seedsbook-new {
+        try_files /seedsbook-new.html =404;
+    }
+
+    # 변경 전 화면 주소 호환
+    location = /seedsbook-old {
+        return 302 /seedsbook$is_args$args;
+    }
+
+    location = /seedsbook-old.html {
+        return 302 /seedsbook$is_args$args;
+    }
+
+    # 기존 파일 주소 호환
+    location = /seedsbookapp.html {
+        return 302 /seedsbook$is_args$args;
+    }
+
+    location = /seedsbookapp-old.html {
+        return 302 /seedsbook$is_args$args;
+    }
+
+    # 힐링 유형 테스트
+    location = /healing-type {
+        try_files /healing-type.html =404;
+    }
+
+    # 참여 페이지 모음 (허브)
+    location = /hub {
+        try_files /hub.html =404;
+    }
+
+
+    # SPA fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location = /404.html { internal; }
+    error_page 404 /404.html;
+
+    ssl_certificate     /etc/letsencrypt/live/gventus.store/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/gventus.store/privkey.pem;   # managed by Certbot
+    include             /etc/letsencrypt/options-ssl-nginx.conf;            # managed by Certbot
+    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;                 # managed by Certbot
+}
+
+```
+

@@ -2,410 +2,75 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>벤투스 × 문화티켓 설문조사</title>
-  <link rel="icon" href="/assets/images/site/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="/assets/styles/common.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
-  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
-  <style>
-    /* 인터랙티브 캔버스 레이어 */
-    #sv-bg,#sv-fx{position:fixed;inset:0;width:100%;height:100%;display:block}
-    #sv-bg{z-index:0}
-    #sv-fx{z-index:2;pointer-events:none}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>벤투스 × CULTURE PASS · 문화티켓 설문조사</title>
+  <meta name="description" content="광주 청년을 위한 문화티켓 월구독권, 여러분의 취향으로 함께 만들어갑니다.">
+  <link rel="icon" href="/assets/images/site/favicon.ico">
+  <link rel="stylesheet" href="/assets/styles/survey.css">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js" defer></script>
+  <script src="/assets/scripts/pages/survey.js" defer></script>
 </head>
-<body class="survey-page">
-
-<canvas id="sv-bg" aria-hidden="true"></canvas>
-<canvas id="sv-fx" aria-hidden="true"></canvas>
-
-<button id="infoBtn" aria-label="안내문 보기" onclick="openInfoModal()">
-  <i class="fa-solid fa-circle-info"></i>
-</button>
-
-<button id="homeBtn" aria-label="처음으로" onclick="resetSurvey()">
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-    <path d="M1 6.5L8 1L15 6.5V14.5C15 14.78 14.78 15 14.5 15H10.5V10.5H5.5V15H1.5C1.22 15 1 14.78 1 14.5V6.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</button>
-
-<div class="survey-wrap">
-
-  <div class="progress-bar-container" id="progressContainer" style="display:none;">
-    <div class="progress-bar" id="progressBar"></div>
+<body>
+<a class="skip-link" href="#surveyMain">설문으로 건너뛰기</a>
+<aside class="editorial">
+  <div><p class="edition"><span></span> VENTUS RESEARCH PROJECT</p><h1>CULTURE<br><em>PASS</em></h1><p class="editorial-copy">당신의 취향이,<br>광주의 새로운 문화가 되도록.</p><p class="editorial-description">2030 청년을 위한 문화티켓 월구독권을 기획하고 있어요. 경험과 취향을 들려주세요.</p></div>
+  <div class="editorial-footer"><span>GWANGJU, KR<br>2026 EDITION</span><iconify-icon icon="ph:ticket-light" aria-hidden="true"></iconify-icon></div>
+</aside>
+<main id="surveyMain" class="survey-main">
+  <header class="survey-header">
+    <ol class="step-list" aria-label="설문 진행 단계"><li data-step="0" aria-current="step"><b>1</b><span>경험</span></li><li data-step="1"><b>2</b><span>선호</span></li><li data-step="2"><b>3</b><span>정보</span></li></ol>
+    <div class="header-actions"><button type="button" id="homeBtn" onclick="resetSurvey()" aria-label="처음부터 다시 시작" hidden>↺</button><button type="button" id="infoBtn" onclick="openInfoModal()" aria-label="벤투스 안내 보기">i</button></div>
+    <div id="progressContainer" class="progress-track" role="progressbar" aria-label="설문 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="33"><div id="progressBar"></div></div>
+  </header>
+  <div class="survey-wrap">
+    <section class="step active" id="step-0" aria-labelledby="question-0">
+      <p class="step-num">QUESTION 01 <span>경험에 관하여</span></p><h2 id="question-0" tabindex="-1">광주에서 즐겨본<br>문화행사가 있나요?</h2><p class="desc">경험해본 문화를 모두 골라주세요.<br>아직 없다면 바로 다음 단계로 넘어가도 괜찮아요.</p>
+      <div class="category-grid" role="group" aria-label="참여한 문화행사"><button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '전시회/팝업')"><iconify-icon icon="solar:palette-bold-duotone" aria-hidden="true"></iconify-icon><span>전시회 / 팝업</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '뮤지컬/연극/콘서트/음악회')"><iconify-icon icon="solar:music-notes-bold-duotone" aria-hidden="true"></iconify-icon><span>뮤지컬 / 연극 / 콘서트</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '영화')"><iconify-icon icon="solar:video-frame-bold-duotone" aria-hidden="true"></iconify-icon><span>영화</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '공예/원데이클래스')"><iconify-icon icon="solar:pen-new-round-bold-duotone" aria-hidden="true"></iconify-icon><span>공예 / 원데이클래스</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '동호회(운동 등)')"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone" aria-hidden="true"></iconify-icon><span>동호회</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '온라인 소모임(맛집,카페,노래방 등)')"><iconify-icon icon="solar:smartphone-update-bold-duotone" aria-hidden="true"></iconify-icon><span>온라인 소모임</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q2', '기타')"><iconify-icon icon="solar:lightbulb-bold-duotone" aria-hidden="true"></iconify-icon><span>기타</span><span class="selection-check" aria-hidden="true">✓</span></button></div>
+      <p class="grid-hint" id="q2-count" aria-live="polite">복수 선택 가능 · 0개 선택</p>
+      <div class="survey-nav"><button type="button" class="btn" onclick="nextStep(0, 1)">다음 단계로 <span aria-hidden="true">→</span></button></div>
+    </section>
+    <section class="step" id="step-1" aria-labelledby="question-1">
+      <p class="step-num">QUESTION 02 <span>취향에 관하여</span></p><h2 id="question-1" tabindex="-1">다음에는 어떤 문화를<br>만나고 싶나요?</h2><p class="desc">광주에서 참여하고 싶은 문화행사를 골라주세요.<br>마음이 가는 만큼, 여러 개 골라도 좋아요.</p>
+      <div class="category-grid" role="group" aria-label="참여하고 싶은 문화행사"><button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '전시회/팝업')"><iconify-icon icon="solar:palette-bold-duotone" aria-hidden="true"></iconify-icon><span>전시회 / 팝업</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '뮤지컬/연극/콘서트/음악회')"><iconify-icon icon="solar:music-notes-bold-duotone" aria-hidden="true"></iconify-icon><span>뮤지컬 / 연극 / 콘서트</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '영화')"><iconify-icon icon="solar:video-frame-bold-duotone" aria-hidden="true"></iconify-icon><span>영화</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '공예/원데이클래스')"><iconify-icon icon="solar:pen-new-round-bold-duotone" aria-hidden="true"></iconify-icon><span>공예 / 원데이클래스</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '동호회(운동 등)')"><iconify-icon icon="solar:users-group-two-rounded-bold-duotone" aria-hidden="true"></iconify-icon><span>동호회</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '온라인 소모임(맛집,카페,노래방 등)')"><iconify-icon icon="solar:smartphone-update-bold-duotone" aria-hidden="true"></iconify-icon><span>온라인 소모임</span><span class="selection-check" aria-hidden="true">✓</span></button>
+<button type="button" class="category-card" aria-pressed="false" onclick="toggleCheck(this, 'q3', '기타')"><iconify-icon icon="solar:lightbulb-bold-duotone" aria-hidden="true"></iconify-icon><span>기타</span><span class="selection-check" aria-hidden="true">✓</span></button></div>
+      <p class="grid-hint" id="q3-count" aria-live="polite">복수 선택 가능 · 0개 선택</p>
+      <div class="survey-nav"><button type="button" class="btn btn-back" onclick="prevStep(1, 0)" aria-label="이전 질문">←</button><button type="button" class="btn" onclick="goTo(1, 2)">마지막 단계로 <span aria-hidden="true">→</span></button></div>
+    </section>
+    <section class="step" id="step-2" aria-labelledby="question-2">
+      <p class="step-num">QUESTION 03 <span>당신에 관하여</span></p><h2 id="question-2" tabindex="-1">이야기를 나눌 준비,<br>거의 다 됐어요.</h2><p class="desc">기본 정보와 인터뷰 희망 일정을 남겨주세요.<br><span class="required">*</span> 표시된 항목은 필수입니다.</p>
+      <section class="form-card"><h3>참여자 정보</h3><div class="field-grid">
+        <div class="input-group"><label for="q6-name">이름 <span>*</span></label><input id="q6-name" type="text" class="input-field" placeholder="홍길동" autocomplete="name" required></div>
+        <div class="input-group"><label for="q8-tel">연락처 <span>*</span></label><input id="q8-tel" type="tel" class="input-field" placeholder="010-0000-0000" autocomplete="tel" required></div>
+        <div class="input-group"><label for="q7-age">나이 <span>*</span></label><input id="q7-age" type="number" class="input-field" placeholder="25" min="1" max="99" required></div>
+        <div class="input-group"><label for="q9-mbti">MBTI <small>선택</small></label><input id="q9-mbti" type="text" class="input-field" placeholder="예) INFP" maxlength="4" autocapitalize="characters"></div>
+      </div></section>
+      <section class="form-card"><h3>인터뷰 희망 일정</h3><p>내일부터 한 달 이내의 날짜와 시간을 입력해주세요.</p><div class="field-grid">
+        <div class="input-group"><label for="q5-date">희망 날짜 <span>*</span></label><input id="q5-date" type="date" class="input-field" required></div>
+        <div class="input-group"><label for="q5-time">희망 시간 <span>*</span></label><input id="q5-time" type="text" class="input-field" placeholder="예) 오후 2시, 14:00" required></div>
+      </div></section>
+      <p class="privacy-note">제출 전 개인정보 수집 및 이용 안내를 확인해주세요.</p><p class="error-msg" id="q6-error" role="alert" style="display:none">필수 항목을 확인해주세요.</p>
+      <div class="survey-nav"><button type="button" class="btn btn-back" onclick="prevStep(2, 1)" aria-label="이전 질문">←</button><button type="button" class="btn btn-submit" onclick="openPrivacyModal()">제출하기 <span aria-hidden="true">✓</span></button></div>
+    </section>
+    <section class="step" id="step-3" aria-labelledby="question-3">
+      <div class="outro-wrap"><span class="success-mark" aria-hidden="true">✓</span><p class="step-num">THANK YOU FOR YOUR VOICE</p><h2 id="question-3" tabindex="-1">당신의 취향을<br>잘 전달했어요.</h2><p class="desc">소중한 의견 감사합니다.<br>더 가까운 문화생활을 기획하는 데 참고할게요.</p>
+      <article class="receipt"><header><span>PARTICIPATION RECEIPT</span><h3>설문 참여 내역</h3></header><div class="receipt-body"><p class="receipt-date">참여일 <time id="receiptDate"></time></p><p class="receipt-label">만나고 싶은 문화</p><div id="interestTags" class="interest-tags"></div><details><summary>제출 내용 확인 <span aria-hidden="true">＋</span></summary><div id="summaryBlock" class="summary-block"></div></details><div class="receipt-bars" aria-hidden="true"></div><p class="receipt-note">설문 참여 내역입니다.<br>입장권이나 인터뷰 예약 확정을 의미하지 않습니다.</p></div></article>
+      <button type="button" class="restart-button" onclick="resetSurvey()">처음으로 돌아가기 <span aria-hidden="true">↗</span></button></div>
+    </section>
+    <footer class="survey-footer">VENTUS <span>문화와 일상 사이, 당신의 목소리.</span></footer>
   </div>
-
-  <div class="step active" id="step-0">
-    <div class="badge"><span class="badge-dot"></span>Ventus Survey 2026</div>
-    <h1 class="intro-title">문화티켓<br>월구독권<br>서비스 기획</h1>
-    <p class="desc">문화플랫폼 <strong style="color:#0d0c0b">벤투스</strong>에서 2030 청년들을 대상으로 문화티켓 월구독권 서비스를 기획 중입니다‼️
-
-      여러분이 더 가까이에서 즐겁고 유익한 여가를 즐길 수 있도록 만들어가고자 합니다 😃</p>
-    <div class="intro-meta">
-      <span class="intro-meta-item">소요시간 약 30초</span>
-      <span class="intro-meta-item">총 3문항</span>
-    </div>
-    <div class="step-num">01 / 03</div>
-    <p class="grid-label">광주에서 참여해본 문화행사를 골라주세요</p>
-    <div class="category-grid">
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '전시회/팝업')">
-        <iconify-icon icon="flat-color-icons:gallery" width="60" height="60"></iconify-icon>
-        <span>전시회 / 팝업</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '뮤지컬/연극/콘서트/음악회')">
-        <iconify-icon icon="flat-color-icons:music" width="60" height="60"></iconify-icon>
-        <span>뮤지컬 / 연극 / 콘서트</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '영화')">
-        <iconify-icon icon="flat-color-icons:film-reel" width="60" height="60"></iconify-icon>
-        <span>영화</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '공예/원데이클래스')">
-        <iconify-icon icon="flat-color-icons:edit-image" width="60" height="60"></iconify-icon>
-        <span>공예 / 원데이클래스</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '동호회(운동 등)')">
-        <iconify-icon icon="flat-color-icons:conference-call" width="60" height="60"></iconify-icon>
-        <span>동호회</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '온라인 소모임(맛집,카페,노래방 등)')">
-        <iconify-icon icon="flat-color-icons:video-call" width="60" height="60"></iconify-icon>
-        <span>온라인 소모임</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q2', '기타')">
-        <iconify-icon icon="flat-color-icons:idea" width="60" height="60"></iconify-icon>
-        <span>기타</span>
-      </div>
-    </div>
-    <p class="grid-hint">복수 선택 가능 · 없으면 바로 다음을 눌러주세요</p>
-    <button class="btn" style="width:100%; justify-content:center; margin-top:16px;" onclick="nextStep(0, 1)">다음</button>
-  </div>
-
-  <div class="step" id="step-1">
-    <div class="step-num">02 / 03</div>
-    <h1>광주에서 참여하고 싶은<br>문화행사를 골라주세요</h1>
-    <p class="desc">복수 선택 가능합니다</p>
-    <div class="category-grid">
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '전시회/팝업')">
-        <iconify-icon icon="flat-color-icons:gallery" width="60" height="60"></iconify-icon>
-        <span>전시회 / 팝업</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '뮤지컬/연극/콘서트/음악회')">
-        <iconify-icon icon="flat-color-icons:music" width="60" height="60"></iconify-icon>
-        <span>뮤지컬 / 연극 / 콘서트</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '영화')">
-        <iconify-icon icon="flat-color-icons:film-reel" width="60" height="60"></iconify-icon>
-        <span>영화</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '공예/원데이클래스')">
-        <iconify-icon icon="flat-color-icons:edit-image" width="60" height="60"></iconify-icon>
-        <span>공예 / 원데이클래스</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '동호회(운동 등)')">
-        <iconify-icon icon="flat-color-icons:conference-call" width="60" height="60"></iconify-icon>
-        <span>동호회</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '온라인 소모임(맛집,카페,노래방 등)')">
-        <iconify-icon icon="flat-color-icons:video-call" width="60" height="60"></iconify-icon>
-        <span>온라인 소모임</span>
-      </div>
-      <div class="category-card" onclick="toggleCheck(this, 'q3', '기타')">
-        <iconify-icon icon="flat-color-icons:idea" width="60" height="60"></iconify-icon>
-        <span>기타</span>
-      </div>
-    </div>
-    <p class="grid-hint">복수 선택 가능 · 없으면 바로 다음을 눌러주세요</p>
-    <div class="survey-nav">
-      <button class="btn btn-back" onclick="prevStep(1, 0)">이전</button>
-      <button class="btn" style="flex:1; justify-content:center;" onclick="goTo(1, 2)">다음</button>
-    </div>
-  </div>
-
-  <div class="step" id="step-2">
-    <div class="step-num">03 / 03</div>
-    <h1>기본 정보를 입력해 주세요</h1>
-    <div class="input-group">
-      <div class="input-label">이름</div>
-      <input type="text" class="input-field" id="q6-name" placeholder="홍길동">
-    </div>
-    <div class="input-group">
-      <div class="input-label">나이</div>
-      <input type="number" class="input-field" id="q7-age" placeholder="25" min="1" max="99">
-    </div>
-    <div class="input-group">
-      <div class="input-label">연락처</div>
-      <input type="tel" class="input-field" id="q8-tel" placeholder="010-0000-0000">
-    </div>
-    <div class="input-group">
-      <div class="input-label">MBTI</div>
-      <input type="text" class="input-field" id="q9-mbti" placeholder="예) INFP" maxlength="4" style="text-transform:uppercase;">
-    </div>
-
-    <div style="height:1px; background:var(--border); margin:28px 0;"></div>
-
-    <h1>인터뷰 일정을 선택해 주세요</h1>
-    <p class="desc" style="margin-bottom:20px;">한 달 이내의 날짜와 원하시는 시간을 입력해 주세요</p>
-    <div class="input-group">
-      <div class="input-label">날짜</div>
-      <input type="date" class="input-field" id="q5-date" min="" max="">
-    </div>
-    <div class="input-group">
-      <div class="input-label">시간</div>
-      <input type="text" class="input-field" id="q5-time" placeholder="예) 오후 2시, 14:00">
-    </div>
-
-    <div class="error-msg" id="q6-error" style="display:none;">모든 항목을 빠짐없이 입력해 주세요.</div>
-    <div class="survey-nav">
-      <button class="btn btn-back" onclick="prevStep(2, 1)">이전</button>
-      <button class="btn" style="flex:1; justify-content:center;" onclick="openPrivacyModal()">제출하기</button>
-    </div>
-  </div>
-
-  <div class="step" id="step-3">
-    <div class="outro-wrap">
-      <span class="outro-symbol">✦</span>
-      <h1 class="outro-title">제출이<br>완료되었습니다</h1>
-      <p class="desc">소중한 시간을 내어 참여해 주셔서 감사합니다.<br>보내주신 의견을 바탕으로 더 발전하는<br>서비스가 되겠습니다 😃</p>
-      <p class="summary-title">제출 내용 확인</p>
-      <div id="summaryBlock" class="summary-block"></div>
-      <button class="btn" style="margin-top: 32px;" onclick="resetSurvey()">처음으로 돌아가기</button>
-    </div>
-  </div>
-
-</div><!-- /survey-wrap -->
-
-<!-- ──────────────────── Info Modal ──────────────────── -->
-<div class="info-modal-overlay" id="infoModal">
-  <div class="info-modal-box">
-    <button class="info-modal-close" onclick="closeInfoModal()" aria-label="닫기">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-    <div class="info-slider-wrap">
-      <div class="info-slider" id="infoSlider">
-        <div class="info-slide">
-          <img src="/assets/images/site/ventus_info1.png" alt="벤투스 안내 1" draggable="false">
-        </div>
-        <div class="info-slide">
-          <img src="/assets/images/site/ventus_info2.png" alt="벤투스 안내 2" draggable="false">
-        </div>
-      </div>
-    </div>
-    <button class="info-nav info-nav-prev" onclick="slideInfo(-1)" aria-label="이전">
-      <i class="fa-solid fa-chevron-left"></i>
-    </button>
-    <button class="info-nav info-nav-next" onclick="slideInfo(1)" aria-label="다음">
-      <i class="fa-solid fa-chevron-right"></i>
-    </button>
-    <div class="info-dots">
-      <span class="info-dot active"></span>
-      <span class="info-dot"></span>
-    </div>
-  </div>
-</div>
-
-<!-- ──────────────────── Privacy Modal ──────────────────── -->
-<div class="modal-overlay" id="privacyModal">
-  <div class="modal-box">
-    <h3 class="modal-title">개인정보 수집 및 이용 동의</h3>
-    <table class="privacy-table">
-      <tbody>
-      <tr><th>수집하는 항목</th><td>이름, 연락처</td></tr>
-      <tr><th>수집 및 이용 목적</th><td>이벤트 진행 및 당첨자 안내</td></tr>
-      <tr><th>보유 및 이용기간</th><td><strong>당첨자 발표 후 1달간 보관</strong></td></tr>
-      </tbody>
-    </table>
-    <label class="agree-label">
-      <input type="checkbox" id="privacyConsent">
-      <span>개인정보 수집 및 이용에 동의합니다. (필수)</span>
-    </label>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">취소</button>
-      <button class="btn-confirm" onclick="confirmAndSubmit()">확인 및 제출</button>
-    </div>
-  </div>
-</div>
-
-<script src="/assets/scripts/pages/survey.js"></script>
-
-<script>
-/* ── survey 인터랙티브 캔버스 (ambient 배경 + 탭 파티클 + 완료 축포) ── */
-(function () {
-  var DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-  var SVBG = {
-    c: document.getElementById('sv-bg'), ctx: null, w: 0, h: 0, t: 0,
-    mood: 0.15, target: 0.15, px: 0, py: 0, tpx: 0, tpy: 0, orbs: [],
-    pal: [[98,162,226],[139,189,232],[230,168,147],[120,150,225],[86,196,206]],
-    init: function () {
-      this.ctx = this.c.getContext('2d');
-      this.resize(); window.addEventListener('resize', this.resize.bind(this));
-      for (var i = 0; i < 5; i++) this.orbs.push({
-        x: Math.random(), y: Math.random(), r: 0.30 + Math.random() * 0.34,
-        col: this.pal[i % this.pal.length],
-        sx: (Math.random() - 0.5) * 0.00014, sy: (Math.random() - 0.5) * 0.00014,
-        ph: Math.random() * Math.PI * 2
-      });
-      window.addEventListener('pointermove', function (e) {
-        this.tpx = (e.clientX / window.innerWidth - 0.5) * 2;
-        this.tpy = (e.clientY / window.innerHeight - 0.5) * 2;
-      }.bind(this), { passive: true });
-      requestAnimationFrame(this.loop.bind(this));
-    },
-    resize: function () {
-      this.w = this.c.width = window.innerWidth * DPR;
-      this.h = this.c.height = window.innerHeight * DPR;
-      this.c.style.width = window.innerWidth + 'px';
-      this.c.style.height = window.innerHeight + 'px';
-    },
-    loop: function () {
-      this.t++;
-      this.mood += (this.target - this.mood) * 0.02;
-      this.px += (this.tpx - this.px) * 0.04;
-      this.py += (this.tpy - this.py) * 0.04;
-      var ctx = this.ctx, W = this.w, H = this.h;
-      var g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, '#0A3680'); g.addColorStop(1, '#07265E');
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'lighter';
-      for (var i = 0; i < this.orbs.length; i++) {
-        var o = this.orbs[i];
-        o.x += o.sx; o.y += o.sy;
-        if (o.x < -0.3 || o.x > 1.3) o.sx *= -1;
-        if (o.y < -0.3 || o.y > 1.3) o.sy *= -1;
-        var pulse = 0.85 + Math.sin(this.t * 0.006 + o.ph) * 0.15;
-        var cx = o.x * W + this.px * 40 * DPR * (i % 2 ? 1 : -1);
-        var cy = o.y * H + this.py * 40 * DPR * (i % 2 ? -1 : 1);
-        var rad = o.r * Math.min(W, H) * pulse;
-        var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
-        var a = 0.10 + this.mood * 0.18;
-        rg.addColorStop(0, 'rgba(' + o.col[0] + ',' + o.col[1] + ',' + o.col[2] + ',' + a + ')');
-        rg.addColorStop(1, 'rgba(' + o.col[0] + ',' + o.col[1] + ',' + o.col[2] + ',0)');
-        ctx.fillStyle = rg;
-        ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-      requestAnimationFrame(this.loop.bind(this));
-    }
-  };
-
-  var SVFX = {
-    c: document.getElementById('sv-fx'), ctx: null, w: 0, h: 0,
-    parts: [], rings: [], running: false,
-    init: function () {
-      this.ctx = this.c.getContext('2d');
-      this.resize(); window.addEventListener('resize', this.resize.bind(this));
-    },
-    resize: function () {
-      this.w = this.c.width = window.innerWidth * DPR;
-      this.h = this.c.height = window.innerHeight * DPR;
-      this.c.style.width = window.innerWidth + 'px';
-      this.c.style.height = window.innerHeight + 'px';
-    },
-    burst: function (x, y, strong) {
-      var px = x * DPR, py = y * DPR;
-      var n = strong ? 20 : 12;
-      var cols = strong ? [[139,189,232],[98,162,226],[255,255,255]] : [[230,168,147],[139,189,232]];
-      for (var i = 0; i < n; i++) {
-        var ang = Math.random() * Math.PI * 2;
-        var sp = (strong ? 2.2 : 1.4) * (0.4 + Math.random()) * DPR;
-        this.parts.push({
-          x: px, y: py, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 0.6 * DPR,
-          life: 1, decay: 0.018 + Math.random() * 0.02,
-          r: (strong ? 3.4 : 2.4) * (0.6 + Math.random()) * DPR, col: cols[i % cols.length]
-        });
-      }
-      this.rings.push({ x: px, y: py, r: 6 * DPR, vr: (strong ? 3.4 : 2.2) * DPR, life: 1,
-        col: strong ? [139,189,232] : [230,168,147] });
-      this.kick();
-    },
-    celebrate: function () {
-      var cx = this.w / 2, cy = this.h * 0.30;
-      var cols = [[139,189,232],[98,162,226],[230,168,147],[255,255,255],[86,196,206]];
-      for (var i = 0; i < 90; i++) {
-        var ang = Math.random() * Math.PI * 2;
-        var sp = (1.5 + Math.random() * 4) * DPR;
-        this.parts.push({
-          x: cx, y: cy, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
-          life: 1, decay: 0.008 + Math.random() * 0.012,
-          r: (2.5 + Math.random() * 3) * DPR, col: cols[i % cols.length], grav: 0.045 * DPR
-        });
-      }
-      for (var k = 0; k < 3; k++) (function (self, d) {
-        setTimeout(function () {
-          self.rings.push({ x: cx, y: cy, r: 10 * DPR, vr: 5 * DPR, life: 1, col: [139,189,232] });
-          self.kick();
-        }, d);
-      })(this, k * 180);
-      this.kick();
-    },
-    kick: function () {
-      if (!this.running) { this.running = true; requestAnimationFrame(this.loop.bind(this)); }
-    },
-    loop: function () {
-      var ctx = this.ctx;
-      ctx.clearRect(0, 0, this.w, this.h);
-      for (var i = this.parts.length - 1; i >= 0; i--) {
-        var p = this.parts[i];
-        p.x += p.vx; p.y += p.vy;
-        p.vy += (p.grav || 0.03 * DPR);
-        p.vx *= 0.99; p.vy *= 0.99;
-        p.life -= p.decay;
-        if (p.life <= 0) { this.parts.splice(i, 1); continue; }
-        ctx.globalAlpha = Math.max(0, p.life);
-        ctx.fillStyle = 'rgb(' + p.col[0] + ',' + p.col[1] + ',' + p.col[2] + ')';
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fill();
-      }
-      for (var j = this.rings.length - 1; j >= 0; j--) {
-        var r = this.rings[j];
-        r.r += r.vr; r.vr *= 0.96; r.life -= 0.03;
-        if (r.life <= 0) { this.rings.splice(j, 1); continue; }
-        ctx.globalAlpha = Math.max(0, r.life) * 0.6;
-        ctx.strokeStyle = 'rgb(' + r.col[0] + ',' + r.col[1] + ',' + r.col[2] + ')';
-        ctx.lineWidth = 2 * DPR;
-        ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2); ctx.stroke();
-      }
-      ctx.globalAlpha = 1;
-      if (this.parts.length || this.rings.length) requestAnimationFrame(this.loop.bind(this));
-      else this.running = false;
-    }
-  };
-
-  function stepIndex() {
-    var a = document.querySelector('.step.active');
-    if (!a) return 0;
-    var m = /step-(\d+)/.exec(a.id);
-    return m ? parseInt(m[1], 10) : 0;
-  }
-  var MOODS = [0.15, 0.42, 0.7, 1.0];
-  var celebrated = false;
-  function syncStep() {
-    var idx = stepIndex();
-    SVBG.target = MOODS[Math.min(idx, 3)];
-    if (idx === 3 && !celebrated) { celebrated = true; SVFX.celebrate(); }
-    if (idx === 0) celebrated = false;
-  }
-
-  function start() {
-    SVBG.init(); SVFX.init(); syncStep();
-    var mo = new MutationObserver(syncStep);
-    document.querySelectorAll('.step').forEach(function (s) {
-      mo.observe(s, { attributes: true, attributeFilter: ['class'] });
-    });
-    document.addEventListener('click', function (e) {
-      var t = e.target.closest && e.target.closest('.category-card, .option-label');
-      if (!t) return;
-      var x = e.clientX, y = e.clientY;
-      if (!x && !y) { var b = t.getBoundingClientRect(); x = b.left + b.width / 2; y = b.top + b.height / 2; }
-      requestAnimationFrame(function () { SVFX.burst(x, y, t.classList.contains('selected')); });
-    }, true);
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-})();
-</script>
-
+</main>
+<dialog id="privacyModal" aria-labelledby="privacyTitle"><div class="modal-box"><p class="step-num">ONE LAST THING</p><h2 id="privacyTitle">개인정보 수집 및 이용 동의</h2><table class="privacy-table"><tbody><tr><th scope="row">수집하는 항목</th><td>이름, 연락처</td></tr><tr><th scope="row">수집 및 이용 목적</th><td>이벤트 진행 및 당첨자 안내</td></tr><tr><th scope="row">보유 및 이용기간</th><td><strong>당첨자 발표 후 1달간 보관</strong></td></tr></tbody></table><label class="agree-label"><input type="checkbox" id="privacyConsent" required><span>개인정보 수집 및 이용에 동의합니다. (필수)</span></label><div class="modal-actions"><button type="button" class="btn btn-back" onclick="closeModal()">취소</button><button type="button" class="btn" id="confirmSubmit" onclick="confirmAndSubmit()">동의 및 제출</button></div></div></dialog>
+<dialog id="infoModal" aria-label="벤투스 안내"><div class="info-modal-box"><button type="button" class="info-modal-close" onclick="closeInfoModal()" aria-label="안내 닫기">×</button><div class="info-slider-wrap"><div class="info-slider" id="infoSlider"><div class="info-slide"><img src="/assets/images/site/ventus_info1.png" alt="벤투스 안내 1" draggable="false"></div><div class="info-slide"><img src="/assets/images/site/ventus_info2.png" alt="벤투스 안내 2" draggable="false"></div></div></div><div class="info-controls"><button type="button" onclick="slideInfo(-1)" aria-label="이전 안내">←</button><div class="info-dots" aria-hidden="true"><span class="info-dot active"></span><span class="info-dot"></span></div><button type="button" onclick="slideInfo(1)" aria-label="다음 안내">→</button></div></div></dialog>
 </body>
 </html>
