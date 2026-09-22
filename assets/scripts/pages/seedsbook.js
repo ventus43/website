@@ -90,6 +90,16 @@ function updateNav() {
     : '다음 <i class="fa-solid fa-chevron-right"></i>';
   $('nextBtn').classList.toggle('submit-mode', last);
   $('surveyCharFloat').classList.toggle('hidden-char', last);
+  updateSproutProgress();
+}
+
+// 진행 상태를 "1/6" 텍스트 대신 새싹이 자라나는 그래픽으로 표시
+function updateSproutProgress() {
+  document.querySelectorAll('#sproutProgress .sprout-dot').forEach((dot, i) => {
+    dot.classList.toggle('grown', i <= currentQ);
+    dot.classList.toggle('current', i === currentQ);
+  });
+  $('sproutCount').textContent = `${currentQ + 1} / ${TOTAL_Q}`;
 }
 
 // 선택 핸들러
