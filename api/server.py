@@ -19,6 +19,8 @@ if not BOT_TOKEN or not CHAT_ID:
 print(f'[OK] .env 로딩 완료 / chat_id: {CHAT_ID} / sabujak_chat_id: {SABUJAK_CHAT_ID}')
 
 app = Flask(__name__)
+from seed_groups import groups
+app.register_blueprint(groups)
 
 
 def _post_telegram(token: str, chat_id: str, text: str) -> None:
