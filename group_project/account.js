@@ -1,22 +1,33 @@
 'use strict';
 const accountPanel=document.createElement('section');
 accountPanel.className='history'; accountPanel.style.gridColumn='1 / -1';
-accountPanel.innerHTML=`<h2>계정과 그룹 관리</h2>
+accountPanel.innerHTML=`<h2 id="account-title">개인 계정</h2>
 <p id="account-info"></p>
 <form id="account-form">
 <label>아이디 <input name="username" pattern="[a-z0-9_]{4,32}" minlength="4" maxlength="32" autocomplete="username" required></label>
-<label>비밀번호 / 복구 시 새 비밀번호 <input name="password" type="password" minlength="10" maxlength="128" autocomplete="off" required></label>
-<label id="recovery-label">복구 코드 (복구할 때만) <input name="recovery" autocomplete="off" maxlength="128"></label>
-<button value="login">로그인</button> <button value="recover">비밀번호 복구</button> <button value="account">현재 구성원 계정 등록</button>
+<label>비밀번호 <input name="password" type="password" minlength="10" maxlength="128" autocomplete="current-password" required></label>
+<button value="login">로그인</button> <button value="account">현재 구성원 계정 등록</button>
 </form>
-<form id="manage-form" hidden>
+<details id="recovery-panel">
+<summary>복구 코드로 비밀번호 재설정</summary>
+<form id="recovery-form">
+<label>아이디 <input name="username" pattern="[a-z0-9_]{4,32}" minlength="4" maxlength="32" autocomplete="username" required></label>
+<label>새 비밀번호 <input name="password" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label>
+<label>복구 코드 <input name="recovery" autocomplete="off" maxlength="128" required></label>
+<button value="recover">비밀번호 재설정</button>
+</form>
+</details>
+<section id="admin-panel" hidden>
+<h3>관리자 그룹 관리</h3>
+<p>관리자 역할로 로그인한 경우에만 이 영역이 표시됩니다.</p>
+<form id="manage-form">
 <label>새 그룹 이름 <input name="name" maxlength="40"></label><button value="rename">그룹 이름 변경</button>
 <button value="invite">초대 코드 재발급</button>
 <label>관리할 팀원 <select name="member" aria-label="관리할 팀원"></select></label>
 <button value="reset">팀원 복구 코드 발급</button> <button value="remove">팀원 탈퇴 처리</button>
 <p id="member-manage-note" hidden>팀원 참여 후 복구 코드 발급과 탈퇴 처리를 사용할 수 있어요.</p>
 <p>탈퇴 시 접속을 차단하고 자리를 비워요. 기존 기록은 서버에 보관하지만 현황에서는 제외돼요.</p>
-</form><p id="account-status" role="status"></p>`;
+</form></section><p id="account-status" role="status"></p>`;
 document.querySelector('main').append(accountPanel);
 const secretDialog=document.createElement('dialog');
 secretDialog.innerHTML='<h2>복구 코드 보관</h2><p>이 코드는 지금 한 번만 표시돼요. 비밀번호처럼 안전한 곳에 보관해 주세요. 복구하면 기존 코드는 만료됩니다.</p><output style="overflow-wrap:anywhere"></output><form method="dialog"><button>보관했어요</button></form>';
@@ -29,12 +40,13 @@ function showRecovery(result) {
 }
 function accountRender() {
   const connected=!!remoteGroup;
-  $('account-info').textContent=remoteGroup?.username ? `등록된 아이디: ${remoteGroup.username} · 새로 로그인하면 이전 기기의 접속은 종료돼요.` : connected ? '아이디를 등록하면 접속 키를 잃어도 로그인할 수 있어요.' : '등록한 아이디로 로그인하거나 복구 코드로 새 비밀번호를 설정하세요.';
+  const manager=remoteGroup?.role==='manager';
+  $('account-title').textContent=manager?'관리자 계정 및 그룹 관리':'개인 계정';
+  $('account-info').textContent=remoteGroup?.username ? `등록된 아이디: ${remoteGroup.username} · ${manager?'관리자':'개인'} 로그인 · 새로 로그인하면 이전 기기의 접속은 종료돼요.` : connected ? '아이디를 등록하면 접속 키를 잃어도 로그인할 수 있어요.' : '등록한 아이디로 로그인하거나 복구 코드로 새 비밀번호를 설정하세요.';
   $('account-form').hidden=!!remoteGroup?.username;
   $('account-form').querySelector('[value="account"]').hidden=!connected;
-  for(const action of ['login','recover']) $('account-form').querySelector(`[value="${action}"]`).hidden=connected;
-  $('recovery-label').hidden=connected;
-  $('manage-form').hidden=remoteGroup?.role!=='manager';
+  $('recovery-panel').hidden=connected;
+  $('admin-panel').hidden=!manager;
   const select=$('manage-form').elements.member;
   const selected=select.value; select.replaceChildren();
   for(const member of remoteGroup?.members || []) if(member.role==='member') select.add(new Option(member.name,member.id));
@@ -60,6 +72,7 @@ async function submitAccount(event) {
   finally {buttons.forEach(button=>button.disabled=false);}
 }
 $('account-form').addEventListener('submit',submitAccount);
+$('recovery-form').addEventListener('submit',submitAccount);
 $('manage-form').addEventListener('submit',async event=>{
   event.preventDefault(); const form=event.currentTarget, action=event.submitter?.value;
   if(['reset','remove'].includes(action)&&!form.elements.member.value) return;

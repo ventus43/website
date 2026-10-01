@@ -49,7 +49,7 @@ function handleCharacterSelect(character) {
   $('nextBtn').focus({ preventScroll: true });
 }
 
-const requestedVariant = new URLSearchParams(window.location.search).get('characterVariant') || 'slider';
+const requestedVariant = 'friends';
 const characterSelect = new window.CharacterSelect({
   root: $('characterSelect'),
   characters,

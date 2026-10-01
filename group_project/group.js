@@ -7,13 +7,13 @@ let saving = false;
 const groupPanel = document.createElement('section');
 groupPanel.className = 'history';
 groupPanel.id = 'group-panel';
-groupPanel.innerHTML = `<p class="eyebrow">THREE READERS, ONE GUIDE</p><h2>팀원 3명과 지도사 1명</h2>
-<p>지도사는 팀원별 실천 현황을 확인하고, 팀원은 자신의 체크를 남겨요.</p>
+groupPanel.innerHTML = `<p class="eyebrow">THREE READERS, ONE GUIDE</p><h2>팀원 3명과 관리자 1명</h2>
+<p>관리자는 팀원별 실천 현황을 확인하고, 팀원은 자신의 체크를 남겨요.</p>
 <form id="connect-form"><label>내 이름 <input id="member-name" maxlength="40" required></label>
 <label>모임 이름 (생성할 때) <input id="new-group-name" maxlength="40"></label>
 <label>초대 코드 (참여할 때) <input id="invite-code" autocomplete="off"></label>
-<p>체크 여부는 지도사에게 공개됩니다. 지도사는 모임 중 ‘함께 보기’ 화면으로 팀원별 상태와 그룹 정원을 보여줄 수 있어요.</p>
-<button name="action" value="create">지도사로 그룹 만들기</button> <button name="action" value="join">팀원으로 참여하기</button></form>
+<p>체크 여부는 관리자에게 공개됩니다. 관리자는 모임 중 ‘함께 보기’ 화면으로 팀원별 상태와 그룹 정원을 보여줄 수 있어요.</p>
+<button name="action" value="create">관리자로 그룹 만들기</button> <button name="action" value="join">개인으로 참여하기</button></form>
 <p id="group-status" role="status"></p><div id="remote-content"></div><button id="refresh-group" hidden>현황 새로고침</button>
 <button id="leave-session" hidden>접속 종료</button><p id="key-notice" hidden>이 탭을 닫기 전 개인 접속 키를 보관하세요. 키를 아는 사람은 내 권한으로 접속할 수 있어요.</p>
 <details><summary>개인 접속 키로 다시 접속</summary><form id="restore-form"><input id="access-key" type="password" aria-label="개인 접속 키" required><button>접속</button></form><button id="show-key" type="button">내 접속 키 보기</button><output id="key-output"></output></details>`;
@@ -111,7 +111,7 @@ function remoteRender() {
   $('group-name').textContent = remoteGroup.name;
   const manager = remoteGroup.role === 'manager';
   $('mode-note').textContent = manager ? '팀원을 초대하고 실천 현황을 살펴보세요. 함께 보기로 정원을 보여줄 수 있어요.' : '그룹에 참여했어요. 내용 입력 없이 오늘의 실천을 체크해 보세요.';
-  $('group-status').textContent = manager ? '지도사 관리 화면 · 팀원 3명 기준 · 한국 시간' : '팀원 화면 · 체크는 서버에 저장됩니다 · 한국 시간';
+  $('group-status').textContent = manager ? '관리자 그룹 관리 화면 · 팀원 3명 기준 · 한국 시간' : '개인 기록 화면 · 체크는 서버에 저장됩니다 · 한국 시간';
   if(manager) {
     const invite = document.createElement('p'); invite.textContent = `팀원 초대 코드: ${remoteGroup.invite}`; invite.style.overflowWrap = 'anywhere'; $('remote-content').append(invite);
     const linkLabel=document.createElement('label'); linkLabel.textContent='팀원 초대 링크';
@@ -124,8 +124,12 @@ function remoteRender() {
     $('remote-content').append(linkLabel,copy);
   }
   const members = remoteGroup.members.filter(m => m.role === 'member');
-  const summary = document.createElement('p'); summary.textContent = `팀원 ${members.length}/3명 · 지도사 1명`; $('remote-content').append(summary);
-  if(manager) $('remote-content').append(gardenScene(members,remoteGroup.today));
+  if(manager) {
+    const summary = document.createElement('p'); summary.textContent = `팀원 ${members.length}/3명 · 관리자 1명`; $('remote-content').append(summary);
+    $('remote-content').append(gardenScene(members,remoteGroup.today));
+  } else {
+    const personal = document.createElement('p'); personal.textContent = '내가 체크한 독서 기록과 성장만 보여요.'; $('remote-content').append(personal);
+  }
   for(const member of members) {
     if(!manager && member.id !== remoteGroup.me) continue;
     const card = document.createElement('article'); card.className='member-card';
@@ -169,7 +173,7 @@ async function refreshRemote() {
   // Avoid replacing focused controls during unchanged background polls.
   if(changed) remoteRender();
   if(presentation.open) presentation.querySelector('.presentation-sync').textContent=`${result.today} · 한국 시간 · 방금 동기화했어요`;
-  $('group-status').textContent=`${result.role==='manager'?'지도사 관리':'팀원'} 화면 · 한국 시간 · 방금 동기화했어요`;
+  $('group-status').textContent=`${result.role==='manager'?'관리자 그룹 관리':'개인 기록'} 화면 · 한국 시간 · 방금 동기화했어요`;
 }
 async function changeRemote(path, data) {
   if(saving) return;

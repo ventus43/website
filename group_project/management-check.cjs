@@ -9,11 +9,11 @@ vm.runInContext(source.slice(source.indexOf('function accountRender()'),source.i
 for(const size of [0,3,0]){
   context.remoteGroup={role:'manager',members:Array.from({length:size},(_,id)=>({role:'member',id:String(id),name:`팀원 ${id}`}))};
   vm.runInContext('accountRender()',context);
-  assert.equal(node('manage-form').hidden,false);
+  assert.equal(node('admin-panel').hidden,false);
   assert.equal(select.disabled,size===0);
   assert.equal(node('member-manage-note').hidden,size>0);
   for(const action of ['reset','remove'])assert.equal(node(`manage-form[value="${action}"]`).disabled,size===0);
 }
 context.remoteGroup={role:'member',members:[]};vm.runInContext('accountRender()',context);
-assert.equal(node('manage-form').hidden,true);
-console.log('PASS: zero/three/zero members disable and restore management actions; member cannot see manager form');
+assert.equal(node('admin-panel').hidden,true);
+console.log('PASS: zero/three/zero members disable and restore management actions; member cannot see admin panel');

@@ -2,6 +2,7 @@ import os
 import json
 import urllib.request
 import urllib.error
+from html import escape
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 
@@ -112,6 +113,7 @@ def sabujak_book():
         f'<b>이름:</b> {body.get("이름", "-")}',
         f'<b>출생연도:</b> {body.get("출생연도", "-")}',
         f'<b>연락처:</b> {body.get("연락처", "-")}',
+        f'<b>MBTI:</b> {escape(str(body.get("MBTI") or "-"))}',
         f'<b>좋아하는 세계:</b> {body.get("좋아하는세계", "-")}',
         f'<b>사부작에 온 이유:</b> {body.get("참여이유", "-")}',
         f'<b>참여 가능 시간:</b> {body.get("가능시간", "-")}',

@@ -2,6 +2,9 @@
   'use strict';
 
   const VARIANTS = [
+    { id: 'friends', label: '책방 친구들' },
+    { id: 'profiles', label: '프로필 카드' },
+    { id: 'fan', label: '부채꼴 카드' },
     { id: 'slider', label: 'Slider' },
     { id: 'deck', label: 'Deck' },
     { id: 'roulette', label: 'Roulette' }
@@ -53,7 +56,7 @@
       url.searchParams.set('characterVariant', variant);
       window.history.replaceState({}, '', url);
       this.render();
-      this.root.querySelector('[data-variant-toggle]').focus();
+      this.root.querySelector('[data-variant-toggle], [data-compare][aria-pressed="true"]').focus();
     }
 
     render() {
@@ -61,6 +64,9 @@
       if (this.resizeObserver) this.resizeObserver.disconnect();
       this.confirmed = false;
       this.root.classList.remove('is-confirming');
+      const comparison = ['friends', 'profiles', 'fan'].includes(this.variant);
+      this.root.closest('.page').classList.toggle('is-comparison', comparison);
+      if (comparison) { this.renderComparison(); return; }
       this.root.innerHTML = `
         <button type="button" class="variant-toggle" data-variant-toggle aria-haspopup="dialog" aria-expanded="false" aria-controls="variantMenu">☰</button>
         <dialog id="variantMenu" class="variant-switcher" aria-label="캐릭터 선택 화면 변경">
@@ -114,6 +120,48 @@
         this.root.classList.remove('is-confirming');
         this.onSelect(character);
       }, prefersReducedMotion() ? 0 : 180);
+    }
+
+    renderComparison() {
+      const labels = ['차근차근 탐색가', '밤샘 몰입왕', '편안한 동행', '숨은 이야기 수집가', '문장을 나누는 친구', '꾸준한 완독가', '신나는 시작 담당', '자유로운 취향', '함께 읽는 응원가'];
+      const descriptions = {
+        friends: ['책방에 모인 친구들', '마음이 가는 친구를 톡 눌러보세요.'],
+        profiles: ['나와 닮은 책 친구', '아홉 가지 성격, 어떤 친구와 잘 맞을까요?'],
+        fan: ['오늘의 친구를 펼쳐봐요', '펼쳐진 카드에서 마음에 드는 친구를 골라보세요.']
+      };
+      const copy = descriptions[this.variant];
+      this.root.innerHTML = `
+        <div class="compare-shell compare-${this.variant}">
+          <nav class="compare-tabs" aria-label="선택 화면 비교" ${this.variant === 'friends' ? 'hidden' : ''}>
+            ${VARIANTS.slice(0, 3).map(v => `<button type="button" data-compare="${v.id}" aria-pressed="${v.id === this.variant}">${v.label}</button>`).join('')}
+          </nav>
+          ${this.variant === 'friends' ? '' : `<header class="compare-heading"><span>씨앗책방 · 친구 만나기</span><h1>${copy[0]}</h1><p>${copy[1]}</p></header>`}
+          <div class="compare-collection" aria-label="아홉 명의 책 친구">
+            ${this.characters.map((c, i) => `<button type="button" class="compare-card" data-friend="${i}" style="--slot:${i % 3 - 1}" aria-pressed="false">
+              <span class="compare-check" aria-hidden="true">✓</span>
+              ${characterImage(c, 'compare-image')}<strong>${c.name}</strong><span class="compare-trait">${labels[i]}</span>
+            </button>`).join('')}
+          </div>
+          <footer class="compare-selection">
+            <div class="compare-summary" role="status" aria-live="polite"><strong>어떤 친구가 마음에 드나요?</strong><p>친구를 고르면 여기에 소개해드릴게요.</p></div>
+            <button type="button" class="compare-confirm" disabled>친구를 선택해주세요</button>
+          </footer>
+        </div>`;
+      this.root.querySelectorAll('[data-compare]').forEach(button => button.addEventListener('click', () => {
+        this.setVariant(button.dataset.compare);
+      }));
+      let selected = null;
+      const confirm = this.root.querySelector('.compare-confirm');
+      this.root.querySelectorAll('[data-friend]').forEach(button => button.addEventListener('click', () => {
+        if (this.confirmed) return;
+        selected = this.characters[Number(button.dataset.friend)];
+        this.root.querySelectorAll('[data-friend]').forEach(card => card.setAttribute('aria-pressed', String(card === button)));
+        this.root.querySelector('.compare-summary').innerHTML = `<strong>${selected.name}</strong><p>“${selected.shortMessage}”</p>`;
+        confirm.disabled = false;
+        const particle = (selected.name.charCodeAt(selected.name.length - 1) - 0xAC00) % 28 === 0 ? '와' : '과';
+        confirm.textContent = `${selected.name}${particle} 함께 시작하기 →`;
+      }));
+      confirm.addEventListener('click', () => { if (selected) this.confirm(selected, confirm); });
     }
 
     renderSlider(mount) {

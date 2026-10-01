@@ -377,6 +377,45 @@
     }
     .modal-close:hover { background: var(--accent-bright); border-color: var(--accent-bright); }
 
+    /* 사부작 비행 경로와 탑승권 */
+    .progress-track { position: relative; height: 38px; overflow: visible; background: none; }
+    .progress-track::before {
+      content: ""; position: absolute; top: 19px; left: 8px; right: 8px;
+      height: 1px; background: rgba(255,255,255,.2);
+    }
+    .progress-fill { position: absolute; top: 19px; height: 1px; box-shadow: 0 0 12px var(--accent); }
+    .orbit-stars { position: absolute; inset: 0 8px; display: flex; justify-content: space-between; align-items: center; }
+    .orbit-star { width: 7px; height: 7px; border-radius: 50%; background: #38413d; border: 1px solid #75847b; }
+    .orbit-star.visited { background: var(--accent-bright); border-color: var(--accent-bright); box-shadow: 0 0 12px var(--accent-shadow); }
+    .orbit-star.current { outline: 1px solid rgba(74,222,128,.4); outline-offset: 5px; }
+    .orbit-ship { position: absolute; top: -9px; font-size: 19px; transform: translateX(-50%); }
+    .progress-text { color: rgba(255,255,255,.65); }
+    .progress-text .now { color: var(--accent-bright); }
+    .flight-label { font-size: 10px; letter-spacing: .22em; color: var(--accent-bright); margin: 0 0 16px; }
+    .boarding-pass {
+      position: relative; width: 100%; text-align: left; padding: 26px 24px 20px;
+      border: 1px solid rgba(133,238,170,.4); border-radius: 22px;
+      background: radial-gradient(ellipse at top right, rgba(34,197,94,.18), transparent 65%), #101a15;
+      box-shadow: 0 18px 60px rgba(0,0,0,.35); overflow: hidden;
+    }
+    .boarding-pass::after { content: "✦"; position: absolute; top: 52px; right: 24px; font-size: 42px; color: rgba(133,238,170,.25); }
+    .ticket-name { position: relative; z-index: 1; margin: 0 0 8px; padding-right: 28px; font-size: 25px; overflow-wrap: anywhere; }
+    .ticket-subtitle { font-size: 13px; color: rgba(255,255,255,.6); margin: 0 0 26px; }
+    .ticket-details { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 16px; margin: 0; }
+    .ticket-details dt { font-size: 11px; color: rgba(255,255,255,.5); margin-bottom: 7px; }
+    .ticket-details dd { margin: 0; font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; }
+    .ticket-wide { grid-column: 1 / -1; }
+    .ticket-footer { border-top: 1px dashed rgba(133,238,170,.3); margin-top: 24px; padding-top: 17px; display: flex; justify-content: space-between; font-size: 11px; letter-spacing: .08em; color: var(--accent-bright); }
+    #screen-result { max-width: 370px; }
+    #screen-result .result-desc { margin: 22px 0 0; }
+    #btn-retry { margin-top: 24px; }
+    #btn-retry[hidden] { display: none; }
+    @media (max-height: 740px) {
+      .logo { top: 24px; height: 44px; }
+      .app { padding-top: 88px; }
+      #screen-result { margin-top: 18px; }
+    }
+
     @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
   </style>
 </head>
@@ -421,6 +460,9 @@
     </div>
     <div class="form-input">
       <input type="text" id="input-q1-phone" placeholder="전화번호 (숫자만 입력)" inputmode="numeric" maxlength="13" autocomplete="tel">
+    </div>
+    <div class="form-input">
+      <input type="text" id="input-q1-mbti" placeholder="MBTI (선택, 예: INFP)" aria-label="MBTI (선택)" maxlength="4" autocapitalize="characters" spellcheck="false">
       <div class="input-error" id="hint-q1">&nbsp;</div>
     </div>
     <div class="next-btn-wrap">
@@ -512,14 +554,28 @@
   <!-- LOADING -->
   <section class="screen" id="screen-loading">
     <div class="loading-emoji">📡</div>
-    <p class="loading-text" id="loading-text">지구인 신호 수신 중<span class="loading-dots"><span></span><span></span><span></span></span></p>
+    <p class="loading-text" id="loading-text" role="status" aria-live="polite">지구인 신호 수신 중<span class="loading-dots"><span></span><span></span><span></span></span></p>
+    <button class="next-btn" id="btn-retry" hidden><span class="btn-text">다시 전송하기</span></button>
   </section>
 
   <!-- RESULT -->
   <section class="screen" id="screen-result">
-    <div class="result-emoji">🛸</div>
-    <h2 class="result-title">착륙 준비 완료🛸</h2>
-    <p class="result-desc">"곧 첫 만남 안내를 보내드릴게요."</p>
+    <p class="flight-label">YOUR NEXT CHAPTER</p>
+    <h2 class="result-title">당신의 첫 착륙을 기다려요.</h2>
+    <article class="boarding-pass" aria-label="사부작 탑승권">
+      <p class="flight-label">SABUJAK · BOARDING PASS</p>
+      <h3 class="ticket-name" id="ticket-name"></h3>
+      <p class="ticket-subtitle">책에서 시작되는 새로운 궤도</p>
+      <dl class="ticket-details">
+        <div><dt>출발지</dt><dd>나의 일상</dd></div>
+        <div><dt>도착지</dt><dd>사부작 🛸</dd></div>
+        <div><dt>탐험가 유형</dt><dd id="ticket-mbti"></dd></div>
+        <div><dt>좋아하는 세계</dt><dd id="ticket-world"></dd></div>
+        <div class="ticket-wide"><dt>참여 희망 일정</dt><dd id="ticket-schedule"></dd></div>
+      </dl>
+      <div class="ticket-footer"><span>신청 접수 완료</span><span>✦ SEE YOU SOON</span></div>
+    </article>
+    <p class="result-desc">곧 첫 만남 안내를 보내드릴게요.<br>참여 일정은 안내를 통해 확정됩니다.</p>
   </section>
 
 </div>
@@ -537,6 +593,7 @@
 
       2. 수집하는 개인정보 항목
       - 이름, 출생연도, 연락처
+      - MBTI (선택)
 
       3. 보유 및 이용 기간
       - 모임 종료 후 30일 이내 파기
@@ -554,6 +611,24 @@
       idx: 0,
       answers: {}
     };
+
+    document.querySelectorAll('.progress-track').forEach((track, step) => {
+      const stars = document.createElement('div');
+      stars.className = 'orbit-stars';
+      stars.setAttribute('aria-hidden', 'true');
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElement('span');
+        star.className = 'orbit-star' + (i <= step ? ' visited' : '') + (i === step ? ' current' : '');
+        stars.appendChild(star);
+      }
+      const ship = document.createElement('span');
+      ship.className = 'orbit-ship';
+      ship.textContent = '🛸';
+      ship.style.left = `${step * 25}%`;
+      stars.appendChild(ship);
+      track.appendChild(stars);
+      track.querySelector('.progress-fill').style.width = `${step * 25}%`;
+    });
 
     function show(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -574,10 +649,11 @@
     // START
     document.getElementById('btn-start').addEventListener('click', goNext);
 
-    // Q1 — 이름 / 출생연도 / 전화번호 + consent
+    // Q1 — 이름 / 출생연도 / 전화번호 / MBTI + consent
     const inputQ1Name = document.getElementById('input-q1-name');
     const inputQ1Birth = document.getElementById('input-q1-birth');
     const inputQ1Phone = document.getElementById('input-q1-phone');
+    const inputQ1Mbti = document.getElementById('input-q1-mbti');
     const consentCheck = document.getElementById('consent-check');
     const btnQ1Next = document.getElementById('btn-q1-next');
     const hintQ1 = document.getElementById('hint-q1');
@@ -608,17 +684,20 @@
       const nameOk = name.length >= 1;
       const birthOk = birth.length === 4 && year >= 1920 && year <= THIS_YEAR;
       const phoneOk = phone.length === 11;
+      const mbti = inputQ1Mbti.value.trim().toUpperCase();
+      const mbtiOk = !mbti || /^[EI][NS][TF][JP]$/.test(mbti);
 
       let msg = NBSP;
       if (name && !nameOk) msg = '이름을 입력해 주세요.';
       else if (birth.length && !birthOk) msg = `출생연도 4자리를 정확히 입력해 주세요. (1920~${THIS_YEAR})`;
       else if (phone.length && !phoneOk) msg = '전화번호 11자리(숫자)를 정확히 입력해 주세요.';
+      else if (!mbtiOk) msg = 'MBTI 4자리를 정확히 입력해 주세요. (예: INFP)';
       hintQ1.textContent = msg;
       hintQ1.classList.toggle('show', msg !== NBSP);
 
-      btnQ1Next.disabled = !(nameOk && birthOk && phoneOk && consentCheck.checked);
+      btnQ1Next.disabled = !(nameOk && birthOk && phoneOk && mbtiOk && consentCheck.checked);
     }
-    [inputQ1Name, inputQ1Birth, inputQ1Phone].forEach(el => el.addEventListener('input', validateQ1));
+    [inputQ1Name, inputQ1Birth, inputQ1Phone, inputQ1Mbti].forEach(el => el.addEventListener('input', validateQ1));
     consentCheck.addEventListener('change', validateQ1);
     btnQ1Next.addEventListener('click', () => {
       const name = inputQ1Name.value.trim();
@@ -627,6 +706,7 @@
       state.answers.q1_name = name;
       state.answers.q1_birth = birth;
       state.answers.q1_phone = phone;
+      state.answers.q1_mbti = inputQ1Mbti.value.trim().toUpperCase();
       state.answers.q1_profile = `${name}/${birth}/${phone}`;
       state.answers.q1_consent = consentCheck.checked;
       goNext();
@@ -696,7 +776,7 @@
 
     // 제출 → 기존 텔레그램 봇 전송
     let submitted = false;
-    function submitToTelegram() {
+    async function submitToTelegram() {
       if (submitted) return;
       submitted = true;
       const a = state.answers;
@@ -705,30 +785,44 @@
         이름: a.q1_name || '-',
         출생연도: a.q1_birth || '-',
         연락처: a.q1_phone || '-',
+        MBTI: a.q1_mbti || '-',
         좋아하는세계: a.q2_world || '-',
         참여이유: a.q3_reason || '-',
         가능시간: a.q4_time || '-',
         가능날짜: a.q5_date || '-',
         개인정보동의: a.q1_consent ? '동의함' : '미동의'
       };
-      fetch('/api/sabujak-book', {
+      const response = await fetch('/api/sabujak-book', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(err => console.error('전송 실패:', err));
+      });
+      if (!response.ok) throw new Error('접수 실패');
+      const result = await response.json();
+      if (!result.ok) throw new Error('접수 실패');
     }
 
-    // LOADING → RESULT
-    function runLoading() {
-      submitToTelegram();
+    // 실제 접수 성공 후 탑승권 발급
+    const retryButton = document.getElementById('btn-retry');
+    retryButton.addEventListener('click', runLoading);
+    async function runLoading() {
+      if (submitted) return;
       const loadingText = document.getElementById('loading-text');
-      setTimeout(() => {
-        loadingText.innerHTML = '✓ 지구인 확인 완료';
-        setTimeout(() => {
-          show('screen-result');
-          console.log('제출된 답변:', state.answers);
-        }, 500);
-      }, 4000);
+      retryButton.hidden = true;
+      loadingText.textContent = '사부작으로 신호를 보내고 있어요…';
+      try {
+        await submitToTelegram();
+        const a = state.answers;
+        document.getElementById('ticket-name').textContent = `${a.q1_name}님의 탑승권`;
+        document.getElementById('ticket-mbti').textContent = a.q1_mbti || '아직 미지의 탐험가';
+        document.getElementById('ticket-world').textContent = a.q2_world || '새로운 세계';
+        document.getElementById('ticket-schedule').textContent = [a.q5_date, a.q4_time].filter(Boolean).join(' · ') || '안내 시 함께 정해요';
+        show('screen-result');
+      } catch (err) {
+        submitted = false;
+        loadingText.textContent = '접수를 확인하지 못했어요. 다시 전송해 주세요.';
+        retryButton.hidden = false;
+      }
     }
 
     // 첫 진입 로딩 (0.8초 후 시작 화면)

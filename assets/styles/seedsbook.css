@@ -1671,3 +1671,60 @@ body { font-family: 'Nanum Gothic','Apple SD Gothic Neo','Malgun Gothic',sans-se
 .res-card-consent { border-left-color: #4a9d5a; }
 .res-value-consent { color: #4a9d5a; font-weight: bold; }
 .res-value-consent i { margin-right: 5px; }
+
+/* 책방 친구들 선택 화면 */
+#pageCharacter.is-comparison { padding: 16px; scrollbar-gutter: stable both-edges; }
+.is-comparison .character-select { display: block; flex: 0 0 auto; width: 100%; margin-top: auto; color: #302e29; }
+.compare-shell { width: min(100%, 860px); margin: auto; padding: 24px 24px 0; border-radius: 28px; background: rgba(255,250,240,.88); }
+.compare-tabs { display: flex; gap: 4px; padding: 5px; background: #ebe9e2; border-radius: 16px; width: fit-content; margin: 0 auto; }
+.compare-tabs button { border: 0; border-radius: 12px; background: transparent; color: #666359; padding: 12px 20px; cursor: pointer; }
+.compare-tabs button[aria-pressed="true"] { background: white; color: #344f3b; box-shadow: 0 2px 8px #302e2910; font-weight: 800; }
+.compare-heading { text-align: center; margin: 30px 0 22px; }
+.compare-heading > span { font-size: 12px; color: #6b7968; letter-spacing: 2px; }
+.compare-heading h1 { font-size: clamp(24px, 4vw, 34px); letter-spacing: -1.5px; margin: 12px 0; }
+.compare-heading p { font-size: 14px; color: #77736b; line-height: 1.6; }
+.compare-collection { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; padding: 0 20px 26px; }
+.compare-card { position: relative; border: 2px solid transparent; border-radius: 24px; padding: 10px; background: transparent; color: inherit; cursor: pointer; min-width: 0; transition: transform .2s, background .2s, border-color .2s; }
+.compare-image { display: block; width: 100%; height: 120px; object-fit: contain; margin: auto; transition: transform .2s; }
+.compare-card strong { display: block; font-size: 15px; margin: 7px 0 4px; }
+.compare-trait { display: block; font-size: 11px; color: #79766d; }
+.compare-check { position: absolute; top: 9px; right: 9px; display: none; width: 22px; height: 22px; border-radius: 50%; background: #45634d; color: white; line-height: 22px; font-size: 13px; z-index: 2; }
+.compare-card[aria-pressed="true"] .compare-check { display: block; }
+.compare-card[aria-pressed="true"] { border-color: #57745b; background: #edf2e9; }
+.compare-card[aria-pressed="true"] .compare-image { transform: none; }
+.compare-friends .compare-collection { width: min(100%, 480px); margin: 0 auto; gap: 6px; padding: 0 0 12px; }
+.compare-friends .compare-card { padding: 5px 2px; }
+.compare-friends .compare-image { filter: drop-shadow(0 8px 3px #40392216); }
+.compare-profiles .compare-card { background: white; border-color: #e8e6dd; text-align: left; padding: 14px; box-shadow: 0 4px 12px #302e2905; }
+.compare-profiles .compare-card[aria-pressed="true"] { border-color: #57745b; background: #edf2e9; }
+.compare-profiles .compare-image { background: #f6f5ef; border-radius: 15px; }
+.compare-fan .compare-collection { gap: 28px 0; padding: 15px 35px 40px; }
+.compare-fan .compare-card { background: white; border-color: #e5e1d6; box-shadow: 0 8px 16px #40392212; transform: translateY(calc(var(--slot) * var(--slot) * 9px)) rotate(calc(var(--slot) * 8deg)); }
+.compare-fan .compare-card[aria-pressed="true"] { background: #edf2e9; border-color: #57745b; transform: translateY(-9px) rotate(0deg); z-index: 3; }
+.compare-selection { position: sticky; bottom: 0; z-index: 5; background: #faf9f6f5; border-top: 1px solid #e4e2d9; padding: 16px 0 max(16px, env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 24px; backdrop-filter: blur(12px); }
+.compare-summary { flex: 1; min-width: 0; min-height: 74px; }
+.compare-summary strong { font-size: 16px; }
+.compare-summary p { color: #77736b; font-size: 13px; line-height: 1.6; margin-top: 6px; }
+.compare-confirm { flex: 0 0 240px; border: 0; border-radius: 14px; min-height: 52px; padding: 12px 24px; background: #45634d; color: white; cursor: pointer; font-weight: 700 !important; }
+.compare-confirm:disabled { background: #e3e4dd; color: #83857d; cursor: default; }
+@media (hover: hover) { .compare-card:hover { border-color: #91a18a; } }
+@media (max-width: 540px) {
+  #pageCharacter.is-comparison { padding: 10px; }
+  .compare-shell { padding: 14px 14px 0; }
+  .compare-confirm { flex-basis: auto; }
+  .compare-tabs { width: 100%; }
+  .compare-tabs button { flex: 1; padding: 12px 5px; font-size: 12px; }
+  .compare-heading { margin: 24px 0 16px; }
+  .compare-heading h1 { font-size: 25px; }
+  .compare-heading p { font-size: 12px; }
+  .compare-collection { gap: 9px; padding: 0 0 20px; }
+  .compare-card { padding: 7px 2px; border-radius: 17px; }
+  .compare-image { height: 86px; }
+  .compare-card strong { font-size: 13px; }
+  .compare-trait { font-size: 10px; letter-spacing: -.4px; }
+  .compare-profiles .compare-card { padding: 7px; }
+  .compare-fan .compare-collection { padding: 10px 12px 30px; gap: 23px 0; }
+  .compare-selection { flex-direction: column; align-items: stretch; gap: 12px; padding-top: 12px; }
+  .compare-summary { min-height: 57px; }
+  .compare-summary p { font-size: 12px; }
+}
