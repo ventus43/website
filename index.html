@@ -13,13 +13,15 @@
   <meta property="og:url" content="https://gventus.store/">
   <meta property="og:image" content="https://gventus.store/assets/images/site/og_image.png">
   <link rel="stylesheet" href="/assets/styles/home.css">
+  <link rel="stylesheet" href="/assets/styles/team-intro.css">
+  <script src="/assets/scripts/pages/team-intro.js" defer></script>
 </head>
 <body id="top">
   <a class="skip-link" href="#main">본문으로 건너뛰기</a>
   <header class="masthead">
     <a class="wordmark" href="#top" aria-label="VENTUS 처음으로">ventus<span>↗</span></a>
     <span class="masthead-note">CULTURE, CLOSE TO YOU.<br>GWANGJU · KOREA</span>
-    <nav aria-label="주요 메뉴"><a href="#collection">문화 펼쳐보기 <span>↘</span></a><a href="#about">우리의 이야기</a></nav>
+    <nav aria-label="주요 메뉴"><button type="button" id="view-back" hidden>← 뒤로가기</button><a href="#collection" data-home-nav>문화 펼쳐보기 <span>↘</span></a><a href="#about" data-home-nav>우리의 이야기</a><a href="#top" id="home-return" hidden>홈으로</a><a href="#team" id="team-nav">기획단 소개 <span aria-hidden="true">↗</span></a></nav>
   </header>
   <main id="main">
     <section class="cover" aria-labelledby="cover-title">
@@ -62,6 +64,67 @@
       <div class="about-layout"><div class="about-symbol" aria-hidden="true">v<span>✳</span></div><div><h2 id="about-title">문화는 멀리 있지 않아요.<br>우리의 <em>사이</em>에 있어요.</h2><p>VENTUS는 광주에서 사람과 문화를 잇는 문화기획팀입니다. 동네의 작은 공간, 누군가의 새로운 시도, 함께 나누고 싶은 이야기에 주목합니다.</p><p>보고 끝나는 경험을 넘어, 대화가 시작되고 취향이 발견되는 순간. 우리가 만들고 싶은 문화는 그렇게 일상 가까이에 있습니다.</p><div class="about-tags"><span>지역을 발견하고</span><span>경험을 만들고</span><span>사람을 연결합니다</span></div></div></div>
     </section>
     <section class="closing section-wrap" aria-labelledby="closing-title"><p class="eyebrow">YOUR NEXT SCENE STARTS HERE</p><h2 id="closing-title">다음 장면은,<br>당신과 함께.</h2><div class="closing-bottom"><p>새로운 문화의 시작이 될 이야기가 있나요?<br>벤투스에게 들려주세요.</p><a href="mailto:ventus430613@gmail.com">이야기 건네기 <span>↗</span></a></div></section>
+  </main>
+  <main id="team" class="team-page" hidden>
+    <section class="team-hero" aria-labelledby="team-title">
+      <div class="team-hero-copy">
+        <p class="team-kicker">청년 문화사업 기획단 · VENTUS</p>
+        <h1 id="team-title" tabindex="-1">문화를 발견하고,<br>사람과 기회를<br><em>연결합니다.</em></h1>
+        <p class="team-lead">지역의 문화를 콘텐츠로 만들고,<br>청년의 아이디어를 프로젝트로 이어갑니다.</p>
+        <a class="team-link" href="#team-work">우리가 하는 일 <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="team-graphic" aria-hidden="true">
+        <span class="team-graphic-caption">A CONNECTION STARTS HERE.</span>
+        <div class="team-path"></div>
+        <div class="team-node team-node-culture"><small>발견의 시작</small><strong>문화</strong><span>CULTURE</span></div>
+        <div class="team-node team-node-people"><small>함께하는 힘</small><strong>사람</strong><span>PEOPLE</span></div>
+        <div class="team-node team-node-chance"><small>다음의 가능성</small><strong>기회 ↗</strong><span>POSSIBILITY</span></div>
+        <span class="team-graphic-foot">GWANGJU, AND BEYOND.</span>
+      </div>
+      <div class="team-hero-foot"><span>발견에서 경험으로, 경험에서 기회로.</span><span>우리는 벤투스입니다.</span></div>
+    </section>
+
+    <section class="team-statement team-wrap" aria-labelledby="team-statement-title">
+      <p class="team-kicker">우리가 주목하는 것</p>
+      <div><h2 id="team-statement-title">익숙한 지역 안에,<br>아직 만나지 못한 가능성.</h2>
+      <p>익숙한 골목의 작은 공간, 자신만의 작업을 이어가는 창작자, 새로운 시도를 준비하는 청년. 지역에는 아직 충분히 알려지지 않은 이야기와 가능성이 있습니다.</p>
+      <p>우리는 그 가치를 발견해 콘텐츠로 소개하고, 사람들이 직접 참여할 수 있는 문화 경험을 기획합니다. 청년과 지역의 다양한 주체가 만나 아이디어를 구체화하고 함께 실행할 수 있도록 돕습니다.</p>
+      <p class="team-statement-end">좋은 문화가 더 많은 사람에게 닿고,<br>작은 시도가 다음 기회로 이어지도록.<br>벤투스는 그 과정에 함께합니다.</p></div>
+    </section>
+
+    <section id="team-work" class="team-work team-wrap" aria-labelledby="team-work-title">
+      <div class="team-section-heading"><div><p class="team-kicker">WHAT WE DO</p><h2 id="team-work-title">우리가 하는 일</h2></div><p>발견하고, 만들고, 함께 실행합니다.</p></div>
+      <article class="team-service">
+        <div class="team-service-title"><span class="team-service-mark" aria-hidden="true">↗</span><h3>지역문화 콘텐츠</h3><span class="team-service-en">LOCAL CONTENT</span></div>
+        <div class="team-service-copy"><h4>지역의 매력을 발견하고,<br>찾아가고 싶은 이야기로 만듭니다.</h4><p>공간과 사람, 음식과 예술, 행사와 새로운 활동까지. 지역의 이야기를 사진, 영상, 디자인, SNS 콘텐츠로 전합니다.</p><p>정보를 알리는 데서 한 걸음 더 나아가, 직접 방문하고 경험하고 싶어지는 이유를 담습니다.</p></div>
+      </article>
+      <article class="team-service">
+        <div class="team-service-title"><span class="team-service-mark" aria-hidden="true">✳</span><h3>문화 경험 기획</h3><span class="team-service-en">CULTURAL EXPERIENCE</span></div>
+        <div class="team-service-copy"><h4>관심이 참여로 이어지는<br>경험을 만듭니다.</h4><p>지역의 공간과 이야기를 바탕으로 모임, 프로그램, 행사, 캠페인을 기획합니다.</p><p>일상에서 가볍게 참여하는 작은 모임부터 여러 주체가 함께하는 프로젝트까지. 사람들이 문화를 직접 경험하고 서로 이야기를 나눌 수 있는 자리를 만듭니다.</p></div>
+      </article>
+      <article class="team-service team-service-support">
+        <div class="team-service-title"><span class="team-service-mark" aria-hidden="true">＋</span><h3>청년 사업·<br>프로젝트 지원</h3><span class="team-service-en">IDEAS INTO ACTION</span></div>
+        <div class="team-service-copy"><h4>청년의 아이디어가 실행으로<br>이어지도록 함께합니다.</h4><p>무엇부터 시작할지 고민하는 단계부터 사람들에게 소개하고 운영하는 과정까지. 청년 개인과 팀이 자신의 아이디어를 구체적인 활동과 사업으로 발전시킬 수 있도록 돕습니다.</p><p>기획, 브랜딩, 콘텐츠 제작, 홍보, 운영을 함께 살피고, 필요한 공간과 협업 파트너를 연결합니다.</p>
+        <div class="team-support"><h5>주요 지원 영역</h5><ul><li>아이디어 구체화 및 사업·프로젝트 기획</li><li>브랜드 방향 설정과 콘텐츠 제작</li><li>SNS·온라인 홍보</li><li>지역 공간 및 협업 파트너 연결</li><li>행사·프로젝트 운영</li><li>청년 활동과 커뮤니티 기획</li></ul></div>
+        <p>한 번의 시도가 경험으로 쌓이고, 다음 활동을 이어갈 기반이 되도록 함께합니다.</p></div>
+      </article>
+      <article class="team-service">
+        <div class="team-service-title"><span class="team-service-mark" aria-hidden="true">↔</span><h3>지역 협업 프로젝트</h3><span class="team-service-en">LOCAL COLLABORATION</span></div>
+        <div class="team-service-copy"><h4>서로 다른 사람들이<br>함께할 일을 찾습니다.</h4><p>청년, 소상공인, 예술가, 창작자, 문화공간, 기업과 기관은 저마다 다른 자원과 관점을 가지고 있습니다.</p><p>벤투스는 함께할 주제를 찾고 각자의 역할을 구체화해, 만남이 실제 콘텐츠와 프로젝트로 이어지도록 협업을 기획합니다.</p></div>
+      </article>
+    </section>
+
+    <section class="team-origin team-wrap" aria-labelledby="team-origin-title">
+      <div class="team-origin-poster" aria-hidden="true"><span>OUR STARTING POINT</span><strong>광주<span>에서</span><br>시작해.</strong><div class="team-origin-orbit"></div><small>GWANGJU → MORE POSSIBILITIES</small></div>
+      <div class="team-origin-copy"><p class="team-kicker">우리가 시작한 곳, 광주</p><h2 id="team-origin-title">가까운 곳에서 시작해,<br>더 넓은 가능성으로.</h2><p>벤투스의 활동은 광주에서 시작되었습니다.</p><p>우리는 가까운 공간과 사람, 청년들의 시도에 주목합니다. 익숙해서 지나쳤던 지역의 모습을 새롭게 소개하고, 그 안에서 새로운 활동이 시작될 계기를 만들고자 합니다.</p><p>광주에서 쌓아가는 경험을 바탕으로, 더 다양한 사람들과 지역문화의 가능성을 넓혀가겠습니다.</p></div>
+    </section>
+
+    <section class="team-future team-wrap" aria-labelledby="team-future-title">
+      <p class="team-kicker">우리가 만들고 싶은 미래</p><h2 id="team-future-title">하나의 발견이,<br>다음의 시작이 되도록.</h2>
+      <div class="team-future-copy"><p>좋은 문화가 사람들에게 발견되고, 청년이 아이디어를 시도하며, 지역의 공간과 사람들이 함께할 일을 찾는 곳. 우리는 그런 지역을 만들고 싶습니다.</p><p>하나의 콘텐츠가 방문으로 이어지고, 한 번의 경험이 만남을 만들며, 그 만남에서 다음 프로젝트가 시작되도록.</p></div>
+      <p class="team-promise">지역의 문화를 발견하고,<br>사람의 아이디어를 연결하고,<br>새로운 경험과 기회를 만듭니다.</p>
+      <div class="team-contact"><span>청년 문화사업 기획단, 벤투스.</span><a href="mailto:ventus430613@gmail.com">함께할 이야기 보내기 <span aria-hidden="true">↗</span></a></div>
+    </section>
   </main>
   <footer>
     <a class="wordmark" href="#top">ventus<span>↗</span></a>
